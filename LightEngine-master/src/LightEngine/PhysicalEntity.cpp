@@ -4,9 +4,10 @@ void PhysicalEntity::Fall(float deltaTime)
 {
 	float gravity = 9.81f;
 
-	float pPosY = GetPosition().y;
+	sf::Vector2f pPos = GetPosition();
 	mGravitySpeed += gravity * deltaTime;
-	pPosY += mGravitySpeed * deltaTime;
+	pPos.y += mGravitySpeed * deltaTime;
+	SetPosition(pPos.x, pPos.y);
 }
 
 void PhysicalEntity::Jump()

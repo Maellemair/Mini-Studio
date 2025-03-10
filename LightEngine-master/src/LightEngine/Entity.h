@@ -21,6 +21,7 @@ class Entity
     };
 
 protected:
+
     sf::CircleShape mShape;
     sf::Vector2f mDirection;
 	Target mTarget;
