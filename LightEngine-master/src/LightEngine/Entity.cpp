@@ -6,19 +6,35 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
-void Entity::Initialize(float radius, const sf::Color& color)
+void Entity::InitializeCircle(float radius, const sf::Color& color)
 {
+	sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape);
+
 	mDirection = sf::Vector2f(0.0f, 0.0f);
 
-	mShape.setOrigin(0.f, 0.f);
-	mShape.setRadius(radius);
-	mShape.setFillColor(color);
+	pShape->setOrigin(0.f, 0.f);
+	pShape->setRadius(radius);
+	pShape->setFillColor(color);
 	
 	mTarget.isSet = false;
 
 	OnInitialize();
 }
+
+void Entity::InitializeRect(float height, float width, const sf::Color& color)
+{
+	sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape);
+	
+	pShape->setSize(sf::Vector2f(height, width));
+	pShape->setOrigin(0.f, 0.f);
+	pShape->setFillColor(color);
+
+	mTarget.isSet = false;
+	OnInitialize();
+}
+
 
 void Entity::Repulse(Entity* other) 
 {
@@ -63,10 +79,18 @@ bool Entity::IsInside(float x, float y) const
 
 	float dx = x - position.x;
 	float dy = y - position.y;
-
-	float radius = mShape.getRadius();
-
-	return (dx * dx + dy * dy) < (radius * radius);
+	
+	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
+	{
+		float radius = pShape->getRadius();
+		return (dx * dx + dy * dy) < (radius * radius);
+	}
+	else if (sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape))
+	{
+		float height = pShape->getSize().y;
+		float width = pShape->getSize().x;
+		return (dx * dx + dy * dy) < ( height * width);
+	}
 }
 
 void Entity::Destroy()
@@ -76,32 +100,23 @@ void Entity::Destroy()
 	OnDestroy();
 }
 
-void Entity::SetPosition(float x, float y, float ratioX, float ratioY)
-{
-	float size = mShape.getRadius() * 2;
-
-	x -= size * ratioX;
-	y -= size * ratioY;
-
-	mShape.setPosition(x, y);
-
-	//#TODO Optimise
-	if (mTarget.isSet) 
-	{
-		sf::Vector2f position = GetPosition(0.5f, 0.5f);
-		mTarget.distance = Utils::GetDistance(position.x, position.y, mTarget.position.x, mTarget.position.y);
-		GoToDirection(mTarget.position.x, mTarget.position.y);
-		mTarget.isSet = true;
-	}
-}
-
 sf::Vector2f Entity::GetPosition(float ratioX, float ratioY) const
 {
-	float size = mShape.getRadius() * 2;
-	sf::Vector2f position = mShape.getPosition();
+	sf::Vector2f position = mShape->getPosition();
 
-	position.x += size * ratioX;
-	position.y += size * ratioY;
+	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
+	{
+		float size = pShape->getRadius() * 2;
+		position.x += size * ratioX;
+		position.y += size * ratioY;
+	}
+	else if (sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape))
+	{
+		float height = pShape->getSize().y;
+		float width = pShape->getSize().x;
+		position.x += width * ratioX;
+		position.y += height * ratioY;
+	}
 
 	return position;
 }
@@ -143,12 +158,30 @@ void Entity::SetDirection(float x, float y, float speed)
 	mTarget.isSet = false;
 }
 
+float Entity::GetRadius() const
+{
+	sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape); 
+	return pShape->getRadius();
+}
+
+float Entity::GetHeigth() const
+{
+	sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape);
+	return pShape->getSize().y;
+}
+
+float Entity::GetWidth() const
+{
+	sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape);
+	return pShape->getSize().x;
+}
+
 void Entity::Update()
 {
 	float dt = GetDeltaTime();
 	float distance = dt * mSpeed;
 	sf::Vector2f translation = distance * mDirection;
-	mShape.move(translation);
+	mShape->move(translation);
 
 	if (mTarget.isSet) 
 	{

@@ -22,7 +22,7 @@ class Entity
 
 protected:
 
-    sf::CircleShape mShape;
+    sf::Shape* mShape;
     sf::Vector2f mDirection;
 	Target mTarget;
     float mSpeed = 0.f;
@@ -33,16 +33,19 @@ protected:
 public:
 	bool GoToDirection(int x, int y, float speed = -1.f);
     bool GoToPosition(int x, int y, float speed = -1.f);
-    void SetPosition(float x, float y, float ratioX = 0.5f, float ratioY = 0.5f);
+    virtual void SetPosition(float x, float y, float ratioX = 0.5f, float ratioY = 0.5f) = 0;
 	void SetDirection(float x, float y, float speed = -1.f);
 	void SetSpeed(float speed) { mSpeed = speed; }
 	void SetTag(int tag) { mTag = tag; }
-	float GetRadius() const { return mShape.getRadius(); }
+	
+	float GetRadius() const;
+	float GetHeigth() const;
+	float GetWidth() const;
 	void SetRigidBody(bool isRigitBody) { mRigidBody = isRigitBody; }
 	bool IsRigidBody() const { return mRigidBody; }
 
     sf::Vector2f GetPosition(float ratioX = 0.5f, float ratioY = 0.5f) const;
-	sf::Shape* GetShape() { return &mShape; }
+	sf::Shape* GetShape() { return mShape; }
 
 	bool IsTag(int tag) const { return mTag == tag; }
     bool IsColliding(Entity* other) const;
@@ -71,7 +74,8 @@ protected:
 	
 private:
     void Update();
-	void Initialize(float radius, const sf::Color& color);
+	void InitializeCircle(float radius, const sf::Color& color);
+	void InitializeRect(float height, float width, const sf::Color& color);
 	void Repulse(Entity* other);
 
     friend class GameManager;

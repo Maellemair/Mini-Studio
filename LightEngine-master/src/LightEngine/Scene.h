@@ -22,7 +22,9 @@ protected:
 
 public:
 	template<typename T>
-	T* CreateEntity(float radius, const sf::Color& color);
+	T* CreateCircle(float radius, const sf::Color& color);
+	template<typename T>
+	T* CreateRectangle(float height, float width, const sf::Color& color);
 
 	float GetDeltaTime() const;
 

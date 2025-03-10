@@ -9,5 +9,6 @@ class PhysicalEntity : public Entity
 public:
 	void Fall(float deltaTime);
 	void Jump();
+	void OnUpdate() override;
 };
 
