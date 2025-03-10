@@ -1,5 +1,5 @@
 #include "SampleScene.h"
-
+#include <iostream>
 #include "DummyEntity.h"
 
 #include "Debug.h"
@@ -19,8 +19,20 @@ void SampleScene::OnInitialize()
 
 void SampleScene::OnEvent(const sf::Event& event)
 {
-	if (event.type != sf::Event::EventType::MouseButtonPressed)
-		return;
+
+	if (event.JoystickConnected) {
+		if (sf::Joystick::isButtonPressed(0, 20))
+		{
+			// oui : on shoot !!
+		std:: cout << "Bouton 1 appuyé" << std::endl;
+		}
+		
+	}
+
+
+	float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+	float y = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+	pEntity1->SetDirection(x, y, 10.f);
 
 	if (event.mouseButton.button == sf::Mouse::Button::Right)
 	{
