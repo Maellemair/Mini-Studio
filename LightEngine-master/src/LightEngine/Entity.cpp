@@ -10,6 +10,7 @@
 
 void Entity::InitializeCircle(float radius, const sf::Color& color)
 {
+	mShape = new sf::CircleShape;
 	sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape);
 
 	mDirection = sf::Vector2f(0.0f, 0.0f);
@@ -25,6 +26,7 @@ void Entity::InitializeCircle(float radius, const sf::Color& color)
 
 void Entity::InitializeRect(float height, float width, const sf::Color& color)
 {
+	mShape = new sf::RectangleShape;
 	sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape);
 	
 	pShape->setSize(sf::Vector2f(height, width));
@@ -42,11 +44,15 @@ void Entity::Repulse(Entity* other)
 	
 	float sqrLength = (distance.x * distance.x) + (distance.y * distance.y);
 	float length = std::sqrt(sqrLength);
-
-	float radius1 = mShape.getRadius();
-	float radius2 = other->mShape.getRadius();
-
-	float overlap = (length - (radius1 + radius2)) * 0.5f;
+	
+	float overlap = 0;
+	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
+	{
+		float radius1 = pShape->getRadius();
+		sf::CircleShape* pOther = dynamic_cast<sf::CircleShape*>(other);
+		float radius2 = pOther->getRadius();
+		overlap = (length - (radius1 + radius2)) * 0.5f;
+	}
 
 	sf::Vector2f normal = distance / length;
 
@@ -65,10 +71,21 @@ bool Entity::IsColliding(Entity* other) const
 
 	float sqrLength = (distance.x * distance.x) + (distance.y * distance.y);
 
-	float radius1 = mShape.getRadius();
-	float radius2 = other->mShape.getRadius();
-
-	float sqrRadius = (radius1 + radius2) * (radius1 + radius2);
+	float sqrRadius = 0;
+	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
+	{
+		float radius1 = pShape->getRadius();
+		if (sf::CircleShape* pOther = dynamic_cast<sf::CircleShape*>(other))
+		{
+			float radius2 = pOther->getRadius();
+			sqrRadius = (radius1 + radius2) * (radius1 + radius2);
+		}
+		else if (sf::RectangleShape* pOther = dynamic_cast<sf::RectangleShape*>(other))
+		{
+			sqrRadius = sqrLength + 10;
+		}
+		
+	}
 
 	return sqrLength < sqrRadius;
 }
@@ -147,6 +164,33 @@ bool Entity::GoToPosition(int x, int y, float speed)
 	mTarget.isSet = true;
 
 	return true;
+}
+
+void Entity::SetPosition(float x, float y, float ratioX, float ratioY)
+{
+	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
+	{
+		float size = pShape->getRadius() * 2;
+		x -= size * ratioX;
+		y -= size * ratioY;
+	}
+	else if (sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape))
+	{
+		sf::Vector2f size = pShape->getSize();
+		x -= size.x / 2;
+		y -= size.y / 2;
+	}
+
+	mShape->setPosition(x, y);
+
+	//#TODO Optimise
+	if (mTarget.isSet)
+	{
+		sf::Vector2f position = GetPosition(0.5f, 0.5f);
+		mTarget.distance = Utils::GetDistance(position.x, position.y, mTarget.position.x, mTarget.position.y);
+		GoToDirection(mTarget.position.x, mTarget.position.y);
+		mTarget.isSet = true;
+	}
 }
 
 void Entity::SetDirection(float x, float y, float speed)

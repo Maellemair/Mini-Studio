@@ -8,11 +8,11 @@
 
 void SampleScene::OnInitialize()
 {
-	pEntity1 = CreateCircle<PhysicalEntity>(100, sf::Color::Red);
+	pEntity1 = CreateCircle<PhysicalEntity>(50, sf::Color::Red);
 	pEntity1->SetPosition(100, 100);
 	pEntity1->SetRigidBody(true);
 
-	pEntity2 = CreateCircle<PhysicalEntity>(50, sf::Color::Green);
+	pEntity2 = CreateRectangle<PhysicalEntity>(200, 200, sf::Color::Green);
 	pEntity2->SetPosition(500, 500);
 	pEntity2->SetRigidBody(true);
 
@@ -35,7 +35,8 @@ void SampleScene::OnEvent(const sf::Event& event)
 	{
 		if (pEntitySelected != nullptr) 
 		{
-			pEntitySelected->Jump();
+			pEntitySelected->GoToPosition(event.mouseButton.x, event.mouseButton.y, 100);
+			//pEntitySelected->Jump();
 		}
 	}
 }

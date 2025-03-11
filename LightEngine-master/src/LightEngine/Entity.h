@@ -2,6 +2,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace sf 
 {
@@ -33,7 +34,7 @@ protected:
 public:
 	bool GoToDirection(int x, int y, float speed = -1.f);
     bool GoToPosition(int x, int y, float speed = -1.f);
-    virtual void SetPosition(float x, float y, float ratioX = 0.5f, float ratioY = 0.5f) = 0;
+    void SetPosition(float x, float y, float ratioX = 0.5f, float ratioY = 0.5f);
 	void SetDirection(float x, float y, float speed = -1.f);
 	void SetSpeed(float speed) { mSpeed = speed; }
 	void SetTag(int tag) { mTag = tag; }
@@ -57,11 +58,14 @@ public:
 	template<typename T>
 	T* GetScene() const;
 
+	template<typename T>
+	T* CreateCircle(float radius, const sf::Color& color);
+
+	template<typename T>
+	T* CreateRectangle(float height, float width, const sf::Color& color);
+
     Scene* GetScene() const;
 	float GetDeltaTime() const;
-
-    template<typename T>
-    T* CreateEntity(float radius, const sf::Color& color);
 
 protected:
     Entity() = default;

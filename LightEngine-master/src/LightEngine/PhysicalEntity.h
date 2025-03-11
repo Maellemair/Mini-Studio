@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include <iostream>
+
 class PhysicalEntity : public Entity
 {
 	bool mGravity = false;

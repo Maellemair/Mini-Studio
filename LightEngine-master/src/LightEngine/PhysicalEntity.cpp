@@ -20,6 +20,6 @@ void PhysicalEntity::Jump()
 void PhysicalEntity::OnUpdate()
 {
 	float dt = GetDeltaTime();
-	Fall(dt);
+	//Fall(dt);
 }
 
