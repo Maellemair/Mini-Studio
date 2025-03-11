@@ -63,6 +63,14 @@ void Player::Move()
 	std::cout << "X : " << x << std::endl;
 }
 
+void Player::TakeHit()
+{
+	Life--;
+	if (Life <= 0)
+	{
+		//GameOver
+	}
+}
 
 void Player::OnUpdate()
 {
