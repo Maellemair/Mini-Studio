@@ -2,6 +2,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace sf 
 {
@@ -21,7 +22,8 @@ class Entity
     };
 
 protected:
-    sf::CircleShape mShape;
+
+    sf::Shape* mShape;
     sf::Vector2f mDirection;
 	Target mTarget;
     float mSpeed = 0.f;
@@ -36,12 +38,15 @@ public:
 	void SetDirection(float x, float y, float speed = -1.f);
 	void SetSpeed(float speed) { mSpeed = speed; }
 	void SetTag(int tag) { mTag = tag; }
-	float GetRadius() const { return mShape.getRadius(); }
+	
+	float GetRadius() const;
+	float GetHeigth() const;
+	float GetWidth() const;
 	void SetRigidBody(bool isRigitBody) { mRigidBody = isRigitBody; }
 	bool IsRigidBody() const { return mRigidBody; }
 
     sf::Vector2f GetPosition(float ratioX = 0.5f, float ratioY = 0.5f) const;
-	sf::Shape* GetShape() { return &mShape; }
+	sf::Shape* GetShape() { return mShape; }
 
 	bool IsTag(int tag) const { return mTag == tag; }
     bool IsColliding(Entity* other) const;
@@ -53,11 +58,14 @@ public:
 	template<typename T>
 	T* GetScene() const;
 
+	template<typename T>
+	T* CreateCircle(float radius, const sf::Color& color);
+
+	template<typename T>
+	T* CreateRectangle(float height, float width, const sf::Color& color);
+
     Scene* GetScene() const;
 	float GetDeltaTime() const;
-
-    template<typename T>
-    T* CreateEntity(float radius, const sf::Color& color);
 
 protected:
     Entity() = default;
@@ -70,7 +78,8 @@ protected:
 	
 private:
     void Update();
-	void Initialize(float radius, const sf::Color& color);
+	void InitializeCircle(float radius, const sf::Color& color);
+	void InitializeRect(float height, float width, const sf::Color& color);
 	void Repulse(Entity* other);
 
     friend class GameManager;

@@ -1,18 +1,22 @@
 #pragma once
 
 #include "Scene.h"
+#include <vector>
 
-class DummyEntity;
+class PhysicalEntity;
+class ObjectEntity;
 
 class SampleScene : public Scene
 {
-	DummyEntity* pEntity1;
-	DummyEntity* pEntity2;
+	PhysicalEntity* pEntity1;
+	PhysicalEntity* pEntity2;
 
-	DummyEntity* pEntitySelected;
+	PhysicalEntity* pEntitySelected;
+
+	std::vector<ObjectEntity*> mPlateforms;
 
 private:
-	void TrySetSelectedEntity(DummyEntity* pEntity, int x, int y);
+	void TrySetSelectedEntity(PhysicalEntity* pEntity, int x, int y);
 
 public:
 	void OnInitialize() override;

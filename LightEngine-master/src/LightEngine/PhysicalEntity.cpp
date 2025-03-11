@@ -3,15 +3,24 @@
 void PhysicalEntity::Fall(float deltaTime)
 {
 	float gravity = 9.81f;
+	float speed = 10.f;
 
-	float pPosY = GetPosition().y;
-	mGravitySpeed += gravity * deltaTime;
-	pPosY += mGravitySpeed * deltaTime;
+	sf::Vector2f pPos = GetPosition();
+	mGravitySpeed += speed * gravity * deltaTime;
+	pPos.y += mGravitySpeed * deltaTime;
+	SetPosition(pPos.x, pPos.y);
 }
 
 void PhysicalEntity::Jump()
 {
-	mGravitySpeed -= 100;
+	mGravitySpeed = -150;
+	std::cout << "Jump" << std::endl;
+}
+
+void PhysicalEntity::OnUpdate()
+{
+	float dt = GetDeltaTime();
+	Fall(dt);
 }
 
 bool PhysicalEntity::IsColliding(const AABBCollider& c1, const AABBCollider& c2)

@@ -14,7 +14,13 @@ T* Entity::GetScene() const
 
 
 template<typename T>
-T* Entity::CreateEntity(float radius, const sf::Color& color)
+T* Entity::CreateCircle(float radius, const sf::Color& color)
 {
-	return GetScene()->CreateEntity<T>(radius, color);
+	return GetScene()->CreateCircle<T>(radius, color);
+}
+
+template<typename T>
+T* Entity::CreateRectangle(float height, float width, const sf::Color& color)
+{
+	return GetScene()->CreateRectangle<T>(height, width, color);
 }
