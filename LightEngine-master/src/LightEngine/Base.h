@@ -4,5 +4,6 @@
 
 class Base : public Entity
 {
+
 };
 
