@@ -1,12 +1,12 @@
 #include "SceneGame.h"
 #include <iostream>
-#include "DummyEntity.h"
+#include "Player.h"
 
 #include "Debug.h"
 
 void SceneGame::OnInitialize()
 {
-	pPlayer = CreateEntity<DummyEntity>(20, sf::Color::Red);
+	pPlayer = CreateEntity<Player>(20, sf::Color::Red);
 	pPlayer->SetPosition(640, 600);
 	pPlayer->SetRigidBody(true);
 

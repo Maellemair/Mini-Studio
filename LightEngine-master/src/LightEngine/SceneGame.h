@@ -3,10 +3,12 @@
 #include "Scene.h"
 
 class DummyEntity;
+class Player;
 
 class SceneGame : public Scene
 {
-	DummyEntity* pPlayer;
+	DummyEntity* mPlayer;
+	Player* pPlayer;
 
 public:
 	void OnInitialize() override;
