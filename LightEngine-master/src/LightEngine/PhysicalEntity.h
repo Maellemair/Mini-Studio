@@ -21,6 +21,9 @@ public:
 
 	void EnableGravity(bool value);
 
-	bool IsColliding(const AABBCollider& c1, const AABBCollider& c2);
-};
+	//void BottomEdgeCollision(float groundY);
 
+	bool IsColliding(const AABBCollider& c1, const AABBCollider& c2);
+
+	void OnUpdate() override;
+};

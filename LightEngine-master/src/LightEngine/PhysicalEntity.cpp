@@ -1,23 +1,27 @@
 #include "PhysicalEntity.h"
 #include <iostream>
 
-float GravityAcceleration = 9.81f;
 
 void PhysicalEntity::Fall(float deltaTime)
 {
 	if (!mGravity) return;
 	
-	mGravitySpeed += GravityAcceleration * deltaTime;
-	mPosition.y += mGravitySpeed * deltaTime;
+	float gravity = 9.81f;
+	float speed = 25.f;
 
-	std::cout << "GravitySpeed: " << mGravitySpeed << " | Position Y: " << mPosition.y << std::endl;
+	sf::Vector2f pPos = GetPosition();
+	mGravitySpeed += speed * gravity * deltaTime;
+	pPos.y += mGravitySpeed * deltaTime;
+	SetPosition(pPos.x, pPos.y);
 
-	SetPosition(mPosition.x, mPosition.y);
+	//std::cout << "GravitySpeed: " << mGravitySpeed << " | Position Y: " << mPosition.y << std::endl;
 }
 
 void PhysicalEntity::Jump()
 {
-	mGravitySpeed -= 100;
+	EnableGravity(true);
+	mGravitySpeed = -200;
+	std::cout << "Jump" << std::endl;
 }
 
 void PhysicalEntity::EnableGravity(bool value)
@@ -26,6 +30,15 @@ void PhysicalEntity::EnableGravity(bool value)
 	if (!mGravity)
 		mGravitySpeed = 0.f;
 }
+
+//void PhysicalEntity::BottomEdgeCollision(float groundY)
+//{
+//	if (GetPosition().y + 49 >= groundY)
+//	{
+//		EnableGravity(false);
+//		SetPosition(GetPosition().x, groundY - 50);
+//	}
+//}
 
 bool PhysicalEntity::IsColliding(const AABBCollider& c1, const AABBCollider& c2)
 {
@@ -40,3 +53,9 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1, const AABBCollider& c2)
 	return true;
 }
 
+void PhysicalEntity::OnUpdate()
+{
+	float dt = GetDeltaTime();
+	Fall(dt);
+	//std::cout << "GetDeltaTime(): " << dt << std::endl;
+}

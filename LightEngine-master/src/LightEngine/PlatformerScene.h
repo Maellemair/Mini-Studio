@@ -12,8 +12,6 @@ private:
 	int mWidth;
 	int mHeight;
 
-	float entityRadius;
-
 public:
 	void OnInitialize() override;
 	void OnUpdate() override;
