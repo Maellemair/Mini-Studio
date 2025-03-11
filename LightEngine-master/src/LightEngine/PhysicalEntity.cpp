@@ -3,7 +3,7 @@
 void PhysicalEntity::Fall(float deltaTime)
 {
 	float gravity = 9.81f;
-	float speed = 25.f;
+	float speed = 10.f;
 
 	sf::Vector2f pPos = GetPosition();
 	mGravitySpeed += speed * gravity * deltaTime;
@@ -13,13 +13,13 @@ void PhysicalEntity::Fall(float deltaTime)
 
 void PhysicalEntity::Jump()
 {
-	mGravitySpeed -= 100;
+	mGravitySpeed = -150;
 	std::cout << "Jump" << std::endl;
 }
 
 void PhysicalEntity::OnUpdate()
 {
 	float dt = GetDeltaTime();
-	//Fall(dt);
+	Fall(dt);
 }
 
