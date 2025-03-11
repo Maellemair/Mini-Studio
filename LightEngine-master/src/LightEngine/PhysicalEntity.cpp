@@ -8,7 +8,7 @@ void PhysicalEntity::OnInitialize()
 void PhysicalEntity::Fall(float deltaTime)
 {
 	float gravity = 9.81f;
-	float speed = 25.f;
+	float speed = 50.f;
 
 	sf::Vector2f pPos = GetPosition();
 	mGravitySpeed += speed * gravity * deltaTime;
@@ -59,16 +59,16 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 					pPos.y = c1.yMin - GetHeight() / 2;
 					state = TOP;
 					mNbrJump = 0;
+					mGravitySpeed = 0;
 				}
 				else {
 					pPos.y = c1.yMax + GetHeight() / 2;
+					mGravitySpeed = 0;
 					state = BOTTOM;
 				}
 			}
 		}
 		SetPosition(pPos.x, pPos.y);
-
-		mGravitySpeed = 0;
 		return true;
 	}
 	else

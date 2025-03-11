@@ -7,13 +7,13 @@ void Player::Move(float deltaTime, int key)
 
 void Player::Jump()
 {
-	if (mNbrJump >= 2)
+	if (GetState() == TOP || mNbrJump >= 2 || mClockDoubleJump.getElapsedTime().asSeconds() < jumpCooldown)
 		return;
 
 	sf::Vector2f pPos = GetPosition(0.5f, 0.5f);
 	SetPosition(pPos.x, pPos.y - 1);
 	mGravity = true;
-	mGravitySpeed = -250;
+	mGravitySpeed = -350;
 	mNbrJump++;
-	std::cout << "Jump" << std::endl;
+	mClockDoubleJump.restart();
 }

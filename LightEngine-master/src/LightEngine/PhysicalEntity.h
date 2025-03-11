@@ -2,7 +2,7 @@
 #include "Entity.h"
 #include <iostream>
 
-enum CollisionSide {
+enum CollisionFace {
 	TOP,
 	BOTTOM,
 	LEFT,
@@ -12,13 +12,15 @@ enum CollisionSide {
 
 class PhysicalEntity : public Entity
 {
-	CollisionSide state = None;
+	CollisionFace state = None;
+
 protected:
 	float mNbrJump = 2;
 	bool mGravity = true;
 	float mGravitySpeed = 0.f;
 
 public:
+	CollisionFace GetState() { return state; }
 	void OnInitialize() override;
 	void Fall(float deltaTime);
 	void OnUpdate() override;

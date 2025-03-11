@@ -9,25 +9,30 @@
 
 void SampleScene::OnInitialize()
 {
-	pEntity1 = CreateRectangle<Player>(50, 50, sf::Color::Red);
+	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);
 	pEntity1->SetPosition(101, 100);
 	pEntity1->SetRigidBody(true);
 
-	float posX = 64;
-	float posY = 500;
-	for (int i = 0; i < 15; i++)
+	float posX = 32;
+	float posY = 624;
+	for (int i = 0; i < 20; i++)
 	{
-		ObjectEntity* tempEntity = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Yellow);
-		mPlateforms.push_back(tempEntity);
-		tempEntity->SetPosition(posX, posY);
-		tempEntity->SetRigidBody(true);
-		posX += 74;
+		ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Green);
+		mPlateforms.push_back(tempEntityGrass);
+		tempEntityGrass->SetPosition(posX, posY);
+		tempEntityGrass->SetRigidBody(true);
+
+		ObjectEntity* tempEntityDirt = CreateRectangle<ObjectEntity>(64, 64, sf::Color(88, 41, 0, 255));
+		mPlateforms.push_back(tempEntityDirt);
+		tempEntityDirt->SetPosition(posX, posY + 64);
+		tempEntityDirt->SetRigidBody(true);
+		posX += 64;
 	}
 
-	ObjectEntity* tempEntity = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Yellow);
-	mPlateforms.push_back(tempEntity);
-	tempEntity->SetPosition(500, 300);
-	tempEntity->SetRigidBody(true);
+	ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(100, 100, sf::Color::Yellow);
+	mPlateforms.push_back(tempEntityGrass);
+	tempEntityGrass->SetPosition(500, 400);
+	tempEntityGrass->SetRigidBody(true);
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
@@ -44,6 +49,17 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
 		pEntity1->Jump();
+	}
+
+	if (event.type != sf::Event::EventType::MouseButtonPressed)
+		return;
+
+	if (event.mouseButton.button == sf::Mouse::Button::Left)
+	{
+		ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Green);
+		mPlateforms.push_back(tempEntityGrass);
+		tempEntityGrass->SetPosition(event.mouseButton.x, event.mouseButton.y);
+		tempEntityGrass->SetRigidBody(true);
 	}
 }
 
