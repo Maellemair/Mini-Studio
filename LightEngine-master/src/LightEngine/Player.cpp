@@ -26,9 +26,8 @@ void Player::Jump()
 	{
 		if (jumpCount < 2)
 		{
-			mGravitySpeed -= 200;
+			mGravitySpeed = -200;
 			isJumping = true;
-			std::cout << "Jump" << std::endl;
 			jumpCount++;
 		}
 
@@ -57,15 +56,13 @@ void Player::Move()
 	if (sf::Joystick::isButtonPressed(0, 7))
 	{
 		vitesse = vitesse * 1.5;
-		std::cout << "Bouton 1" << std::endl;
 	}
 	SetDirection(x, 0, vitesse);
-	std::cout << "X : " << x << std::endl;
 }
 
 void Player::TakeHit()
 {
-	//test life décrémentations
+	////test life décrémentations
 	//if (sf::Joystick::isButtonPressed(0, 3))
 	//{
 	//	Life--;

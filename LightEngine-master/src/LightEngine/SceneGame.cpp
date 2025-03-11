@@ -11,8 +11,6 @@ void SceneGame::OnInitialize()
     pPlayer->SetPosition(640, 600);
     pPlayer->SetRigidBody(true);
 
-	Base* pBase = CreateRectangle<Base>(200, 50 sf::Color::Green);
-	pBase->SetPosition(640, 700);
 }
 
 void SceneGame::OnEvent(const sf::Event& event)
