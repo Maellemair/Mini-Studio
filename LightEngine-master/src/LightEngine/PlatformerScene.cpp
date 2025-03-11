@@ -10,9 +10,9 @@ void PlatformerScene::OnInitialize()
 	mWidth = GetWindowWidth();
 	mHeight = GetWindowHeight();
 
-	pEntity1 = CreateEntity<PhysicalEntity>(50, sf::Color::Red);
+	/*pEntity1 = CreateEntity<PhysicalEntity>(50, sf::Color::Red);
 	pEntity1->SetPosition(500, 500);
-	pEntity1->SetRigidBody(true);
+	pEntity1->SetRigidBody(true);*/
 
 	pEntity1->EnableGravity(true);
 }

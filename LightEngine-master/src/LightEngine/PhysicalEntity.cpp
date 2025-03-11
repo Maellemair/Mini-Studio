@@ -59,4 +59,10 @@ void PhysicalEntity::OnUpdate()
 	float dt = GetDeltaTime();
 	Fall(dt);
 	//std::cout << "GetDeltaTime(): " << dt << std::endl;
+
+	if (IsColliding({ GetPosition().x, GetPosition().y, GetPosition().x + GetWidth(), GetPosition().y + GetHeigth() }, { 0.f, 700.f, 1280.f, 720.f }))
+	{
+		EnableGravity(false);
+		std::cout << "Colliding with edge" << std::endl;
+	}
 }
