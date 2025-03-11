@@ -54,6 +54,8 @@ public:
 	bool IsRigidBody() const { return mRigidBody; }
 
     sf::Vector2f GetPosition(float ratioX = 0.5f, float ratioY = 0.5f) const;
+	sf::Vector2f GetColliderPos(float ratioX = 0.5f, float ratioY = 0.5f) const;
+	sf::Vector2f GetColliderSize();
 	sf::Shape* GetShape() { return mShape; }
 
 	bool IsTag(int tag) const { return mTag == tag; }

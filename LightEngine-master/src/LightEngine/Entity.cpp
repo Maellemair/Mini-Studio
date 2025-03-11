@@ -109,6 +109,29 @@ sf::Vector2f Entity::GetPosition(float ratioX, float ratioY) const
 	return position;
 }
 
+sf::Vector2f Entity::GetColliderPos(float ratioX, float ratioY) const
+{
+	sf::Vector2f position = sf::Vector2f(mBoxCollider->xMin, mBoxCollider->yMin);
+
+	float height = mBoxCollider->yMax - mBoxCollider->yMin;
+	float width = mBoxCollider->xMax - mBoxCollider->xMin;
+
+	position.x += width * ratioX;
+	position.y += height * ratioY;
+
+	return position;
+}
+
+sf::Vector2f Entity::GetColliderSize()
+{
+	sf::Vector2f size;
+
+	size.x = mBoxCollider->xMax - mBoxCollider->xMin;
+	size.y = mBoxCollider->yMax - mBoxCollider->yMin;
+
+	return size;
+}
+
 bool Entity::GoToDirection(int x, int y, float speed)
 {
 	sf::Vector2f position = GetPosition(0.5f, 0.5f);

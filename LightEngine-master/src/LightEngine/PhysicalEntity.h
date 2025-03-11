@@ -2,17 +2,26 @@
 #include "Entity.h"
 #include <iostream>
 
+enum CollisionSide {
+	TOP,
+	BOTTOM,
+	LEFT,
+	RIGHT,
+	None,
+};
+
 class PhysicalEntity : public Entity
 {
-	bool mGravity = false;
+	CollisionSide state = None;
+protected:
+	float mNbrJump = 2;
+	bool mGravity = true;
 	float mGravitySpeed = 0.f;
 
 public:
 	void OnInitialize() override;
 	void Fall(float deltaTime);
-	void Jump();
 	void OnUpdate() override;
-	const AABBCollider* GetCollider() { return mBoxCollider; }
 	bool IsColliding(const AABBCollider& c1);
 };
 
