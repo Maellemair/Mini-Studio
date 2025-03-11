@@ -15,10 +15,14 @@ void PlatformerScene::OnInitialize()
 	pEntity1->SetRigidBody(true);
 
 	entityRadius = mHeight * 0.05f;
+
+	pEntity1->EnableGravity(true);
 }
 
 void PlatformerScene::OnUpdate()
 {
+	std::cout << "GetDeltaTime(): " << GetDeltaTime() << std::endl;
+	pEntity1->Fall(GetDeltaTime());
 }
 
 void PlatformerScene::OnEvent(const sf::Event& event)
@@ -28,6 +32,10 @@ void PlatformerScene::OnEvent(const sf::Event& event)
 
 	if (event.mouseButton.button == sf::Mouse::Button::Right)
 	{
-		
+		pEntity1->SetPosition(event.mouseButton.x, event.mouseButton.y);
+	}
+	else if (event.mouseButton.button == sf::Mouse::Button::Left)
+	{
+		pEntity1->Jump();
 	}
 }

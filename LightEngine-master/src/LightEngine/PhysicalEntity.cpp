@@ -1,17 +1,30 @@
 #include "PhysicalEntity.h"
+#include <iostream>
+
+float GravityAcceleration = 9.81f;
 
 void PhysicalEntity::Fall(float deltaTime)
 {
-	float gravity = 9.81f;
+	if (!mGravity) return;
+	
+	mGravitySpeed += GravityAcceleration * deltaTime;
+	mPosition.y += mGravitySpeed * deltaTime;
 
-	float pPosY = GetPosition().y;
-	mGravitySpeed += gravity * deltaTime;
-	pPosY += mGravitySpeed * deltaTime;
+	std::cout << "GravitySpeed: " << mGravitySpeed << " | Position Y: " << mPosition.y << std::endl;
+
+	SetPosition(mPosition.x, mPosition.y);
 }
 
 void PhysicalEntity::Jump()
 {
 	mGravitySpeed -= 100;
+}
+
+void PhysicalEntity::EnableGravity(bool value)
+{
+	mGravity = value;
+	if (!mGravity)
+		mGravitySpeed = 0.f;
 }
 
 bool PhysicalEntity::IsColliding(const AABBCollider& c1, const AABBCollider& c2)
