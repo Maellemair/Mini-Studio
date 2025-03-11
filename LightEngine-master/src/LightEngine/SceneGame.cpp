@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Player.h"
 #include "Debug.h"
+#include "Base.h"
 #include <SFML/Graphics.hpp>
 
 void SceneGame::OnInitialize()
@@ -10,9 +11,8 @@ void SceneGame::OnInitialize()
     pPlayer->SetPosition(640, 600);
     pPlayer->SetRigidBody(true);
 
-    sf::RectangleShape Rect(sf::Vector2f(200.f, 50.f)); 
-    Rect.setFillColor(sf::Color::Blue);
-    Rect.setPosition(300.f, 300.f);
+	Base* Rect = CreateEntity<Base>(20, sf::Color::Green);
+
     
 }
 
