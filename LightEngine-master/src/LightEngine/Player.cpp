@@ -56,7 +56,7 @@ void Player::Move()
 	//Boutton R2 Appuyé = sprint
 	if (sf::Joystick::isButtonPressed(0, 7))
 	{
-		vitesse = vitesse * 2;
+		vitesse = vitesse * 1.5;
 		std::cout << "Bouton 1" << std::endl;
 	}
 	SetDirection(x, 0, vitesse);
@@ -65,11 +65,22 @@ void Player::Move()
 
 void Player::TakeHit()
 {
+	//test life décrémentations
+	//if (sf::Joystick::isButtonPressed(0, 3))
+	//{
+	//	Life--;
+	//	if (Life <= 0)
+	//	{
+	//		//GameOver
+	//	}
+	//}
+
 	Life--;
 	if (Life <= 0)
 	{
 		//GameOver
 	}
+
 }
 
 void Player::OnUpdate()
@@ -78,5 +89,6 @@ void Player::OnUpdate()
 	Fall(dt);
 	Jump();
 	Move();	
+	//TakeHit();
 }
 

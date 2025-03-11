@@ -16,6 +16,7 @@ public:
 	void Jump();
 	void Move();
 	void TakeHit();
+	int GetLife() { return Life; }
 	void OnUpdate() override;
 };
 
