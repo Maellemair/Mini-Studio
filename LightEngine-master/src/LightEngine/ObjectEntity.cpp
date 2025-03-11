@@ -1,23 +1,31 @@
 #include "ObjectEntity.h"
+#include <iostream>
 
-
-ObjectEntity::ObjectEntity()
+void ObjectEntity::OnInitialize()
 {
-	mBoxCollider->xMin = GetPosition().x - GetWidth() / 2;
-	mBoxCollider->xMax = GetPosition().x + GetWidth() / 2;
-	mBoxCollider->yMin = GetPosition().y - GetHeigth() / 2;
-	mBoxCollider->yMax = GetPosition().y + GetHeigth() / 2;
 }
 
-bool ObjectEntity::IsColliding(const AABBCollider& c1, const AABBCollider& c2)
+bool ObjectEntity::IsColliding(const AABBCollider& c1)
 {
-	if (c1.xMax < c2.xMin || c1.xMin > c2.xMax)
+	if (c1.xMin < mBoxCollider->xMax &&
+		c1.xMax >  mBoxCollider->xMin &&
+		c1.yMin < mBoxCollider->yMax &&
+		c1.yMax >  mBoxCollider->yMin)
+	{
+		std::cout << "Test" << std::endl;
+		return true;
+	}
+	else
+	{
+		return false;
+	}/*
+	if (c1.xMax < mBoxCollider->xMin || c1.xMin > mBoxCollider->xMax)
 	{
 		return false;
 	}
-	if (c1.yMax < c2.yMin || c1.yMin > c2.yMax)
+	if (c1.yMax < mBoxCollider->yMin || c1.yMin > mBoxCollider->yMax)
 	{
 		return false;
 	}
-	return true;
+	return true;*/
 }

@@ -10,6 +10,13 @@ namespace sf
     class Color;
 }
 
+
+struct AABBCollider
+{
+	float xMin, yMin;
+	float xMax, yMax;
+};
+
 class Scene;
 
 class Entity
@@ -23,7 +30,8 @@ class Entity
 
 protected:
 
-    sf::Shape* mShape;
+	AABBCollider* mBoxCollider;
+    sf::RectangleShape* mShape;
     sf::Vector2f mDirection;
 	Target mTarget;
     float mSpeed = 0.f;
@@ -39,8 +47,8 @@ public:
 	void SetSpeed(float speed) { mSpeed = speed; }
 	void SetTag(int tag) { mTag = tag; }
 	
-	float GetRadius() const;
-	float GetHeigth() const;
+	//float GetRadius() const;
+	float GetHeight() const;
 	float GetWidth() const;
 	void SetRigidBody(bool isRigitBody) { mRigidBody = isRigitBody; }
 	bool IsRigidBody() const { return mRigidBody; }
@@ -59,9 +67,6 @@ public:
 	T* GetScene() const;
 
 	template<typename T>
-	T* CreateCircle(float radius, const sf::Color& color);
-
-	template<typename T>
 	T* CreateRectangle(float height, float width, const sf::Color& color);
 
     Scene* GetScene() const;
@@ -78,7 +83,6 @@ protected:
 	
 private:
     void Update();
-	void InitializeCircle(float radius, const sf::Color& color);
 	void InitializeRect(float height, float width, const sf::Color& color);
 	void Repulse(Entity* other);
 

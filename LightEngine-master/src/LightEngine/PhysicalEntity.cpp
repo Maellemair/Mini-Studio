@@ -1,5 +1,9 @@
 #include "PhysicalEntity.h"
 
+void PhysicalEntity::OnInitialize()
+{
+}
+
 void PhysicalEntity::Fall(float deltaTime)
 {
 	float gravity = 9.81f;
@@ -23,9 +27,22 @@ void PhysicalEntity::OnUpdate()
 	Fall(dt);
 }
 
-bool PhysicalEntity::IsColliding(const AABBCollider& c1, const AABBCollider& c2)
+bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 {
-	if (c1.xMax < c2.xMin || c1.xMin > c2.xMax)
+
+	if (c1.xMin < mBoxCollider->xMax &&
+		c1.xMax >  mBoxCollider->xMin &&
+		c1.yMin < mBoxCollider->yMax &&
+		c1.yMax >  mBoxCollider->yMin)
+	{
+		mGravitySpeed = 0;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	/*if (c1.xMax < c2.xMin || c1.xMin > c2.xMax)
 	{
 		return false;
 	}
@@ -33,6 +50,6 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1, const AABBCollider& c2)
 	{
 		return false;
 	}
-	return true;
+	return true;*/
 }
 

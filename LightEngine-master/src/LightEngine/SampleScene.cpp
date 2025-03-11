@@ -9,7 +9,7 @@
 
 void SampleScene::OnInitialize()
 {
-	pEntity1 = CreateCircle<PhysicalEntity>(50, sf::Color::Red);
+	pEntity1 = CreateRectangle<PhysicalEntity>(100, 100, sf::Color::Red);
 	pEntity1->SetPosition(100, 100);
 	pEntity1->SetRigidBody(true);
 
@@ -66,5 +66,13 @@ void SampleScene::OnUpdate()
 	{
 		sf::Vector2f position = pEntitySelected->GetPosition();
 		Debug::DrawCircle(position.x, position.y, 10, sf::Color::Blue);
+	}
+	for (int i = 0; i < mPlateforms.size(); i++)
+	{
+		const auto* ObjectCollider = mPlateforms[i]->GetCollider();
+		if (pEntity1->IsColliding(*ObjectCollider))
+		{
+			std::cout << "collision" << std::endl;
+		}
 	}
 }

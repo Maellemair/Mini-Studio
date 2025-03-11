@@ -21,8 +21,8 @@ protected:
 	virtual void OnUpdate() = 0;
 
 public:
-	template<typename T>
-	T* CreateCircle(float radius, const sf::Color& color);
+	/*template<typename T>
+	T* CreateCircle(float radius, const sf::Color& color);*/
 	template<typename T>
 	T* CreateRectangle(float height, float width, const sf::Color& color);
 
