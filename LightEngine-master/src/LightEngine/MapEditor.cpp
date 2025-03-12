@@ -79,7 +79,7 @@ void MapEditor::CreateMap(float pResolution)
 					pResolution, sf::Color(0, 140, 0, 255));
 				mObjects.push_back(tempEntityPlante);
 				tempEntityPlante->SetTag(4);
-				tempEntityPlante->SetCollider(posX, posY, pResolution, pResolution);
+				tempEntityPlante->SetCollider(posX, posY, pResolution, pResolution / 2);
 				tempEntityPlante->SetPosition(posX, posY);
 				tempEntityPlante->SetRigidBody(true);
 				break;

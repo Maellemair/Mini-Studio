@@ -20,6 +20,7 @@ void Player::Jump()
 
 	sf::Vector2f pPos = GetPosition(0.5f, 0.5f);
 	SetPosition(pPos.x, pPos.y - 1);
+	SetCollider(pPos.x, pPos.y - 1, mBoxCollider->ySize, mBoxCollider->xSize);
 	mGravity = true;
 	mGravitySpeed = -350;
 	mNbrJump++;

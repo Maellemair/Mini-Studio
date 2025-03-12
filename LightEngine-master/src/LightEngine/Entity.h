@@ -15,6 +15,7 @@ struct AABBCollider
 {
 	float xMin, yMin;
 	float xMax, yMax;
+	float xSize, ySize;
 };
 
 class Scene;

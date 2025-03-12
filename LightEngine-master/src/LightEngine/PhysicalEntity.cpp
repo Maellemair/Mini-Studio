@@ -49,31 +49,32 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 		if (intersectX < 0.f && intersectY < 0.f) {
 			if (intersectX > intersectY) {
 				if (deltaX > 0.f) {
-					pPos.x = c1.xMin - GetWidth() / 2;
 					mBoxCollider->xMin = c1.xMin - sizeThis.x;
-					mBoxCollider->xMax = mBoxCollider->xMin + sizeThis.x;
+					mBoxCollider->xMax = mBoxCollider->xMin + mBoxCollider->xSize;
+					pPos.x = mBoxCollider->xMax - GetWidth() / 2;
+					std::cout << pPos.x << std::endl;
 					state = LEFT;
 				}
 				else {
-					pPos.x = c1.xMax + GetWidth() / 2;
 					mBoxCollider->xMin = c1.xMax;
-					mBoxCollider->xMax = mBoxCollider->xMin + sizeThis.x;
+					mBoxCollider->xMax = mBoxCollider->xMin + mBoxCollider->xSize;
+					pPos.x = mBoxCollider->xMin + GetWidth() / 2;
 					state = RIGHT;
 				}
 			}
 			else{
 				if (deltaY > 0.f) {
-					pPos.y = c1.yMin - GetHeight() / 2;
-					mBoxCollider->yMin = c1.yMin - GetHeight();
-					mBoxCollider->yMin = mBoxCollider->yMin + sizeThis.y;
+					mBoxCollider->yMin = c1.yMin - mBoxCollider->ySize;
+					mBoxCollider->yMax = c1.yMin;
+					pPos.y = mBoxCollider->yMax - GetHeight() / 2;
 					state = TOP;
 					mNbrJump = 0;
 					mGravitySpeed = 0;
 				}
 				else {
-					pPos.y = c1.yMax + GetHeight() / 2;
-					mBoxCollider->yMin = c1.yMin;
-					mBoxCollider->yMin = mBoxCollider->yMin + sizeThis.y;
+					mBoxCollider->yMin = c1.yMax;
+					mBoxCollider->yMax = mBoxCollider->yMin + mBoxCollider->ySize;
+					pPos.y = mBoxCollider->yMin + GetHeight() / 2;
 					mGravitySpeed = 0;
 					mNbrJump = 2;
 					state = BOTTOM;

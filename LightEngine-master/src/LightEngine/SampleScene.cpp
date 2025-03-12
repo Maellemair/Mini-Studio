@@ -64,7 +64,7 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
-	std::cout << pEntity1->GetColliderPos().x << " | " << pEntity1->GetColliderPos().y << std::endl;
+	//std::cout << pEntity1->GetState() << std::endl;
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{
 		const auto* ObjectCollider = mPlateforms[i]->GetCollider();

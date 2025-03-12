@@ -169,6 +169,7 @@ void Entity::SetPosition(float x, float y, float ratioX, float ratioY)
 	y -= size.y / 2;
 
 	sf::Vector2f pPos = GetPosition();
+
 	mShape->setPosition(x, y);
 
 	//#TODO Optimise
@@ -187,6 +188,8 @@ void Entity::SetCollider(float posX, float posY, float height, float width)
 	mBoxCollider->xMax = mBoxCollider->xMin + width;
 	mBoxCollider->yMin = posY - height / 2;
 	mBoxCollider->yMax = mBoxCollider->yMin + height;
+	mBoxCollider->xSize = width;
+	mBoxCollider->ySize = height;
 }
 
 void Entity::SetDirection(float x, float y, float speed)
@@ -230,11 +233,11 @@ void Entity::Update()
 
 	mBoxCollider->xMin += translation.x;
 	mBoxCollider->xMax += translation.x;
-
+	
 	if (GetTag() != 1)
 	{
 		sf::Vector2 ColliderSize = GetColliderSize();
-		Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, sf::Color::Magenta);
+		Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, sf::Color(255, 255, 255, 150));
 	}
 
 	mShape->move(translation);
