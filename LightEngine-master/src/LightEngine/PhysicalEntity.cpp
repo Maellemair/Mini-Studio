@@ -11,7 +11,10 @@ void PhysicalEntity::Fall(float deltaTime)
 	float speed = 50.f;
 
 	sf::Vector2f pPos = GetPosition();
+	sf::Vector2f ColliderSize = GetColliderSize();
 	mGravitySpeed += speed * gravity * deltaTime;
+	mBoxCollider->yMin += mGravitySpeed * deltaTime;
+	mBoxCollider->yMax = mBoxCollider->yMin + ColliderSize.y;
 	pPos.y += mGravitySpeed * deltaTime;
 	SetPosition(pPos.x, pPos.y);
 }
@@ -47,23 +50,32 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 			if (intersectX > intersectY) {
 				if (deltaX > 0.f) {
 					pPos.x = c1.xMin - GetWidth() / 2;
+					mBoxCollider->xMin = c1.xMin - sizeThis.x;
+					mBoxCollider->xMax = mBoxCollider->xMin + sizeThis.x;
 					state = LEFT;
 				}
 				else {
 					pPos.x = c1.xMax + GetWidth() / 2;
+					mBoxCollider->xMin = c1.xMax;
+					mBoxCollider->xMax = mBoxCollider->xMin + sizeThis.x;
 					state = RIGHT;
 				}
 			}
 			else{
 				if (deltaY > 0.f) {
 					pPos.y = c1.yMin - GetHeight() / 2;
+					mBoxCollider->yMin = c1.yMin - GetHeight();
+					mBoxCollider->yMin = mBoxCollider->yMin + sizeThis.y;
 					state = TOP;
 					mNbrJump = 0;
 					mGravitySpeed = 0;
 				}
 				else {
 					pPos.y = c1.yMax + GetHeight() / 2;
+					mBoxCollider->yMin = c1.yMin;
+					mBoxCollider->yMin = mBoxCollider->yMin + sizeThis.y;
 					mGravitySpeed = 0;
+					mNbrJump = 2;
 					state = BOTTOM;
 				}
 			}

@@ -3,10 +3,12 @@
 #include "GameManager.h"
 #include "Utils.h"
 #include "Debug.h"
+#include "Player.h"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <iostream>
 
 void Entity::InitializeRect(float height, float width, const sf::Color& color)
 {
@@ -167,12 +169,6 @@ void Entity::SetPosition(float x, float y, float ratioX, float ratioY)
 	y -= size.y / 2;
 
 	sf::Vector2f pPos = GetPosition();
-
-	mBoxCollider->xMin = x;
-	mBoxCollider->xMax = x + GetWidth();
-	mBoxCollider->yMin = y;
-	mBoxCollider->yMax = y + GetHeight();
-
 	mShape->setPosition(x, y);
 
 	//#TODO Optimise
@@ -183,6 +179,14 @@ void Entity::SetPosition(float x, float y, float ratioX, float ratioY)
 		GoToDirection(mTarget.position.x, mTarget.position.y);
 		mTarget.isSet = true;
 	}
+}
+
+void Entity::SetCollider(float posX, float posY, float height, float width)
+{
+	mBoxCollider->xMin = posX - width / 2;
+	mBoxCollider->xMax = mBoxCollider->xMin + width;
+	mBoxCollider->yMin = posY - height / 2;
+	mBoxCollider->yMax = mBoxCollider->yMin + height;
 }
 
 void Entity::SetDirection(float x, float y, float speed)
@@ -218,6 +222,21 @@ void Entity::Update()
 	float dt = GetDeltaTime();
 	float distance = dt * mSpeed;
 	sf::Vector2f translation = distance * mDirection;
+	
+	/*if (Player* p = dynamic_cast<Player*>(this))
+	{
+		std::cout << translation.x << " | " << translation.y << std::endl;
+	}*/
+
+	mBoxCollider->xMin += translation.x;
+	mBoxCollider->xMax += translation.x;
+
+	if (GetTag() != 1)
+	{
+		sf::Vector2 ColliderSize = GetColliderSize();
+		Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, sf::Color::Magenta);
+	}
+
 	mShape->move(translation);
 
 	if (mTarget.isSet) 

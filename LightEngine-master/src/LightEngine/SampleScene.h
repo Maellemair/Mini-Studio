@@ -5,11 +5,12 @@
 
 class Player;
 class ObjectEntity;
+class MapEditor;
 
 class SampleScene : public Scene
 {
 	Player* pEntity1;
-
+	MapEditor* map;
 	std::vector<ObjectEntity*> mPlateforms;
 
 private:

@@ -4,35 +4,22 @@
 #include "ObjectEntity.h"
 #include "Debug.h"
 #include "Music.h"
+#include "MapEditor.h"
 
 #include <iostream>
 
 void SampleScene::OnInitialize()
 {
+	map = new MapEditor();
+	map->Load("../../../res/Layout_Test.txt");
+	map->CreateMap(64);
+	mPlateforms = map->GetMap();
+
 	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);
 	pEntity1->SetPosition(101, 100);
+	pEntity1->SetCollider(101, 100, 16, 16);
 	pEntity1->SetRigidBody(true);
 
-	float posX = 32;
-	float posY = 624;
-	for (int i = 0; i < 20; i++)
-	{
-		ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Green);
-		mPlateforms.push_back(tempEntityGrass);
-		tempEntityGrass->SetPosition(posX, posY);
-		tempEntityGrass->SetRigidBody(true);
-
-		ObjectEntity* tempEntityDirt = CreateRectangle<ObjectEntity>(64, 64, sf::Color(88, 41, 0, 255));
-		mPlateforms.push_back(tempEntityDirt);
-		tempEntityDirt->SetPosition(posX, posY + 64);
-		tempEntityDirt->SetRigidBody(true);
-		posX += 64;
-	}
-
-	ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(100, 100, sf::Color::Yellow);
-	mPlateforms.push_back(tempEntityGrass);
-	tempEntityGrass->SetPosition(500, 400);
-	tempEntityGrass->SetRigidBody(true);
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
@@ -51,15 +38,19 @@ void SampleScene::OnEvent(const sf::Event& event)
 		pEntity1->Jump();
 	}
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
+		pEntity1->Reset();
+	}
+
 	if (event.type != sf::Event::EventType::MouseButtonPressed)
 		return;
 
 	if (event.mouseButton.button == sf::Mouse::Button::Left)
 	{
-		ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Green);
+		/*ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Green);
 		mPlateforms.push_back(tempEntityGrass);
 		tempEntityGrass->SetPosition(event.mouseButton.x, event.mouseButton.y);
-		tempEntityGrass->SetRigidBody(true);
+		tempEntityGrass->SetRigidBody(true);*/
 	}
 }
 
@@ -73,6 +64,7 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
+	std::cout << pEntity1->GetColliderPos().x << " | " << pEntity1->GetColliderPos().y << std::endl;
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{
 		const auto* ObjectCollider = mPlateforms[i]->GetCollider();

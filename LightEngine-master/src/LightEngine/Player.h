@@ -9,6 +9,7 @@ class Player : public PhysicalEntity
 
 public:
 	void Move(float deltaTime, int key);
+	void Reset();
 	void Jump();
 };
 
