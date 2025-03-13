@@ -3,35 +3,22 @@
 #include "GameManager.h"
 #include "Utils.h"
 #include "Debug.h"
+#include "Player.h"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-
-void Entity::InitializeCircle(float radius, const sf::Color& color)
-{
-	mShape = new sf::CircleShape;
-	sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape);
-
-	mDirection = sf::Vector2f(0.0f, 0.0f);
-
-	pShape->setOrigin(0.f, 0.f);
-	pShape->setRadius(radius);
-	pShape->setFillColor(color);
-	
-	mTarget.isSet = false;
-
-	OnInitialize();
-}
+#include <iostream>
 
 void Entity::InitializeRect(float height, float width, const sf::Color& color)
 {
 	mShape = new sf::RectangleShape;
-	sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape);
 	
-	pShape->setSize(sf::Vector2f(height, width));
-	pShape->setOrigin(0.f, 0.f);
-	pShape->setFillColor(color);
+	mShape->setSize(sf::Vector2f(height, width));
+	mShape->setOrigin(0.f, 0.f);
+	mShape->setFillColor(color);
+
+	mBoxCollider = new AABBCollider;
 
 	mTarget.isSet = false;
 	OnInitialize();
@@ -46,13 +33,13 @@ void Entity::Repulse(Entity* other)
 	float length = std::sqrt(sqrLength);
 	
 	float overlap = 0;
-	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
+	/*if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
 	{
 		float radius1 = pShape->getRadius();
 		sf::CircleShape* pOther = dynamic_cast<sf::CircleShape*>(other);
 		float radius2 = pOther->getRadius();
 		overlap = (length - (radius1 + radius2)) * 0.5f;
-	}
+	}*/
 
 	sf::Vector2f normal = distance / length;
 
@@ -72,6 +59,7 @@ bool Entity::IsColliding(Entity* other) const
 	float sqrLength = (distance.x * distance.x) + (distance.y * distance.y);
 
 	float sqrRadius = 0;
+	/*
 	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
 	{
 		float radius1 = pShape->getRadius();
@@ -85,7 +73,7 @@ bool Entity::IsColliding(Entity* other) const
 			sqrRadius = sqrLength + 10;
 		}
 		
-	}
+	}*/
 
 	return sqrLength < sqrRadius;
 }
@@ -97,17 +85,10 @@ bool Entity::IsInside(float x, float y) const
 	float dx = x - position.x;
 	float dy = y - position.y;
 	
-	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
-	{
-		float radius = pShape->getRadius();
-		return (dx * dx + dy * dy) < (radius * radius);
-	}
-	else if (sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape))
-	{
-		float height = pShape->getSize().y;
-		float width = pShape->getSize().x;
-		return (dx * dx + dy * dy) < ( height * width);
-	}
+	float height = mShape->getSize().y;
+	float width = mShape->getSize().x;
+
+	return (dx * dx + dy * dy) < ( height * width);
 }
 
 void Entity::Destroy()
@@ -121,21 +102,36 @@ sf::Vector2f Entity::GetPosition(float ratioX, float ratioY) const
 {
 	sf::Vector2f position = mShape->getPosition();
 
-	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
-	{
-		float size = pShape->getRadius() * 2;
-		position.x += size * ratioX;
-		position.y += size * ratioY;
-	}
-	else if (sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape))
-	{
-		float height = pShape->getSize().y;
-		float width = pShape->getSize().x;
-		position.x += width * ratioX;
-		position.y += height * ratioY;
-	}
+	float height = mShape->getSize().y;
+	float width = mShape->getSize().x;
+
+	position.x += width * ratioX;
+	position.y += height * ratioY;
 
 	return position;
+}
+
+sf::Vector2f Entity::GetColliderPos(float ratioX, float ratioY) const
+{
+	sf::Vector2f position = sf::Vector2f(mBoxCollider->xMin, mBoxCollider->yMin);
+
+	float height = mBoxCollider->yMax - mBoxCollider->yMin;
+	float width = mBoxCollider->xMax - mBoxCollider->xMin;
+
+	position.x += width * ratioX;
+	position.y += height * ratioY;
+
+	return position;
+}
+
+sf::Vector2f Entity::GetColliderSize()
+{
+	sf::Vector2f size;
+
+	size.x = mBoxCollider->xMax - mBoxCollider->xMin;
+	size.y = mBoxCollider->yMax - mBoxCollider->yMin;
+
+	return size;
 }
 
 bool Entity::GoToDirection(int x, int y, float speed)
@@ -168,18 +164,11 @@ bool Entity::GoToPosition(int x, int y, float speed)
 
 void Entity::SetPosition(float x, float y, float ratioX, float ratioY)
 {
-	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
-	{
-		float size = pShape->getRadius() * 2;
-		x -= size * ratioX;
-		y -= size * ratioY;
-	}
-	else if (sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape))
-	{
-		sf::Vector2f size = pShape->getSize();
-		x -= size.x / 2;
-		y -= size.y / 2;
-	}
+	sf::Vector2f size = mShape->getSize();
+	x -= size.x / 2;
+	y -= size.y / 2;
+
+	sf::Vector2f pPos = GetPosition();
 
 	mShape->setPosition(x, y);
 
@@ -193,6 +182,16 @@ void Entity::SetPosition(float x, float y, float ratioX, float ratioY)
 	}
 }
 
+void Entity::SetCollider(float posX, float posY, float height, float width)
+{
+	mBoxCollider->xMin = posX - width / 2;
+	mBoxCollider->xMax = mBoxCollider->xMin + width;
+	mBoxCollider->yMin = posY - height / 2;
+	mBoxCollider->yMax = mBoxCollider->yMin + height;
+	mBoxCollider->xSize = width;
+	mBoxCollider->ySize = height;
+}
+
 void Entity::SetDirection(float x, float y, float speed)
 {
 	if (speed > 0)
@@ -202,22 +201,23 @@ void Entity::SetDirection(float x, float y, float speed)
 	mTarget.isSet = false;
 }
 
-float Entity::GetRadius() const
-{
-	sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape); 
-	return pShape->getRadius();
-}
+//float Entity::GetRadius() const
+//{
+//	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
+//	{
+//		return pShape->getRadius();
+//	}
+//	return 0;
+//}
 
-float Entity::GetHeigth() const
+float Entity::GetHeight() const
 {
-	sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape);
-	return pShape->getSize().y;
+	return mShape->getSize().y;
 }
 
 float Entity::GetWidth() const
 {
-	sf::RectangleShape* pShape = dynamic_cast<sf::RectangleShape*>(mShape);
-	return pShape->getSize().x;
+	return mShape->getSize().x;
 }
 
 void Entity::Update()
@@ -225,6 +225,21 @@ void Entity::Update()
 	float dt = GetDeltaTime();
 	float distance = dt * mSpeed;
 	sf::Vector2f translation = distance * mDirection;
+	
+	/*if (Player* p = dynamic_cast<Player*>(this))
+	{
+		std::cout << translation.x << " | " << translation.y << std::endl;
+	}*/
+
+	mBoxCollider->xMin += translation.x;
+	mBoxCollider->xMax += translation.x;
+	
+	if (GetTag() != 1)
+	{
+		sf::Vector2 ColliderSize = GetColliderSize();
+		Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, sf::Color(255, 255, 255, 150));
+	}
+
 	mShape->move(translation);
 
 	if (mTarget.isSet) 
