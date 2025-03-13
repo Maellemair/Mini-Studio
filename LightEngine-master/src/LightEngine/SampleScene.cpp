@@ -92,6 +92,9 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
+	const char* life = "Life : " + pEntity1->mLife;
+	Debug::DrawText(10, 20, "Life : " + pEntity1->mLife, sf::Color::Black);
+
 	//std::cout << pEntity1->GetState() << std::endl;
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{

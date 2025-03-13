@@ -29,8 +29,8 @@ void Player::Jump()
 
 void Player::TakeHit()
 {
-	Life--;
-	if (Life <= 0)
+	mLife--;
+	if (mLife <= 0)
 	{
 		//GameOver
 	}
