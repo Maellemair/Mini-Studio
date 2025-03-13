@@ -2,23 +2,30 @@
 #include "Entity.h"
 #include <iostream>
 
-struct AABBCollider
-{
-	float xMin, yMin;
-	float xMax, yMax;
+enum CollisionFace {
+	TOP,
+	BOTTOM,
+	LEFT,
+	RIGHT,
+	None,
 };
 
 class PhysicalEntity : public Entity
 {
-	bool mGravity = false;
+	CollisionFace state = None;
+
+protected:
+	float mNbrJump = 2;
+	bool mGravity = true;
 	float mGravitySpeed = 0.f;
 
 public:
-
-	sf::Vector2f mPosition;
-
+	CollisionFace GetState() { return state; }
+	void OnInitialize() override;
 	void Fall(float deltaTime);
-	void Jump();
+	void OnUpdate() override;
+	bool IsColliding(const AABBCollider& c1);
+};
 
 	void EnableGravity(bool value);
 

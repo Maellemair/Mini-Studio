@@ -3,20 +3,18 @@
 #include "Scene.h"
 #include <vector>
 
-class PhysicalEntity;
+class Player;
 class ObjectEntity;
+class MapEditor;
 
 class SampleScene : public Scene
 {
-	PhysicalEntity* pEntity1;
-	PhysicalEntity* pEntity2;
-
-	PhysicalEntity* pEntitySelected;
-
+	Player* pEntity1;
+	MapEditor* map;
 	std::vector<ObjectEntity*> mPlateforms;
 
 private:
-	void TrySetSelectedEntity(PhysicalEntity* pEntity, int x, int y);
+	void TrySetSelectedEntity(Player* pEntity, int x, int y);
 
 public:
 	void OnInitialize() override;
