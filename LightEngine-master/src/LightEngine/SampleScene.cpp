@@ -25,13 +25,13 @@ void SampleScene::OnInitialize()
 void SampleScene::OnEvent(const sf::Event& event)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-		pEntity1->Move(GetDeltaTime(), -1);
+		pEntity1->Move(-1);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-		pEntity1->Move(GetDeltaTime(), 1);
+		pEntity1->Move(1);
 	}
 	else{ 
-		pEntity1->Move(GetDeltaTime(), 0);
+		pEntity1->Move(0);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
@@ -47,20 +47,13 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 	if (event.mouseButton.button == sf::Mouse::Button::Left)
 	{
-		/*ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Green);
+		ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Green);
 		mPlateforms.push_back(tempEntityGrass);
 		tempEntityGrass->SetPosition(event.mouseButton.x, event.mouseButton.y);
-		tempEntityGrass->SetRigidBody(true);*/
+		tempEntityGrass->SetCollider(event.mouseButton.x, event.mouseButton.y, 64, 64);
+		tempEntityGrass->SetRigidBody(true);
 	}
 }
-
-//void SampleScene::TrySetSelectedEntity(PhysicalEntity* pEntity, int x, int y)
-//{
-//	if (pEntity->IsInside(x, y) == false)
-//		return;
-//
-//	pEntitySelected = pEntity;
-//}
 
 void SampleScene::OnUpdate()
 {

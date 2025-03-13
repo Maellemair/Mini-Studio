@@ -1,6 +1,6 @@
 #include "Player.h"
 
-void Player::Move(float deltaTime, int key)
+void Player::Move(int key)
 {
 	SetDirection(key, 0, 250);
 }

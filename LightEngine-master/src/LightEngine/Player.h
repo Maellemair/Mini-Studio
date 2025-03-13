@@ -8,7 +8,7 @@ class Player : public PhysicalEntity
 	float jumpCooldown = 0.5f;
 
 public:
-	void Move(float deltaTime, int key);
+	void Move(int key);
 	void Reset();
 	void Jump();
 };
