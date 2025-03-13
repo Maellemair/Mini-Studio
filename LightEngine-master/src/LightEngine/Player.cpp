@@ -26,3 +26,15 @@ void Player::Jump()
 	mNbrJump++;
 	mClockDoubleJump.restart();
 }
+
+void Player::TakeHit()
+{
+	Life--;
+	if (Life <= 0)
+	{
+		//GameOver
+	}
+}
+
+
+

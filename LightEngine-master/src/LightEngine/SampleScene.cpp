@@ -24,17 +24,45 @@ void SampleScene::OnInitialize()
 
 void SampleScene::OnEvent(const sf::Event& event)
 {
+	
+	if (sf::Joystick::isConnected(0))
+	{
+		float vitesse = 250;
+		float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+
+		if (x > 0.f && x < 10.f || x < 0.f && x > -10.f)
+		{
+			x = 0;
+		}
+
+		if (sf::Joystick::isButtonPressed(0, 7))
+		{
+			vitesse = vitesse * 1.25f;
+		}
+
+		if (x > 10.f)
+		{
+			pEntity1->Move(GetDeltaTime(), 1);
+		}
+		else if (x < -10.f)
+		{
+			pEntity1->Move(GetDeltaTime(), -1);
+		}
+		else
+		{
+			pEntity1->Move(GetDeltaTime(), 0);
+		}
+	}
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
 		pEntity1->Move(GetDeltaTime(), -1);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
 		pEntity1->Move(GetDeltaTime(), 1);
 	}
-	else{ 
-		pEntity1->Move(GetDeltaTime(), 0);
-	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Joystick::isButtonPressed(0, 1)) {
 		pEntity1->Jump();
 	}
 
