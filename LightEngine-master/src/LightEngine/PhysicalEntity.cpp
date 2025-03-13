@@ -97,10 +97,3 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 	}
 	return false;
 }
-
-void PhysicalEntity::OnUpdate()
-{
-	float dt = GetDeltaTime();
-	Fall(dt);
-	//std::cout << "GetDeltaTime(): " << dt << std::endl;
-}
