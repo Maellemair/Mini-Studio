@@ -10,6 +10,7 @@ void Player::Reset()
 	sf::Vector2f pPosCenter = sf::Vector2f(GameManager::Get()->GetScene()->GetWindowWidth(),
 		GameManager::Get()->GetScene()->GetWindowHeight());
 	SetPosition(pPosCenter.x / 2, pPosCenter.y / 4);
+	SetCollider(pPosCenter.x / 2, pPosCenter.y / 4, mBoxCollider->ySize, mBoxCollider->xSize);
 	mGravitySpeed = 0;
 }
 
