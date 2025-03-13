@@ -12,9 +12,8 @@ T* Entity::GetScene() const
 	return pScene;
 }
 
-
 template<typename T>
-T* Entity::CreateEntity(float radius, const sf::Color& color)
+T* Entity::CreateRectangle(float height, float width, const sf::Color& color)
 {
-	return GetScene()->CreateEntity<T>(radius, color);
+	return GetScene()->CreateRectangle<T>(height, width, color);
 }

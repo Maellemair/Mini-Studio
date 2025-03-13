@@ -10,10 +10,10 @@ void Player::Fall(float deltaTime)
 	pPos.y += mGravitySpeed * deltaTime;
 
 	if (pPos.y > 600)
-	{
+{
 		pPos.y = 600;
-		mGravitySpeed = 0;
-	}
+	mGravitySpeed = 0;
+}
 
 	SetPosition(pPos.x, pPos.y);
 }

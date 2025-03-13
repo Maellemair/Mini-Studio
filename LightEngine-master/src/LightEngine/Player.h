@@ -10,7 +10,7 @@ class Player : public Entity
 	int jumpCount = 0;
 	int MaxLife = 3;
 	int Life = MaxLife;
-	
+
 public:
 	void Fall(float deltaTime);
 	void Jump();
