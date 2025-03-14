@@ -1,5 +1,15 @@
 #include "Player.h"
 
+int Player::getLastDirection()
+{
+	return lastDirection;
+}
+
+void Player::setLastDirection(int dir)
+{
+	lastDirection = dir;
+}
+
 void Player::Move(float deltaTime, int key)
 {
 	SetDirection(key, 0, 250);
@@ -34,6 +44,11 @@ void Player::TakeHit()
 	{
 		//GameOver
 	}
+}
+
+void Player::Shoot()
+{
+
 }
 
 

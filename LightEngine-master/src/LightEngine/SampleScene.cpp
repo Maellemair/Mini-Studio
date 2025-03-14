@@ -1,6 +1,7 @@
 #include "SampleScene.h"
 
 #include "Player.h"
+#include "Bullets.h"
 #include "ObjectEntity.h"
 #include "Debug.h"
 #include "Music.h"
@@ -20,11 +21,12 @@ void SampleScene::OnInitialize()
 	pEntity1->SetCollider(101, 100, 16, 16);
 	pEntity1->SetRigidBody(true);
 
+
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
 {
-	
+	//Controller inputs
 	if (sf::Joystick::isConnected(0))
 	{
 		float vitesse = 250;
@@ -35,43 +37,103 @@ void SampleScene::OnEvent(const sf::Event& event)
 			x = 0;
 		}
 
+		if (sf::Joystick::isButtonPressed(0, 1)) {
+			pEntity1->Jump();
+		}
+
+		//Boutton R2
 		if (sf::Joystick::isButtonPressed(0, 7))
 		{
-			vitesse = vitesse * 1.25f;
+			//dash
+			std::cout << "R2 " << std::endl;
+		}
+
+		//Shoot bullets 
+		else if (sf::Joystick::isButtonPressed(0, 0))
+		{
+			Entity* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+			bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+			bullet->SetRigidBody(true);
+
+			//Shoot right
+			if (pEntity1->getLastDirection() == 1)
+			{
+				bullet->SetDirection(1, 0, 500);
+			}
+			//Shoot left
+			else if (pEntity1->getLastDirection() == -1)
+			{
+				bullet->SetDirection(-1, 0, 500);
+			}
+
+			/*else if (x == 0 && pEntity1->getLastDirection() == 1)
+			{
+				bullet->SetDirection(1, 0, 500);
+			}
+			else if (x == 0 && pEntity1->getLastDirection() == -1)
+			{
+				bullet->SetDirection(-1, 0, 500);
+			}*/
+		
 		}
 
 		if (x > 10.f)
 		{
 			pEntity1->Move(GetDeltaTime(), 1);
+			pEntity1->setLastDirection(1);
 		}
 		else if (x < -10.f)
 		{
 			pEntity1->Move(GetDeltaTime(), -1);
+			pEntity1->setLastDirection(-1);
 		}
 		else
 		{
 			pEntity1->Move(GetDeltaTime(), 0);
 		}
+
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-		pEntity1->Move(GetDeltaTime(), -1);
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-		pEntity1->Move(GetDeltaTime(), 1);
-	}
+	//Keyboard inputs
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
+			pEntity1->Move(GetDeltaTime(), -1);
+			pEntity1->setLastDirection(-1);
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+			pEntity1->Move(GetDeltaTime(), 1);
+			pEntity1->setLastDirection(1);
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Joystick::isButtonPressed(0, 1)) {
-		pEntity1->Jump();
-	}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
+			Entity* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+			bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+			bullet->SetRigidBody(true);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
-		pEntity1->Reset();
-	}
+			//Shoot right
+			if (pEntity1->getLastDirection() == 1)
+			{
+				bullet->SetDirection(1, 0, 500);
+			}
+			//Shoot left
+			else if (pEntity1->getLastDirection() == -1)
+			{
+				bullet->SetDirection(-1, 0, 500);
+			}
+		}
 
-	if (event.type != sf::Event::EventType::MouseButtonPressed)
-		return;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+			pEntity1->Jump();
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
+			pEntity1->Reset();
+		}
+
+		if (event.type != sf::Event::EventType::MouseButtonPressed) {
+			return;
+		}
+
 
 	if (event.mouseButton.button == sf::Mouse::Button::Left)
 	{
