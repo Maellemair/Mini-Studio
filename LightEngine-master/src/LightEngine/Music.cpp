@@ -15,4 +15,11 @@ void Music::Load(const char* path)
 void Music::Play()
 {
 	mMusic.play();
+	std::cout << "Music is playing" << std::endl;
+}
+
+void Music::Pause()
+{
+	mMusic.pause();
+	std::cout << "Music is paused" << std::endl;
 }

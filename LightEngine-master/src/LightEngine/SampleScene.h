@@ -6,12 +6,14 @@
 class Player;
 class ObjectEntity;
 class MapEditor;
+class Music;
 
 class SampleScene : public Scene
 {
 	Player* pEntity1;
 	MapEditor* map;
 	std::vector<ObjectEntity*> mPlateforms;
+	Music* mMusic;
 
 private:
 	void TrySetSelectedEntity(Player* pEntity, int x, int y);

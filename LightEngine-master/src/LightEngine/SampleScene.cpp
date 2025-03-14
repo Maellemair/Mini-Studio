@@ -15,6 +15,10 @@ void SampleScene::OnInitialize()
 	map->CreateMap(64);
 	mPlateforms = map->GetMap();
 
+	mMusic = new Music();
+	mMusic->Load("../../../res/f1_intro.ogg");
+	mMusic->Play();
+
 	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);
 	pEntity1->SetPosition(101, 100);
 	pEntity1->SetCollider(101, 100, 16, 16);
