@@ -32,20 +32,15 @@ void SampleScene::OnEvent(const sf::Event& event)
 		float vitesse = 250;
 		float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
 
+		//Drift out
 		if (x > 0.f && x < 10.f || x < 0.f && x > -10.f)
 		{
 			x = 0;
 		}
 
+		//Boutton X
 		if (sf::Joystick::isButtonPressed(0, 1)) {
 			pEntity1->Jump();
-		}
-
-		//Boutton R2
-		if (sf::Joystick::isButtonPressed(0, 7))
-		{
-			//dash
-			std::cout << "R2 " << std::endl;
 		}
 
 		//Shoot bullets 
@@ -66,36 +61,52 @@ void SampleScene::OnEvent(const sf::Event& event)
 				bullet->SetDirection(-1, 0, 500);
 			}
 
-			/*else if (x == 0 && pEntity1->getLastDirection() == 1)
-			{
-				bullet->SetDirection(1, 0, 500);
-			}
-			else if (x == 0 && pEntity1->getLastDirection() == -1)
-			{
-				bullet->SetDirection(-1, 0, 500);
-			}*/
-		
 		}
 
+		//Joystick a Droite
 		if (x > 10.f)
 		{
 			pEntity1->Move(GetDeltaTime(), 1);
 			pEntity1->setLastDirection(1);
 		}
+		//Joystick a Gauche
 		else if (x < -10.f)
 		{
 			pEntity1->Move(GetDeltaTime(), -1);
 			pEntity1->setLastDirection(-1);
 		}
+		//Rien
 		else
 		{
 			pEntity1->Move(GetDeltaTime(), 0);
 		}
 
+		//Boutton R2
+		pEntity1->dashCooldown += GetDeltaTime();
+		if (pEntity1->dashCooldown >= 2.0f)
+		{
+			if (sf::Joystick::isButtonPressed(0, 7))
+			{
+				pEntity1->dashTimer += GetDeltaTime();
+			
+				if (pEntity1->dashTimer < pEntity1->dashTime)
+				{
+					pEntity1->Dash(GetDeltaTime());
+				}
+				else
+				{
+					pEntity1->dashCooldown = 0;
+				}
+				
+			}
+			else
+			{
+				pEntity1->dashTimer = 0;
+			}
+		}
 	}
 
 	//Keyboard inputs
-
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
 			pEntity1->Move(GetDeltaTime(), -1);
 			pEntity1->setLastDirection(-1);
@@ -121,11 +132,13 @@ void SampleScene::OnEvent(const sf::Event& event)
 				bullet->SetDirection(-1, 0, 500);
 			}
 		}
-
+		
+		//Jump
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
 			pEntity1->Jump();
 		}
 
+		//Reset Position
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
 			pEntity1->Reset();
 		}
@@ -133,7 +146,6 @@ void SampleScene::OnEvent(const sf::Event& event)
 		if (event.type != sf::Event::EventType::MouseButtonPressed) {
 			return;
 		}
-
 
 	if (event.mouseButton.button == sf::Mouse::Button::Left)
 	{
