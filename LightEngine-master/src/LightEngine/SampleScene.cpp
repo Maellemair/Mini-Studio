@@ -5,14 +5,31 @@
 #include "Debug.h"
 #include "Music.h"
 #include "MapEditor.h"
+#include "Grass.h"
+#include "Sky.h"
+#include "Dirt.h"
+#include "Background.h"
+#include "AssetManager.h"
 
 #include <iostream>
+#include <string>
 
 void SampleScene::OnInitialize()
 {
+	sf::Vector2f pSizeWin = sf::Vector2f(GetWindowWidth(), GetWindowHeight());
+
+	bg = CreateRectangle<Background>(pSizeWin.x, pSizeWin.y, sf::Color::Red);
+	bg->Load("Background");
+
+	mObjectType['-'] = new Sky();
+	mObjectType['T'] = new Grass();
+	mObjectType['D'] = new Dirt();
+
+	std::vector<std::string> pathLevel = Level::GetInstance()->pathLevel;
+
 	map = new MapEditor();
-	map->Load("../../../res/Layout_Test.txt");
-	map->CreateMap(64);
+	map->Load(pathLevel[0].c_str());
+	map->CreateMap(64, mObjectType);
 	mPlateforms = map->GetMap();
 
 	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);

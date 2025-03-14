@@ -18,7 +18,7 @@ void MapEditor::Load(const char* path)
 // P pour plante
 
 
-void MapEditor::CreateMap(float pResolution)
+void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapObject)
 {
 	if (!fichier.is_open()) {
 		std::cout << "Erreur : Impossible d ouvrir le fichier." << std::endl;
@@ -33,57 +33,12 @@ void MapEditor::CreateMap(float pResolution)
 
 	while (std::getline(fichier, line))
 	{
-		for (int i = 0; i < line.size(); ++i)
+		for (char c : line) 
 		{
-			switch (line[i])
-			{
-			case '-':
-			{
-				ObjectEntity* tempEntityCiel = currentScene->CreateRectangle<ObjectEntity>(pResolution,
-					pResolution, sf::Color::Cyan);
-				mObjects.push_back(tempEntityCiel);
-				tempEntityCiel->SetTag(1);
-				tempEntityCiel->SetPosition(posX, posY);
-				tempEntityCiel->SetCollider(posX, posY, pResolution, pResolution);
-				tempEntityCiel->SetRigidBody(true);
-				break;
-			}
-
-			case 'T':
-			{
-				ObjectEntity* tempEntityDirt = currentScene->CreateRectangle<ObjectEntity>(pResolution,
-					pResolution, sf::Color(88, 41, 0, 255));
-				mObjects.push_back(tempEntityDirt);
-				tempEntityDirt->SetTag(2);
-				tempEntityDirt->SetCollider(posX, posY, pResolution, pResolution);
-				tempEntityDirt->SetPosition(posX, posY);
-				tempEntityDirt->SetRigidBody(true);
-				break;
-			}
-
-			case 'A':
-			{
-				ObjectEntity* tempEntityArbre = currentScene->CreateRectangle<ObjectEntity>(pResolution,
-					pResolution, sf::Color::Green);
-				mObjects.push_back(tempEntityArbre);
-				tempEntityArbre->SetTag(3);
-				tempEntityArbre->SetCollider(posX, posY, pResolution, pResolution);
-				tempEntityArbre->SetPosition(posX, posY);
-				tempEntityArbre->SetRigidBody(true);
-				break;
-			}
-
-			case 'P':
-			{
-				ObjectEntity* tempEntityPlante = currentScene->CreateRectangle<ObjectEntity>(pResolution,
-					pResolution, sf::Color(0, 140, 0, 255));
-				mObjects.push_back(tempEntityPlante);
-				tempEntityPlante->SetTag(4);
-				tempEntityPlante->SetCollider(posX, posY, pResolution, pResolution / 2);
-				tempEntityPlante->SetPosition(posX, posY);
-				tempEntityPlante->SetRigidBody(true);
-				break;
-			}
+			auto it = pMapObject.find(c);
+			if (it != pMapObject.end()) {
+				ObjectEntity* newObject = it->second->Clone(pResolution, pResolution, posX, posY);
+				mPlateforms.push_back(newObject);
 			}
 			posX += pResolution;
 		}
@@ -96,11 +51,11 @@ void MapEditor::CreateMap(float pResolution)
 std::vector<ObjectEntity*> MapEditor::GetMap()
 {
 	std::vector<ObjectEntity*> tempVector;
-	for (int i = 0; i < mObjects.size(); i++)
+	for (int i = 0; i < mPlateforms.size(); i++)
 	{
-		if (mObjects[i]->GetTag() != 1)
+		if (mPlateforms[i]->GetTag() != 1)
 		{
-			tempVector.push_back(mObjects[i]);
+			tempVector.push_back(mPlateforms[i]);
 		}
 	}
 	return tempVector;

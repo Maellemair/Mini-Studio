@@ -16,7 +16,7 @@ void Entity::InitializeRect(float height, float width, const sf::Color& color)
 	
 	mShape->setSize(sf::Vector2f(height, width));
 	mShape->setOrigin(0.f, 0.f);
-	mShape->setFillColor(color);
+	//mShape->setFillColor(color);
 
 	mBoxCollider = new AABBCollider;
 

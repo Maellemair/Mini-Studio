@@ -8,6 +8,7 @@ class Player : public PhysicalEntity
 	float jumpCooldown = 0.5f;
 
 public:
+	void OnInitialize() override;
 	void Move(int key);
 	void Reset();
 	void Jump();

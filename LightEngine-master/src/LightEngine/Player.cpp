@@ -1,5 +1,10 @@
 #include "Player.h"
 
+void Player::OnInitialize()
+{
+	mShape->setFillColor(sf::Color::Red);
+}
+
 void Player::Move(int key)
 {
 	SetDirection(key, 0, 250);
