@@ -19,6 +19,7 @@
 #include "MapEditor.h"
 #include "Background.h"
 #include "AssetManager.h"
+#include "Utils.h"
 
 #include <iostream>
 #include <string>
@@ -29,6 +30,11 @@ void SampleScene::OnInitialize()
 
 	bg = CreateRectangle<Background>(pSizeWin.x, pSizeWin.y, sf::Color::Red);
 	bg->Load("Background");
+
+	cam = GameManager::Get()->GetView();
+	cam->zoom(0.75f);
+	sf::Vector2f camSize = cam->getSize();
+	cam->setCenter(camSize.x / 2, 720 - camSize.y / 2);
 
 	mObjectType['G'] = new Grass();
 	mObjectType['D'] = new Dirt();
@@ -58,7 +64,6 @@ void SampleScene::OnInitialize()
 	pEntity1->SetPosition(101, 100);
 	pEntity1->SetCollider(101, 100, 16, 16);
 	pEntity1->SetRigidBody(true);
-
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
@@ -87,6 +92,20 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
+	sf::Vector2f camPos = cam->getCenter();
+	sf::Vector2f camSize = cam->getSize();
+
+	sf::Vector2f pPos = pEntity1->GetPosition();
+	if (pPos.x - camSize.x / 2 > 0 && pPos.x + camSize.x / 2 < 1280 )
+	{
+		cam->setCenter(pPos.x, camPos.y);
+	}
+
+	if (pPos.y - camSize.y / 2 > 0 && pPos.y + camSize.y / 2 < 720)
+	{
+		cam->setCenter(camPos.x, pPos.y);
+	}
+
 	//std::cout << pEntity1->GetState() << std::endl;
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{

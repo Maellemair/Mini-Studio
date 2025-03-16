@@ -24,6 +24,7 @@ class Rocks;
 
 class SampleScene : public Scene
 {
+	sf::View* cam;
 	Player* pEntity1;
 	MapEditor* map;
 	MapEditor* mapRocks;

@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/View.hpp>
 
 class Entity;
 class Scene;
@@ -23,7 +24,7 @@ class GameManager
 
 	sf::RenderWindow* mpWindow;
 	sf::Font mFont;
-
+	sf::View view;
 	Scene* mpScene;
 
 	float mDeltaTime;
@@ -58,6 +59,7 @@ public:
 	float GetDeltaTime() const { return mDeltaTime; }
 	Scene* GetScene() const { return mpScene; }
 	sf::Font& GetFont() { return mFont; };
+	sf::View* GetView() { return &view; }
 
 	friend Debug;
 	friend Scene;
