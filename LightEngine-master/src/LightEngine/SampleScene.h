@@ -8,21 +8,29 @@ class Player;
 class ObjectEntity;
 class Background;
 class MapEditor;
+
+//ressource
 class Grass;
-class Sky;
 class Dirt;
+class Right_edge_grass;
+class Left_edge_grass;
+class Left_edge_dirt;
+class Right_edge_dirt;
+class Plateform;
+class Plateform_middle;
+class Plateform_edge_right;
+class Plateform_edge_left;
+class Rocks;
 
 class SampleScene : public Scene
 {
 	Player* pEntity1;
 	MapEditor* map;
+	MapEditor* mapRocks;
 	Background* bg;
 	std::vector<ObjectEntity*> mPlateforms;
 	std::map<char, ObjectEntity*> mObjectType;
 	sf::Sprite background;
-
-private:
-	void TrySetSelectedEntity(Player* pEntity, int x, int y);
 
 public:
 	void OnInitialize() override;

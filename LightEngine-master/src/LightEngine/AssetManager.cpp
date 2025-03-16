@@ -34,20 +34,21 @@ Texture* Texture::GetInstance()
 
 void Level::Init()
 {
-	pathLevel.push_back("../../../res/Layout_Test.txt");
+	pathLevel.push_back("../../../res/Layout_plateform_lv1.txt");
+	pathLevel.push_back("../../../res/Layout_Rock_lv1.txt");
 }
 
 void Texture::Init()
 {
-	if (!textObject["Grass"].loadFromFile("../../../res/grass_texture.jpg")) {
+	if (!textObject["TileGrass"].loadFromFile("../../../res/tilemap_grass.png")) {
 		std::cout << "Erreur chargement grass_texture.jpg" << std::endl;
 	}
 
-	if (!textObject["Dirt"].loadFromFile("../../../res/dirt.jpg")) {
-		std::cout << "Erreur chargement Dirt.jpg" << std::endl;
+	if (!textObject["Background"].loadFromFile("../../../res/tree_texture.png")) {
+		std::cout << "Erreur chargement tree_texture.png" << std::endl;
 	}
 
-	if (!textObject["Background"].loadFromFile("../../../res/tree_texture.png")) {
+	if (!textObject["TileRocks"].loadFromFile("../../../res/tilemap_rocks.png")) {
 		std::cout << "Erreur chargement tree_texture.png" << std::endl;
 	}
 }

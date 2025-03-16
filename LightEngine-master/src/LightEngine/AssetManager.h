@@ -24,8 +24,8 @@ class Texture
 
 public:
 	std::map < std::string, sf::Texture > textObject;
-	sf::Texture Grass;
-	sf::Texture Dirt;
+	sf::Texture TileGrass;
+	sf::Texture TileRocks;
 	sf::Texture Background;
 
 	sf::Font textFont;

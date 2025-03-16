@@ -49,6 +49,7 @@ public:
 	void SetDirection(float x, float y, float speed = -1.f);
 	void SetSpeed(float speed) { mSpeed = speed; }
 	void SetTag(int tag) { mTag = tag; }
+	void PrintCollider(sf::Color color);
 	const int GetTag() { return mTag; }
 	
 	//float GetRadius() const;

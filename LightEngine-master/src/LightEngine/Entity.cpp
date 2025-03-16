@@ -201,6 +201,12 @@ void Entity::SetDirection(float x, float y, float speed)
 	mTarget.isSet = false;
 }
 
+void Entity::PrintCollider(sf::Color color)
+{
+	sf::Vector2 ColliderSize = GetColliderSize();
+	Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, color);
+}
+
 //float Entity::GetRadius() const
 //{
 //	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
@@ -234,12 +240,6 @@ void Entity::Update()
 	mBoxCollider->xMin += translation.x;
 	mBoxCollider->xMax += translation.x;
 	
-	if (GetTag() != 1)
-	{
-		sf::Vector2 ColliderSize = GetColliderSize();
-		Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, sf::Color(255, 255, 255, 150));
-	}
-
 	mShape->move(translation);
 
 	if (mTarget.isSet) 
