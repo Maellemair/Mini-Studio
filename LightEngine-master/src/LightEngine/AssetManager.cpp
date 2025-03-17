@@ -51,4 +51,8 @@ void Texture::Init()
 	if (!textObject["TileRocks"].loadFromFile("../../../res/tilemap_rocks.png")) {
 		std::cout << "Erreur chargement tree_texture.png" << std::endl;
 	}
+
+	if (!textObject["animation_Player"].loadFromFile("../../../res/sprite_sheet_bot.png")) {
+		std::cout << "Erreur chargement tree_texture.png" << std::endl;
+	}
 }

@@ -27,6 +27,7 @@ public:
 	sf::Texture TileGrass;
 	sf::Texture TileRocks;
 	sf::Texture Background;
+	sf::Texture animation_Player;
 
 	sf::Font textFont;
 

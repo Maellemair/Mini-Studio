@@ -52,7 +52,6 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 					mBoxCollider->xMin = c1.xMin - sizeThis.x;
 					mBoxCollider->xMax = mBoxCollider->xMin + mBoxCollider->xSize;
 					pPos.x = mBoxCollider->xMax - GetWidth() / 2;
-					std::cout << pPos.x << std::endl;
 					state = LEFT;
 				}
 				else {

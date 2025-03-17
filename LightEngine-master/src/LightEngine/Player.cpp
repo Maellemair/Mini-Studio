@@ -1,12 +1,68 @@
 #include "Player.h"
+#include "AssetManager.h"
+#include "json.hpp"
+#include <fstream>
 
 void Player::OnInitialize()
 {
-	mShape->setFillColor(sf::Color::Red);
+	std::map <std::string, sf::Texture>& m = Texture::GetInstance()->textObject;
+	mShape->setTexture(&m["animation_Player"], true);
+	mShape->setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
+	
+	animIdle = new Animation();
+	animJump = new Animation();
+	
+	std::ifstream fichier("../../../res/Player.json");
+	if (fichier.is_open())
+	{
+		nlohmann::json data;
+		fichier >> data;
+		fichier.close();
+
+		animIdle->SetShape(mShape, sf::Vector2f(0, 0), data["animations"]["idle"]["frames"], 
+			data["animations"]["idle"]["timeProgress"], data["animations"]["idle"]["loop"]);
+		animJump->SetShape(mShape, sf::Vector2f(0, 32), data["animations"]["jump"]["frames"], 
+			data["animations"]["jump"]["timeProgress"], data["animations"]["jump"]["loop"]);
+	}
+	else
+	{
+		std::cout << "le fichier d'animation n'existe pas !" << std::endl;
+		return;
+	}
+}
+
+void Player::OnUpdate()
+{
+	std::cout << mState << std::endl;
+	float dt = GetDeltaTime();
+	if (mState == IDLE)
+	{
+		animIdle->Update(dt);
+	}
+	else if (mState == JUMP)
+	{
+		bool isFinish = animJump->Update(dt);
+		if (isFinish)
+		{
+			mState = IDLE;
+			animJump->ResetNBrLoop();
+		}
+	}
+	else if (mState == WALK)
+	{
+		mShape->setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
+	}
+	PhysicalEntity::OnUpdate();
+}
+
+void Player::SetState(State pState)
+{
+	mState = pState;
 }
 
 void Player::Move(int key)
 {
+	mState = WALK;
 	SetDirection(key, 0, 250);
 }
 
@@ -24,6 +80,7 @@ void Player::Jump()
 	if (GetState() == TOP || mNbrJump >= 2 || mClockDoubleJump.getElapsedTime().asSeconds() < jumpCooldown)
 		return;
 
+	mState = JUMP;
 	sf::Vector2f pPos = GetPosition(0.5f, 0.5f);
 	SetPosition(pPos.x, pPos.y - 1);
 	SetCollider(pPos.x, pPos.y - 1, mBoxCollider->ySize, mBoxCollider->xSize);

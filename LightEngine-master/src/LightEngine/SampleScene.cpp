@@ -28,7 +28,7 @@ void SampleScene::OnInitialize()
 {
 	sf::Vector2f pSizeWin = sf::Vector2f(GetWindowWidth(), GetWindowHeight());
 
-	bg = CreateRectangle<Background>(pSizeWin.x, pSizeWin.y, sf::Color::Red);
+	bg = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
 	bg->Load("Background");
 
 	cam = GameManager::Get()->GetView();
@@ -60,9 +60,9 @@ void SampleScene::OnInitialize()
 	mapRocks->Load(pathLevel[1].c_str());
 	mapRocks->CreateMap(32, mObjectType);*/
 
-	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);
+	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
 	pEntity1->SetPosition(101, 100);
-	pEntity1->SetCollider(101, 100, 16, 16);
+	pEntity1->SetCollider(101, 100, 64, 64);
 	pEntity1->SetRigidBody(true);
 }
 
@@ -70,9 +70,11 @@ void SampleScene::OnEvent(const sf::Event& event)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
 		pEntity1->Move(-1);
+		pEntity1->SetState(WALK);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
 		pEntity1->Move(1);
+		pEntity1->SetState(WALK);
 	}
 	else{ 
 		pEntity1->Move(0);
@@ -80,6 +82,8 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
 		pEntity1->Jump();
+		pEntity1->SetState(JUMP);
+		pEntity1->ResetNBrLoop();
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
@@ -92,21 +96,19 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
-	sf::Vector2f camPos = cam->getCenter();
 	sf::Vector2f camSize = cam->getSize();
-
 	sf::Vector2f pPos = pEntity1->GetPosition();
-	if (pPos.x - camSize.x / 2 > 0 && pPos.x + camSize.x / 2 < 1280 )
-	{
-		cam->setCenter(pPos.x, camPos.y);
-	}
 
-	if (pPos.y - camSize.y / 2 > 0 && pPos.y + camSize.y / 2 < 720)
-	{
-		cam->setCenter(camPos.x, pPos.y);
-	}
+	float minX = camSize.x / 2;
+	float maxX = 1280 - camSize.x / 2;
+	float minY = camSize.y / 2;
+	float maxY = 720 - camSize.y / 2;
 
-	//std::cout << pEntity1->GetState() << std::endl;
+	float newCamX = std::clamp(pPos.x, minX, maxX);
+	float newCamY = std::clamp(pPos.y, minY, maxY);
+
+	cam->setCenter(newCamX, newCamY);
+
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{
 		const auto* ObjectCollider = mPlateforms[i]->GetCollider();
