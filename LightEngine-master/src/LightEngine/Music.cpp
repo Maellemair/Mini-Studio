@@ -8,7 +8,7 @@ void Music::Load(const char* path)
 	{
 		std::cout << "Erreur de chargement de la music" << std::endl;
 	}
-	mMusic.setVolume(50);
+	mMusic.setVolume(10);
 	mMusic.setLoop(true);
 }
 
