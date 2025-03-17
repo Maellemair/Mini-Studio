@@ -19,9 +19,11 @@ public:
 	void Dash(float deltaTime);
 	int mLife = MaxLife;
 	int MaxLife = 3;
-	float dashTime = 0.1f;
+	float dashTime = 0.5f;
 	float dashTimer = 0.0f;
 	float dashCooldown = 2.5f;
+	float shootCooldown = 0.5f;
+
 
 };
 

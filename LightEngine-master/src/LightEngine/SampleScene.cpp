@@ -44,23 +44,33 @@ void SampleScene::OnEvent(const sf::Event& event)
 		}
 
 		//Shoot bullets 
-		else if (sf::Joystick::isButtonPressed(0, 0))
+		pEntity1->shootCooldown += GetDeltaTime();
+
+		if (sf::Joystick::isButtonPressed(0, 0))
 		{
-			Entity* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-			bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-			bullet->SetRigidBody(true);
-
-			//Shoot right
-			if (pEntity1->getLastDirection() == 1)
+			
+			if (pEntity1->shootCooldown >= 0.5f)
 			{
-				bullet->SetDirection(1, 0, 500);
-			}
-			//Shoot left
-			else if (pEntity1->getLastDirection() == -1)
-			{
-				bullet->SetDirection(-1, 0, 500);
-			}
+				Entity* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+				bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+				bullet->SetRigidBody(true);
 
+				//Shoot right
+				if (pEntity1->getLastDirection() == 1)
+				{
+					bullet->SetDirection(1, 0, 500);
+				}
+				//Shoot left
+				else if (pEntity1->getLastDirection() == -1)
+				{
+					bullet->SetDirection(-1, 0, 500);
+				}
+				pEntity1->shootCooldown = 0;
+			}
+			else
+			{
+
+			}
 		}
 
 		//Joystick a Droite
@@ -81,29 +91,33 @@ void SampleScene::OnEvent(const sf::Event& event)
 			pEntity1->Move(GetDeltaTime(), 0);
 		}
 
-		//Boutton R2
-		pEntity1->dashCooldown += GetDeltaTime();
-		if (pEntity1->dashCooldown >= 2.0f)
-		{
-			if (sf::Joystick::isButtonPressed(0, 7))
-			{
-				pEntity1->dashTimer += GetDeltaTime();
-			
-				if (pEntity1->dashTimer < pEntity1->dashTime)
-				{
-					pEntity1->Dash(GetDeltaTime());
-				}
-				else
-				{
-					pEntity1->dashCooldown = 0;
-				}
-				
-			}
-			else
-			{
-				pEntity1->dashTimer = 0;
-			}
-		}
+		////Boutton R2
+		//pEntity1->dashCooldown += GetDeltaTime();
+		//if (pEntity1->dashCooldown >= 2.0f)
+		//{
+		//	if (sf::Joystick::isButtonPressed(0, 7))
+		//	{
+		//		pEntity1->dashTimer += GetDeltaTime();
+
+		//		if (pEntity1->dashTimer < pEntity1->dashTime)
+		//		{
+		//			pEntity1->Dash(GetDeltaTime());
+		//		}
+		//		else
+		//		{
+		//			pEntity1->dashCooldown = 0;
+		//			pEntity1->dashTimer = 0; // Réinitialiser le dashTimer après le dash
+		//		}
+		//	}
+		//	else
+		//	{
+		//		pEntity1->dashTimer = 0; // Réinitialiser le dashTimer si le bouton n'est pas pressé
+		//	}
+		//}
+		//else
+		//{
+		//	pEntity1->dashTimer = 0; // Réinitialiser le dashTimer si le cooldown n'est pas encore terminé
+		//}
 	}
 
 	//Keyboard inputs
