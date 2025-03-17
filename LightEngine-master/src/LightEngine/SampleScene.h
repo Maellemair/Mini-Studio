@@ -4,12 +4,16 @@
 #include <vector>
 
 class Player;
+class Enemy;
 class ObjectEntity;
 class MapEditor;
+class Bullets;
 
 class SampleScene : public Scene
 {
 	Player* pEntity1;
+	Enemy* pEnemy;
+	Bullets* pBullets;
 	MapEditor* map;
 	std::vector<ObjectEntity*> mPlateforms;
 

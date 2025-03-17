@@ -48,7 +48,7 @@ void Player::TakeHit()
 
 void Player::Dash(float deltaTime)
 {
-		SetDirection(lastDirection, 0, 800); // droite ou gauche
+	SetDirection(lastDirection, 0, 800); // droite ou gauche
 }
 
 
