@@ -44,7 +44,7 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 		float deltaY = posOther.y - posThis.y;
 		float intersectX = abs(deltaX) - (widthOther / 2 + sizeThis.x / 2);
 		float intersectY = abs(deltaY) - (heightOther / 2 + sizeThis.y / 2);
-		
+
 		sf::Vector2f pPos = GetPosition(0.5f, 0.5f);
 		if (intersectX < 0.f && intersectY < 0.f) {
 			if (intersectX > intersectY) {
@@ -61,14 +61,15 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 					state = RIGHT;
 				}
 			}
-			else{
-				if (deltaY > 0.f) {
+			else {
+				if (deltaY > 0.f) 
+				{
 					mBoxCollider->yMin = c1.yMin - mBoxCollider->ySize;
 					mBoxCollider->yMax = c1.yMin;
 					pPos.y = mBoxCollider->yMax - GetHeight() / 2;
-					state = TOP;
-					mNbrJump = 0;
 					mGravitySpeed = 0;
+					mNbrJump = 2;
+					state = TOP;
 				}
 				else {
 					mBoxCollider->yMin = c1.yMax;
@@ -89,4 +90,3 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 	}
 	return false;
 }
-

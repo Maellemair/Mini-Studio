@@ -5,7 +5,6 @@ void Right_edge_grass::Create(float posX, float posY)
 {
 	SetTag(2);
 	SetPosition(posX, posY);
-	SetRigidBody(true);
 	sf::Vector2f pSize = sf::Vector2f(GetWidth(), GetHeight());
 	SetCollider(posX, posY, pSize.y, pSize.x);
 	std::map <std::string, sf::Texture>& m = Texture::GetInstance()->textObject;

@@ -37,7 +37,6 @@ bool Animation::Update(float dt)
 
 	if (mPos.x >= mSizeFrame.x * (mNbrFrame - 1))
 	{
-		std::cout << "fini" << std::endl;
 		mPos.x = 0;
 		mNbrLoop++;
 	}
@@ -45,7 +44,6 @@ bool Animation::Update(float dt)
 	mDurationProgress -= dt;
 	if (mDurationProgress <= 0)
 	{
-		std::cout << "Changement" << std::endl;
 		mDurationProgress = mDuration;
 		mPos.x += mSizeFrame.x;
 		mShapeAnim->setTextureRect(sf::IntRect(sf::Vector2i(mPos.x, mPos.y), sf::Vector2i(mSizeFrame.x, mSizeFrame.y)));

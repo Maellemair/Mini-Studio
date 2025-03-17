@@ -38,6 +38,7 @@ void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapO
 			auto it = pMapObject.find(c);
 			if (it != pMapObject.end()) {
 				ObjectEntity* newObject = it->second->Clone(pResolution, pResolution, posX, posY);
+				newObject->SetRigidBody(false);
 				mPlateforms.push_back(newObject);
 			}
 			posX += pResolution;

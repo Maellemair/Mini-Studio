@@ -10,6 +10,14 @@ namespace sf
     class Color;
 }
 
+enum CollisionFace {
+	TOP,
+	BOTTOM,
+	LEFT,
+	RIGHT,
+	None,
+};
+
 
 struct AABBCollider
 {
@@ -31,7 +39,7 @@ class Entity
     };
 
 protected:
-
+	CollisionFace state = None;
 	AABBCollider* mBoxCollider;
     sf::RectangleShape* mShape;
     sf::Vector2f mDirection;
@@ -47,6 +55,7 @@ public:
     void SetPosition(float x, float y, float ratioX = 0.5f, float ratioY = 0.5f);
 	void SetCollider(float posX, float posY, float height, float width);
 	void SetDirection(float x, float y, float speed = -1.f);
+	sf::Vector2f GetDirection() { return mDirection; }
 	void SetSpeed(float speed) { mSpeed = speed; }
 	void SetTag(int tag) { mTag = tag; }
 	void PrintCollider(sf::Color color);
@@ -61,12 +70,12 @@ public:
     sf::Vector2f GetPosition(float ratioX = 0.5f, float ratioY = 0.5f) const;
 	sf::Vector2f GetColliderPos(float ratioX = 0.5f, float ratioY = 0.5f) const;
 	sf::Vector2f GetColliderSize();
+	AABBCollider* GetCollider() { return mBoxCollider; }
 	sf::Shape* GetShape() { return mShape; }
 
 	bool IsTag(int tag) const { return mTag == tag; }
-    bool IsColliding(Entity* other) const;
 	bool IsInside(float x, float y) const;
-
+	bool IsColliding(Entity* other) const;
     void Destroy();
 	bool ToDestroy() const { return mToDestroy; }
 	
@@ -91,7 +100,7 @@ protected:
 private:
     void Update();
 	void InitializeRect(float height, float width, const sf::Color& color);
-	void Repulse(Entity* other);
+	void Repulse(Entity* other) { };
 
     friend class GameManager;
     friend Scene;

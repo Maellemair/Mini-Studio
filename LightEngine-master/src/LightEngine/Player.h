@@ -3,20 +3,24 @@
 #include "Animation.h"
 #include <SFML/Graphics.hpp>
 
+template<typename T>
+class StateMachine;
 class Texture;
-
-enum State
-{
-	WALK,
-	JUMP,
-	FALL,
-	SHOOT,
-	IDLE,
-	NONE
-};
 
 class Player : public PhysicalEntity, public Animation
 {	
+	StateMachine<Player>* mpStateMachine;
+
+	enum State
+	{
+		WALK,
+		JUMP,
+		FALL,
+		SHOOT,
+		IDLE,
+		Count
+	};
+
 	State mState = IDLE;
 	sf::Clock mClockDoubleJump;
 	float jumpCooldown = 0.5f;
@@ -25,6 +29,7 @@ class Player : public PhysicalEntity, public Animation
 
 public:
 	void OnInitialize() override;
+	const char* GetStateName(State state) const;
 	void OnUpdate() override;
 	void SetState(State pState);
 	void Move(int key);

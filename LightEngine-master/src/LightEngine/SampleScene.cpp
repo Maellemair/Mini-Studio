@@ -51,6 +51,12 @@ void SampleScene::OnInitialize()
 
 	std::vector<std::string> pathLevel = Level::GetInstance()->pathLevel;
 
+
+	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
+	pEntity1->SetPosition(101, 100);
+	pEntity1->SetCollider(101, 100, 64, 64);
+	pEntity1->SetRigidBody(true);
+
 	map = new MapEditor();
 	map->Load(pathLevel[0].c_str());
 	map->CreateMap(32, mObjectType);
@@ -60,21 +66,15 @@ void SampleScene::OnInitialize()
 	mapRocks->Load(pathLevel[1].c_str());
 	mapRocks->CreateMap(32, mObjectType);*/
 
-	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
-	pEntity1->SetPosition(101, 100);
-	pEntity1->SetCollider(101, 100, 64, 64);
-	pEntity1->SetRigidBody(true);
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
 		pEntity1->Move(-1);
-		pEntity1->SetState(WALK);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
 		pEntity1->Move(1);
-		pEntity1->SetState(WALK);
 	}
 	else{ 
 		pEntity1->Move(0);
@@ -82,8 +82,6 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
 		pEntity1->Jump();
-		pEntity1->SetState(JUMP);
-		pEntity1->ResetNBrLoop();
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
@@ -113,7 +111,7 @@ void SampleScene::OnUpdate()
 	{
 		const auto* ObjectCollider = mPlateforms[i]->GetCollider();
 		pEntity1->IsColliding(*ObjectCollider);
-		/*mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);*/
+		mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);
 	}
 }
