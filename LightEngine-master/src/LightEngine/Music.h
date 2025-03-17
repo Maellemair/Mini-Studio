@@ -9,5 +9,6 @@ public:
 	void Load(const char* path);
 	void Play();
 	void Pause();
+	void PausePlay();
 };
 

@@ -1,5 +1,12 @@
 #include "Player.h"
 
+#include "Sound.h"
+
+void Player::OnInitialize()
+{
+	mSound = new Sound();
+}
+
 void Player::Move(float deltaTime, int key)
 {
 	SetDirection(key, 0, 250);
@@ -26,4 +33,7 @@ void Player::Jump()
 	mGravitySpeed = -350;
 	mNbrJump++;
 	mClockDoubleJump.restart();
+
+	mSound->Load("../../../res/jump_sound.wav");
+	mSound->Play();
 }

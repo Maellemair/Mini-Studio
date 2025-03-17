@@ -4,6 +4,7 @@
 #include "ObjectEntity.h"
 #include "Debug.h"
 #include "Music.h"
+#include "Sound.h"
 #include "MapEditor.h"
 
 #include <iostream>
@@ -44,6 +45,10 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
 		pEntity1->Reset();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)) {
+		mMusic->PausePlay();
 	}
 
 	if (event.type != sf::Event::EventType::MouseButtonPressed)

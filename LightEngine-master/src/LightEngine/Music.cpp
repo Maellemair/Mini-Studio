@@ -23,3 +23,21 @@ void Music::Pause()
 	mMusic.pause();
 	std::cout << "Music is paused" << std::endl;
 }
+
+void Music::PausePlay()
+{
+	if (mMusic.getStatus() == sf::Music::Status::Playing)
+	{
+		mMusic.pause();
+		std::cout << "Music is paused" << std::endl;
+		std::cout << mMusic.getStatus() << std::endl;
+		return;
+	}
+	else
+	{
+		mMusic.play();
+		std::cout << "Music is playing" << std::endl;
+		std::cout << mMusic.getStatus() << std::endl;
+		return;
+	}
+}
