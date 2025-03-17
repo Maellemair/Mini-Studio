@@ -34,7 +34,6 @@ void SampleScene::OnEvent(const sf::Event& event)
     // Controller inputs
     if (sf::Joystick::isConnected(0))
     {
-        pEntity1->dashCooldown += GetDeltaTime(); 
         pEntity1->shootCooldown += GetDeltaTime();
         float vitesse = 250;
         float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
@@ -91,18 +90,23 @@ void SampleScene::OnEvent(const sf::Event& event)
         }
 
         // Boutton R2
-        if (pEntity1->dashCooldown >= 2.0f) // Correction de la condition
+        pEntity1->dashCooldown += GetDeltaTime();
+        if (pEntity1->dashCooldown >= 2.5f) // Correction de la condition
         {
             if (sf::Joystick::isButtonPressed(0, 7))
             {
-                pEntity1->dashTimer += GetDeltaTime();
                 if (pEntity1->dashTimer < pEntity1->dashTime)
                 {
-                    std::cout << "Dashing with direction: " << pEntity1->getLastDirection() << std::endl;
+                    pEntity1->dashTimer += GetDeltaTime();
                     pEntity1->Dash(GetDeltaTime());
                 }
-                pEntity1->dashCooldown = 0;
+                else
+                {
+                    pEntity1->dashCooldown = 0; // Réinitialiser le dashCooldown après le dash
+                    pEntity1->dashTimer = 0;
+                }
             }
+     
         }
         else
         {
@@ -162,6 +166,8 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 
 
+
+
 //void SampleScene::TrySetSelectedEntity(PhysicalEntity* pEntity, int x, int y)
 //{
 //	if (pEntity->IsInside(x, y) == false)
@@ -185,6 +191,5 @@ void SampleScene::OnUpdate()
 
 	const auto* enemyCollider = pEnemy->GetCollider();
 	pEntity1->IsColliding(*enemyCollider);
-
 
 }

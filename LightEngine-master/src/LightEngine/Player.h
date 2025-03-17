@@ -21,9 +21,9 @@ public:
 
 	int mLife = MaxLife;
 	int MaxLife = 3;
-	float dashTime = 2.5f;
+	float dashTime = 0.2f;
 	float dashTimer = 0.0f;
-	float dashCooldown = 2.5f;
+	float dashCooldown;
 	float shootCooldown = 0.5f;
 };
 
