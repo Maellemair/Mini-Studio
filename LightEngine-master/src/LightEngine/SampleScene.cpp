@@ -17,7 +17,7 @@ void SampleScene::OnInitialize()
 	mPlateforms = map->GetMap();
 
 	mMusic = new Music();
-	mMusic->Load("../../../res/f1_intro.ogg");
+	mMusic->Load("../../../res/platformer_music.wav");
 	mMusic->Play();
 
 	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);
