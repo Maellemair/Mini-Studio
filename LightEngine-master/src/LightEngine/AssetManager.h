@@ -1,14 +1,37 @@
 #pragma once
+
 #include <map>
-#include "Texture.h"
+#include <vector>
+#include <string>
+#include <iostream>
+#include <SFML/Graphics.hpp>
 
-class AssetManager
+class Level
 {
-	std::map <const char*, Texture*> mTextures;
+	static Level* instance;
 
-private:
-	Texture* LoadTexture(const char* path);
 public:
-	Texture* GetTexture(const char* path);
+	std::vector < std::string > pathLevel;
+
+	Level();
+	static Level* GetInstance();
+	void Init();
 };
 
+class Texture
+{
+	static Texture* instance;
+
+public:
+	std::map < std::string, sf::Texture > textObject;
+	sf::Texture TileGrass;
+	sf::Texture TileRocks;
+	sf::Texture Background;
+	sf::Texture animation_Player;
+
+	sf::Font textFont;
+
+	Texture();
+	static Texture* GetInstance();
+	void Init();
+};

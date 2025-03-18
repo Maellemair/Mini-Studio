@@ -14,9 +14,8 @@ void Entity::InitializeRect(float height, float width, const sf::Color& color)
 {
 	mShape = new sf::RectangleShape;
 	
-	mShape->setSize(sf::Vector2f(height, width));
+	mShape->setSize(sf::Vector2f(width, height));
 	mShape->setOrigin(0.f, 0.f);
-	mShape->setFillColor(color);
 
 	mBoxCollider = new AABBCollider;
 
@@ -24,32 +23,17 @@ void Entity::InitializeRect(float height, float width, const sf::Color& color)
 	OnInitialize();
 }
 
-
-void Entity::Repulse(Entity* other) 
+bool Entity::IsInside(float x, float y) const
 {
-	sf::Vector2f distance = GetPosition(0.5f, 0.5f) - other->GetPosition(0.5f, 0.5f);
+	sf::Vector2f position = GetPosition(0.5f, 0.5f);
+
+	float dx = x - position.x;
+	float dy = y - position.y;
 	
-	float sqrLength = (distance.x * distance.x) + (distance.y * distance.y);
-	float length = std::sqrt(sqrLength);
-	
-	float overlap = 0;
-	/*if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
-	{
-		float radius1 = pShape->getRadius();
-		sf::CircleShape* pOther = dynamic_cast<sf::CircleShape*>(other);
-		float radius2 = pOther->getRadius();
-		overlap = (length - (radius1 + radius2)) * 0.5f;
-	}*/
+	float height = mShape->getSize().y;
+	float width = mShape->getSize().x;
 
-	sf::Vector2f normal = distance / length;
-
-	sf::Vector2f translation = overlap * normal;
-
-	sf::Vector2f position1 = GetPosition(0.5f, 0.5f) - translation;
-	sf::Vector2f position2 = other->GetPosition(0.5f, 0.5f) + translation;
-
-	SetPosition(position1.x, position1.y, 0.5f, 0.5f);
-	other->SetPosition(position2.x, position2.y, 0.5f, 0.5f);
+	return (dx * dx + dy * dy) < ( height * width);
 }
 
 bool Entity::IsColliding(Entity* other) const
@@ -72,23 +56,10 @@ bool Entity::IsColliding(Entity* other) const
 		{
 			sqrRadius = sqrLength + 10;
 		}
-		
+
 	}*/
 
 	return sqrLength < sqrRadius;
-}
-
-bool Entity::IsInside(float x, float y) const
-{
-	sf::Vector2f position = GetPosition(0.5f, 0.5f);
-
-	float dx = x - position.x;
-	float dy = y - position.y;
-	
-	float height = mShape->getSize().y;
-	float width = mShape->getSize().x;
-
-	return (dx * dx + dy * dy) < ( height * width);
 }
 
 void Entity::Destroy()
@@ -201,6 +172,12 @@ void Entity::SetDirection(float x, float y, float speed)
 	mTarget.isSet = false;
 }
 
+void Entity::PrintCollider(sf::Color color)
+{
+	sf::Vector2 ColliderSize = GetColliderSize();
+	Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, color);
+}
+
 //float Entity::GetRadius() const
 //{
 //	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
@@ -234,12 +211,6 @@ void Entity::Update()
 	mBoxCollider->xMin += translation.x;
 	mBoxCollider->xMax += translation.x;
 	
-	if (GetTag() != 1)
-	{
-		sf::Vector2 ColliderSize = GetColliderSize();
-		Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, sf::Color(255, 255, 255, 150));
-	}
-
 	mShape->move(translation);
 
 	if (mTarget.isSet) 

@@ -2,17 +2,8 @@
 #include "Entity.h"
 #include <iostream>
 
-enum CollisionFace {
-	TOP,
-	BOTTOM,
-	LEFT,
-	RIGHT,
-	None,
-};
-
 class PhysicalEntity : public Entity
 {
-	CollisionFace state = None;
 
 protected:
 	float mNbrJump = 2;
@@ -21,6 +12,8 @@ protected:
 
 public:
 	CollisionFace GetState() { return state; }
+	float GetGravitySpeed() { return mGravitySpeed; }
+	void SetGravitySpeed(float pSpeed) { mGravitySpeed = pSpeed; }
 	void OnInitialize() override;
 	void Fall(float deltaTime);
 	void OnUpdate() override;
