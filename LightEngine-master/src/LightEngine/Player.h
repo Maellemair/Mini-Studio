@@ -8,9 +8,7 @@ class StateMachine;
 class Texture;
 
 class Player : public PhysicalEntity, public Animation
-{	
-	StateMachine<Player>* mpStateMachine;
-
+{
 	enum State
 	{
 		WALK,
@@ -29,7 +27,6 @@ class Player : public PhysicalEntity, public Animation
 
 public:
 	void OnInitialize() override;
-	const char* GetStateName(State state) const;
 	void OnUpdate() override;
 	void SetState(State pState);
 	void Move(int key);

@@ -62,14 +62,13 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 				}
 			}
 			else {
-				if (deltaY > 0.f) 
-				{
+				if (deltaY > 0.f) {
 					mBoxCollider->yMin = c1.yMin - mBoxCollider->ySize;
 					mBoxCollider->yMax = c1.yMin;
 					pPos.y = mBoxCollider->yMax - GetHeight() / 2;
-					mGravitySpeed = 0;
-					mNbrJump = 2;
 					state = TOP;
+					mNbrJump = 0;
+					mGravitySpeed = 0;
 				}
 				else {
 					mBoxCollider->yMin = c1.yMax;
