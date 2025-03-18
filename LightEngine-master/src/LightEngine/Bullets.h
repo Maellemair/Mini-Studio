@@ -13,5 +13,6 @@ class Bullets : public PhysicalEntity
 public:
 	void OnCollision(Entity* collidedWith) override;
 	const AABBCollider* GetCollider() { return mBoxCollider; }
-	void OnUpdate() override;
+
+	
 };

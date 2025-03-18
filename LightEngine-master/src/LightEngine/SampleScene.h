@@ -13,7 +13,7 @@ class SampleScene : public Scene
 {
 	Player* pEntity1;
 	Enemy* pEnemy;
-	Bullets* pBullets;
+	std::vector<Bullets*> bulletsList;
 	MapEditor* map;
 	std::vector<ObjectEntity*> mPlateforms;
 

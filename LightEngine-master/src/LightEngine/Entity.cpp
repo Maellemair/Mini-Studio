@@ -237,7 +237,7 @@ void Entity::Update()
 	if (GetTag() != 1)
 	{
 		sf::Vector2 ColliderSize = GetColliderSize();
-		Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, sf::Color(255, 255, 255, 150));
+		Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, sf::Color::Red);
 	}
 
 	mShape->move(translation);

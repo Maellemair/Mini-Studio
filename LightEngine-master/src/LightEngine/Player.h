@@ -19,11 +19,14 @@ public:
 	void TakeHit();
 	void Dash(float deltaTime);
 
-	int mLife = MaxLife;
 	int MaxLife = 3;
+	int mLife = MaxLife;
 	float dashTime = 0.2f;
 	float dashTimer = 0.0f;
 	float dashCooldown;
 	float shootCooldown = 0.5f;
+
+	float invicibilityTime = 0.0f;
+	float repulsionTimer = 0.0f;
 };
 
