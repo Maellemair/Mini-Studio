@@ -12,6 +12,8 @@
 #include "Assets/Plateform_edge_left.h"
 #include "Assets/Rocks.h"
 #include "Assets/Background.h"
+#include "Assets/Left_dirt_fall.h"
+#include "Assets/Right_dirt_fall.h"
 
 #include "Player.h"
 #include "ObjectEntity.h"
@@ -30,7 +32,17 @@ void SampleScene::OnInitialize()
 	sf::Vector2f pSizeWin = sf::Vector2f(GetWindowWidth(), GetWindowHeight());
 
 	bg = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
-	bg->Load("Background");
+	bg->Load("Background", sf::Vector2i(380, 180), sf::Vector2i(0, 0));
+	filtre = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
+	filtre->Load("filtre", sf::Vector2i(320, 180), sf::Vector2i(0, 0));
+	arbreBack = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
+	arbreBack->Load("Tree", sf::Vector2i(570, 360/2), sf::Vector2i(0, 360/2));
+	arbreBack->SetPosition(200, pSizeWin.y / 2);
+	arbre = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
+	arbre->Load("Tree", sf::Vector2i(570, 360/2), sf::Vector2i(0, 0));
+	filtreArbre = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
+	filtreArbre->Load("filtre", sf::Vector2i(320, 180), sf::Vector2i(0, 0));
+
 
 	cam = GameManager::Get()->GetView();
 	cam->zoom(0.75f);
@@ -47,6 +59,8 @@ void SampleScene::OnInitialize()
 	mObjectType['T'] = new Plateform_middle();
 	mObjectType['A'] = new Plateform_edge_right();
 	mObjectType['E'] = new Plateform_edge_left();
+	mObjectType['I'] = new Left_dirt_fall(); 
+	mObjectType['J'] = new Right_dirt_fall();
 	
 	mObjectType['r'] = new Rocks();
 
@@ -100,11 +114,12 @@ void SampleScene::OnUpdate()
 {
 	sf::Vector2f camSize = cam->getSize();
 	sf::Vector2f pPos = pEntity1->GetPosition();
+	sf::Vector2f posLimite = sf::Vector2f(2000, 720);
 
 	float minX = camSize.x / 2;
-	float maxX = 1280 - camSize.x / 2;
+	float maxX = posLimite.x - camSize.x / 2;
 	float minY = camSize.y / 2;
-	float maxY = 720 - camSize.y / 2;
+	float maxY = posLimite.y - camSize.y / 2;
 
 	float newCamX = std::clamp(pPos.x, minX, maxX);
 	float newCamY = std::clamp(pPos.y, minY, maxY);

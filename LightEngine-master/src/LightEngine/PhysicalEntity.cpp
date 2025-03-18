@@ -29,6 +29,7 @@ void PhysicalEntity::Fall(float deltaTime)
 void PhysicalEntity::OnUpdate()
 {
 	float dt = GetDeltaTime();
+
 	if (state != TOP)
 	{
 		Fall(dt);
@@ -91,8 +92,8 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 		return true;
 	}
 	else
-	{
+	{	
 		state = None;
+		return false;
 	}
-	return false;
 }

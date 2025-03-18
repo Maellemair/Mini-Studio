@@ -10,7 +10,7 @@ class Background;
 class MapEditor;
 class Music;
 
-//ressource
+//assets
 class Grass;
 class Dirt;
 class Right_edge_grass;
@@ -21,6 +21,8 @@ class Plateform;
 class Plateform_middle;
 class Plateform_edge_right;
 class Plateform_edge_left;
+class Left_dirt_fall;
+class Right_dirt_fall;
 class Rocks;
 
 class SampleScene : public Scene
@@ -30,6 +32,10 @@ class SampleScene : public Scene
 	MapEditor* map;
 	MapEditor* mapRocks;
 	Background* bg;
+	Background* filtre;
+	Background* filtreArbre;
+	Background* arbreBack;
+	Background* arbre;
 	std::vector<ObjectEntity*> mPlateforms;
 	Music* mMusic;
 
