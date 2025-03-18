@@ -58,13 +58,13 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 				if (deltaX > 0.f) {
 					mBoxCollider->xMin = c1.xMin - sizeThis.x;
 					mBoxCollider->xMax = mBoxCollider->xMin + mBoxCollider->xSize;
-					pPos.x = mBoxCollider->xMax - GetWidth() / 2;
+					pPos.x = mBoxCollider->xMax - mBoxCollider->xSize / 2;
 					state = LEFT;
 				}
 				else {
 					mBoxCollider->xMin = c1.xMax;
 					mBoxCollider->xMax = mBoxCollider->xMin + mBoxCollider->xSize;
-					pPos.x = mBoxCollider->xMin + GetWidth() / 2;
+					pPos.x = mBoxCollider->xMin + mBoxCollider->xSize / 2;
 					state = RIGHT;
 				}
 			}
@@ -72,7 +72,7 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 				if (deltaY > 0.f) {
 					mBoxCollider->yMin = c1.yMin - mBoxCollider->ySize;
 					mBoxCollider->yMax = c1.yMin;
-					pPos.y = mBoxCollider->yMax - GetHeight() / 2;
+					pPos.y = mBoxCollider->yMax - mBoxCollider->ySize / 2;
 					state = TOP;
 					mNbrJump = 0;
 					mGravitySpeed = 0;
@@ -80,7 +80,7 @@ bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 				else {
 					mBoxCollider->yMin = c1.yMax;
 					mBoxCollider->yMax = mBoxCollider->yMin + mBoxCollider->ySize;
-					pPos.y = mBoxCollider->yMin + GetHeight() / 2;
+					pPos.y = mBoxCollider->yMin + mBoxCollider->ySize / 2;
 					mGravitySpeed = 0;
 					mNbrJump = 2;
 					state = BOTTOM;

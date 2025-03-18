@@ -55,7 +55,7 @@ void SampleScene::OnInitialize()
 
 	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
 	pEntity1->SetPosition(101, 100);
-	pEntity1->SetCollider(101, 100, 64, 64);
+	pEntity1->SetCollider(101, 100, 64, 45);
 	pEntity1->SetRigidBody(true);
 
 	map = new MapEditor();
@@ -64,14 +64,8 @@ void SampleScene::OnInitialize()
 	mPlateforms = map->GetMap();
 
 	mMusic = new Music();
-	mMusic->Load("../../../res/platformer_music.wav");
+	mMusic->Load("../../../res/f1_intro.ogg");
 	mMusic->Play();
-
-	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);
-	pEntity1->SetPosition(101, 100);
-	pEntity1->SetCollider(101, 100, 16, 16);
-	pEntity1->SetRigidBody(true);
-
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
@@ -121,7 +115,7 @@ void SampleScene::OnUpdate()
 	{
 		const auto* ObjectCollider = mPlateforms[i]->GetCollider();
 		pEntity1->IsColliding(*ObjectCollider);
-		/*mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);*/
+		mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);
 	}
 }
