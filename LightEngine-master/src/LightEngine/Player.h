@@ -25,7 +25,6 @@ public:
 	float dashTimer = 0.0f;
 	float dashCooldown;
 	float shootCooldown = 0.5f;
-
 	float invicibilityTime = 0.0f;
 	float repulsionTimer = 0.0f;
 };

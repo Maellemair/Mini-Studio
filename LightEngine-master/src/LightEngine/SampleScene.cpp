@@ -4,6 +4,7 @@
 #include "Bullets.h"
 #include "ObjectEntity.h"
 #include "Debug.h"
+#include "Bonus.h"
 #include "Music.h"
 #include "MapEditor.h"
 #include "Enemy.h"
@@ -25,6 +26,10 @@ void SampleScene::OnInitialize()
 	pEnemy->SetPosition(200, 100);
 	pEnemy->SetCollider(200, 100, 16, 16);
 	pEnemy->SetRigidBody(true);
+
+    pBonus = CreateRectangle<Bonus>(16, 16, sf::Color::Magenta);
+    pBonus->SetPosition(500, 100);
+    pBonus->SetCollider(500, 100, 16, 16);
 
 
 }
@@ -128,6 +133,7 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
+    
     std::string life = "Life : " + std::to_string(pEntity1->mLife);
     Debug::DrawText(10, 20, life, sf::Color::Black);
 
@@ -213,9 +219,11 @@ void SampleScene::OnUpdate()
         {
             if ((*it)->IsColliding(*enemyCollider))
             {
+                (*it)->Destroy();
                 pEnemy->Destroy();
                 enemyDestroyed = true;
                 it = bulletsList.erase(it);
+
             }
             else
             {
@@ -263,6 +271,8 @@ void SampleScene::OnUpdate()
             newBullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
             newBullet->SetCollider(pEntity1->GetPosition().x, pEntity1->GetPosition().y, 8, 16);
             newBullet->SetRigidBody(true);
+            newBullet->Update();
+           
             bulletsList.push_back(newBullet);
 
             // Shoot right
@@ -279,4 +289,6 @@ void SampleScene::OnUpdate()
             pEntity1->shootCooldown = 0;
         }
     }
+
+
 }
