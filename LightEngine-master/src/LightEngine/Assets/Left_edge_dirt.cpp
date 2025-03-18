@@ -1,5 +1,5 @@
 #include "Left_edge_dirt.h"
-#include "AssetManager.h"
+#include "../AssetManager.h"
 
 void Left_edge_dirt::Create(float posX, float posY)
 {

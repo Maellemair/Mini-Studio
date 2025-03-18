@@ -1,9 +1,7 @@
 #pragma once
 #include "../ObjectEntity.h"
 
-class Texture;
-
-class Plateform_middle : public ObjectEntity
+class Left_dirt_fall : public ObjectEntity
 {
 public:
 	void Create(float posX, float posY);

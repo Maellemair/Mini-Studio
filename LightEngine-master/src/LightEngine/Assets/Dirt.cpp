@@ -1,5 +1,5 @@
 #include "Dirt.h"
-#include "AssetManager.h"
+#include "../AssetManager.h"
 
 void Dirt::Create(float posX, float posY)
 {

@@ -1,5 +1,5 @@
 #include "Rocks.h"
-#include "AssetManager.h"
+#include "../AssetManager.h"
 
 void Rocks::Create(float posX, float posY)
 {

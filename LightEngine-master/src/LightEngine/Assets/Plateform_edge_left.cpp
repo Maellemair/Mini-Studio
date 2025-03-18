@@ -1,5 +1,5 @@
 #include "Plateform_edge_left.h"
-#include "AssetManager.h"
+#include "../AssetManager.h"
 
 void Plateform_edge_left::Create(float posX, float posY)
 {

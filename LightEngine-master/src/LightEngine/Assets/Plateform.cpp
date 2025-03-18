@@ -1,5 +1,5 @@
 #include "Plateform.h"
-#include "AssetManager.h"
+#include "../AssetManager.h"
 
 void Plateform::Create(float posX, float posY)
 {

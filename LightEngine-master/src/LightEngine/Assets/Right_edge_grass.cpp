@@ -1,5 +1,5 @@
 #include "Right_edge_grass.h"
-#include "AssetManager.h"
+#include "../AssetManager.h"
 
 void Right_edge_grass::Create(float posX, float posY)
 {

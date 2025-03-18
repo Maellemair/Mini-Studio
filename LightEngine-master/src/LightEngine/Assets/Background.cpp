@@ -1,5 +1,5 @@
 #include "Background.h"
-#include "AssetManager.h"
+#include "../AssetManager.h"
 
 void Background::Load(const char* backgroundName)
 {

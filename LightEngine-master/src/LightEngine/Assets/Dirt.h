@@ -1,5 +1,5 @@
 #pragma once
-#include "ObjectEntity.h"
+#include "../ObjectEntity.h"
 
 class Texture;
 
