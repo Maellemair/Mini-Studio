@@ -1,37 +1,83 @@
 #include "SampleScene.h"
 
+#include "Grass.h"
+#include "Dirt.h"
+#include "Right_edge_grass.h"
+#include "Left_edge_grass.h"
+#include "Left_edge_dirt.h"
+#include "Right_edge_dirt.h"
+#include "Plateform.h"
+#include "Plateform_middle.h"
+#include "Plateform_edge_right.h"
+#include "Plateform_edge_left.h"
+#include "Rocks.h"
+
 #include "Player.h"
 #include "ObjectEntity.h"
 #include "Debug.h"
 #include "Music.h"
 #include "MapEditor.h"
+#include "Background.h"
+#include "AssetManager.h"
+#include "Utils.h"
 
 #include <iostream>
+#include <string>
 
 void SampleScene::OnInitialize()
 {
+	sf::Vector2f pSizeWin = sf::Vector2f(GetWindowWidth(), GetWindowHeight());
+
+	bg = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
+	bg->Load("Background");
+
+	cam = GameManager::Get()->GetView();
+	cam->zoom(0.75f);
+	sf::Vector2f camSize = cam->getSize();
+	cam->setCenter(camSize.x / 2, 720 - camSize.y / 2);
+
+	mObjectType['G'] = new Grass();
+	mObjectType['D'] = new Dirt();
+	mObjectType['P'] = new Right_edge_grass();
+	mObjectType['C'] = new Left_edge_grass();
+	mObjectType['L'] = new Left_edge_dirt();
+	mObjectType['R'] = new Right_edge_dirt();
+	mObjectType['S'] = new Plateform();
+	mObjectType['T'] = new Plateform_middle();
+	mObjectType['A'] = new Plateform_edge_right();
+	mObjectType['E'] = new Plateform_edge_left();
+	
+	mObjectType['r'] = new Rocks();
+
+	std::vector<std::string> pathLevel = Level::GetInstance()->pathLevel;
+
+
+	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
+	pEntity1->SetPosition(101, 100);
+	pEntity1->SetCollider(101, 100, 64, 64);
+	pEntity1->SetRigidBody(true);
+
 	map = new MapEditor();
-	map->Load("../../../res/Layout_Test.txt");
-	map->CreateMap(64);
+	map->Load(pathLevel[0].c_str());
+	map->CreateMap(32, mObjectType);
 	mPlateforms = map->GetMap();
 
-	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);
-	pEntity1->SetPosition(101, 100);
-	pEntity1->SetCollider(101, 100, 16, 16);
-	pEntity1->SetRigidBody(true);
+	/*mapRocks = new MapEditor();
+	mapRocks->Load(pathLevel[1].c_str());
+	mapRocks->CreateMap(32, mObjectType);*/
 
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-		pEntity1->Move(GetDeltaTime(), -1);
+		pEntity1->Move(-1);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-		pEntity1->Move(GetDeltaTime(), 1);
+		pEntity1->Move(1);
 	}
 	else{ 
-		pEntity1->Move(GetDeltaTime(), 0);
+		pEntity1->Move(0);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
@@ -44,30 +90,28 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 	if (event.type != sf::Event::EventType::MouseButtonPressed)
 		return;
-
-	if (event.mouseButton.button == sf::Mouse::Button::Left)
-	{
-		/*ObjectEntity* tempEntityGrass = CreateRectangle<ObjectEntity>(64, 64, sf::Color::Green);
-		mPlateforms.push_back(tempEntityGrass);
-		tempEntityGrass->SetPosition(event.mouseButton.x, event.mouseButton.y);
-		tempEntityGrass->SetRigidBody(true);*/
-	}
 }
-
-//void SampleScene::TrySetSelectedEntity(PhysicalEntity* pEntity, int x, int y)
-//{
-//	if (pEntity->IsInside(x, y) == false)
-//		return;
-//
-//	pEntitySelected = pEntity;
-//}
 
 void SampleScene::OnUpdate()
 {
-	//std::cout << pEntity1->GetState() << std::endl;
+	sf::Vector2f camSize = cam->getSize();
+	sf::Vector2f pPos = pEntity1->GetPosition();
+
+	float minX = camSize.x / 2;
+	float maxX = 1280 - camSize.x / 2;
+	float minY = camSize.y / 2;
+	float maxY = 720 - camSize.y / 2;
+
+	float newCamX = std::clamp(pPos.x, minX, maxX);
+	float newCamY = std::clamp(pPos.y, minY, maxY);
+
+	cam->setCenter(newCamX, newCamY);
+
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{
 		const auto* ObjectCollider = mPlateforms[i]->GetCollider();
 		pEntity1->IsColliding(*ObjectCollider);
+		/*mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);*/
 	}
 }
