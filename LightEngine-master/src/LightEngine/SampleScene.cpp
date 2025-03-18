@@ -67,11 +67,6 @@ void SampleScene::OnInitialize()
 	mMusic->Load("../../../res/platformer_music.wav");
 	mMusic->Play();
 
-	pEntity1 = CreateRectangle<Player>(16, 16, sf::Color::Red);
-	pEntity1->SetPosition(101, 100);
-	pEntity1->SetCollider(101, 100, 16, 16);
-	pEntity1->SetRigidBody(true);
-
 }
 
 void SampleScene::OnEvent(const sf::Event& event)

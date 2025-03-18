@@ -5,6 +5,7 @@
 #include "PlayerAction.h"
 #include "json.hpp"
 #include "Debug.h"
+#include "Sound.h"
 #include <fstream>
 
 void Player::OnInitialize()
