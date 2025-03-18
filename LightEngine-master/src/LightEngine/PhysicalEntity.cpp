@@ -38,62 +38,75 @@ void PhysicalEntity::OnUpdate()
 
 bool PhysicalEntity::IsColliding(const AABBCollider& c1)
 {
-	if (c1.xMin < mBoxCollider->xMax && c1.xMax >  mBoxCollider->xMin &&
-		c1.yMin < mBoxCollider->yMax && c1.yMax >  mBoxCollider->yMin)
-	{
-		sf::Vector2f posThis = GetColliderPos();
-		sf::Vector2f sizeThis = GetColliderSize();
+    if (c1.xMin < mBoxCollider->xMax && c1.xMax > mBoxCollider->xMin &&
+        c1.yMin < mBoxCollider->yMax && c1.yMax > mBoxCollider->yMin)
+    {
+        return true;
+    }
+    return false;
+}
 
-		float widthOther = c1.xMax - c1.xMin;
-		float heightOther = c1.yMax - c1.yMin;
-		sf::Vector2f posOther = sf::Vector2f(c1.xMin + widthOther / 2, c1.yMin + heightOther / 2);
+void PhysicalEntity::Repulse(const AABBCollider& c1)
+{
+    if(IsColliding(c1))
+    {
+        sf::Vector2f posThis = GetColliderPos();
+        sf::Vector2f sizeThis = GetColliderSize();
 
-		float deltaX = posOther.x - posThis.x;
-		float deltaY = posOther.y - posThis.y;
-		float intersectX = abs(deltaX) - (widthOther / 2 + sizeThis.x / 2);
-		float intersectY = abs(deltaY) - (heightOther / 2 + sizeThis.y / 2);
+        float widthOther = c1.xMax - c1.xMin;
+        float heightOther = c1.yMax - c1.yMin;
+        sf::Vector2f posOther = sf::Vector2f(c1.xMin + widthOther / 2, c1.yMin + heightOther / 2);
 
-		sf::Vector2f pPos = GetPosition(0.5f, 0.5f);
-		if (intersectX < 0.f && intersectY < 0.f) {
-			if (intersectX > intersectY) {
-				if (deltaX > 0.f) {
-					mBoxCollider->xMin = c1.xMin - sizeThis.x;
-					mBoxCollider->xMax = mBoxCollider->xMin + mBoxCollider->xSize;
-					pPos.x = mBoxCollider->xMax - mBoxCollider->xSize / 2;
-					state = LEFT;
-				}
-				else {
-					mBoxCollider->xMin = c1.xMax;
-					mBoxCollider->xMax = mBoxCollider->xMin + mBoxCollider->xSize;
-					pPos.x = mBoxCollider->xMin + mBoxCollider->xSize / 2;
-					state = RIGHT;
-				}
-			}
-			else {
-				if (deltaY > 0.f) {
-					mBoxCollider->yMin = c1.yMin - mBoxCollider->ySize;
-					mBoxCollider->yMax = c1.yMin;
-					pPos.y = mBoxCollider->yMax - mBoxCollider->ySize / 2;
-					state = TOP;
-					mNbrJump = 0;
-					mGravitySpeed = 0;
-				}
-				else {
-					mBoxCollider->yMin = c1.yMax;
-					mBoxCollider->yMax = mBoxCollider->yMin + mBoxCollider->ySize;
-					pPos.y = mBoxCollider->yMin + mBoxCollider->ySize / 2;
-					mGravitySpeed = 0;
-					mNbrJump = 2;
-					state = BOTTOM;
-				}
-			}
-		}
-		SetPosition(pPos.x, pPos.y);
-		return true;
-	}
-	else
-	{	
-		state = None;
-		return false;
-	}
+        sf::Vector2f distance = sf::Vector2f(posOther.x - posThis.x, posOther.y - posThis.y);
+        float sqrLength = (distance.x * distance.x) + (distance.y * distance.y);
+
+        if (sqrLength == 0.0f)
+            return;
+
+        float length = std::sqrt(sqrLength);
+
+        float intersectX = (widthOther / 2 + sizeThis.x / 2) - abs(distance.x);
+        float intersectY = (heightOther / 2 + sizeThis.y / 2) - abs(distance.y);
+
+        if (intersectX > 0.f && intersectY > 0.f)
+        {
+            if (intersectX < intersectY)
+            {
+                if (distance.x > 0.f)
+                {
+                    SetPosition(GetPosition().x - intersectX, GetPosition().y);
+                    state = LEFT;
+                }
+                else
+                {
+                    SetPosition(GetPosition().x + intersectX, GetPosition().y);
+                    state = RIGHT;
+                }
+            }
+            else
+            {
+                if (distance.y > 0.f)
+                {
+                    SetPosition(GetPosition().x, GetPosition().y - intersectY);
+                    state = TOP;
+                    mGravitySpeed = 0;
+                    mNbrJump = 0;
+                }
+                else
+                {
+                    SetPosition(GetPosition().x, GetPosition().y + intersectY);
+                    state = BOTTOM;
+                }
+            }
+
+            mBoxCollider->xMin = GetPosition().x - sizeThis.x / 2;
+            mBoxCollider->xMax = GetPosition().x + sizeThis.x / 2;
+            mBoxCollider->yMin = GetPosition().y - sizeThis.y / 2;
+            mBoxCollider->yMax = GetPosition().y + sizeThis.y / 2;
+        }
+    }
+    else
+    {
+        state = None;
+    }
 }

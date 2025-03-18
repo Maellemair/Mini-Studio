@@ -129,8 +129,13 @@ void SampleScene::OnUpdate()
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{
 		const auto* ObjectCollider = mPlateforms[i]->GetCollider();
-		pEntity1->IsColliding(*ObjectCollider);
-		mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);
+		if (pEntity1->IsColliding(*ObjectCollider) == true)
+		{
+			pEntity1->Repulse(*ObjectCollider);
+			return;
+		}
+		/*mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);*/
 	}
+	pEntity1->SetStateCollision(None);
 }
