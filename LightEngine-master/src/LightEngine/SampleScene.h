@@ -5,6 +5,7 @@
 #include <vector>
 
 class Player;
+class Enemy;
 class ObjectEntity;
 class Background;
 class MapEditor;
@@ -24,12 +25,17 @@ class Plateform_edge_left;
 class Left_dirt_fall;
 class Right_dirt_fall;
 class Rocks;
+class Bullets;
+class Bonus;
 
 class SampleScene : public Scene
 {
 private:
 	sf::View* cam;
 	Player* pEntity1;
+	Enemy* pEnemy;
+	Bonus* pBonus;
+	std::vector<Bullets*> bulletsList;
 	MapEditor* map;
 	MapEditor* mapRocks;
 	Background* bg;

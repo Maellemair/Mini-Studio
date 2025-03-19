@@ -9,6 +9,16 @@
 #include "Sound.h"
 #include <fstream>
 
+int Player::getLastDirection()
+{
+	return lastDirection;
+}
+
+void Player::setLastDirection(int dir)
+{
+	lastDirection = dir;
+}
+
 void Player::OnInitialize()
 {
 	SetTag(16);
@@ -175,3 +185,22 @@ void Player::Jump()
 	mSound->Load("../../../res/jump_sound.wav");
 	mSound->Play();
 }
+
+void Player::TakeHit()
+{
+	mLife--;
+	if (mLife <= 0)
+	{
+		//GameOver
+	}
+}
+
+void Player::Dash(float deltaTime)
+{
+	SetDirection(lastDirection, 0, 800); // droite ou gauche
+}
+
+
+
+
+
