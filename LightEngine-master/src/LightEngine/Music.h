@@ -6,7 +6,7 @@ class Music
 	sf::Music mMusic;
 
 public:
-	void Load(const char* path);
+	void Load(const char* path, int pVolume);
 	void Play();
 	void Pause();
 	void PausePlay();

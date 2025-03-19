@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-void Music::Load(const char* path)
+void Music::Load(const char* path, int pVolume)
 {
 	if (!mMusic.openFromFile(path))
 	{
 		std::cout << "Erreur de chargement de la music" << std::endl;
 	}
-	mMusic.setVolume(10);
+	mMusic.setVolume(pVolume);
 	mMusic.setLoop(true);
 }
 

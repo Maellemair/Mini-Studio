@@ -2,34 +2,32 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <fstream>
-#include "json.hpp"
 
 class Texture;
-
-enum Direction
-{
-	Up,
-	Down,
-	Left,
-	Right
-};
+class Entity;
 
 class Animation
 {
+    struct AnimationData {
+        int frames;
+        float timeProgress;
+        bool loop;
+        int row;
+    };
 
-	sf::Shape* mShapeAnim;
-	sf::Vector2f mPos;
-	sf::Vector2f mSizeFrame;
-	float mSizeLimited;
-	int mCurrentIndex = 0;
-	int mNbrFrame;
-	bool mLoop;
-	int mNbrLoop;
-	float mDuration;
-	float mDurationProgress = mDuration;
+    sf::Texture texture;
+    sf::Shape* animShape;
+    sf::Vector2i frameSize;
+    std::map<std::string, AnimationData> animations;
+    std::string currentAnimation;
+    int currentFrame = 0;
+    float elapsedTime = 0;
+    bool isFacingRight = true;
+
 public:
-	void ResetNBrLoop();
-	void SetShape(sf::Shape* pShape, sf::Vector2f pPos, const int nbrFrame, const float pDuration, bool pLoop);
-	bool Update(float dt);
+    void SetIsFacingRight(bool pIsFacingRight) { isFacingRight = pIsFacingRight; }
+    void loadAnimations(sf::Texture pText, const std::string& jsonFile, sf::Shape* pShape);
+    void setAnimation(const std::string& animName);
+    void update(float deltaTime);
 };
 

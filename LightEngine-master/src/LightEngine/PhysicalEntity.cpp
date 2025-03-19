@@ -32,7 +32,6 @@ void PhysicalEntity::OnUpdate()
 
 	if (ColliderEntity == nullptr)
 	{
-        std::cout << "Bite" << std::endl;
         Fall(dt);
 	}
     else

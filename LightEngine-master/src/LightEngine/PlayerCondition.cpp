@@ -11,7 +11,16 @@ bool PlayerCondition_IsMoving::OnTest(Player* owner)
 
 bool PlayerCondition_isGround::OnTest(Player* owner)
 {
-    if (owner->GetState() == CollisionFace::TOP)
+    if (owner->GetColliderEntity() != nullptr)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool PlayerCondition_isJumping::OnTest(Player* owner)
+{
+    if (owner->GetGravitySpeed() < 0)
     {
         return true;
     }

@@ -1,52 +1,71 @@
 #include "Animation.h"
+#include "Entity.h"
+#include "json.hpp"
+#include <fstream>
+#include <iostream>
+#include <string>
 
-
-void Animation::ResetNBrLoop()
+void Animation::loadAnimations(sf::Texture pText, const std::string& jsonFile, sf::Shape* pShape)
 {
-	mNbrLoop = 0;
+    texture = pText;
+    animShape = pShape;
+    animShape->setTexture(&texture);
+
+    std::ifstream file(jsonFile);
+    nlohmann::json data;
+    file >> data;
+    file.close();
+
+    frameSize.x = (int)data["frame_size"]["width"];
+    frameSize.y = (int)data["frame_size"]["height"];
+
+    for (auto& [key, anim] : data["animations"].items()) 
+    {
+        animations[key] = {
+            anim["frames"].get<int>(),
+            anim["timeProgress"].get<float>(),
+            anim["loop"].get<bool>(),
+            anim["row"].get<int>()
+        };
+    }
 }
 
-void Animation::SetShape(sf::Shape* pShape, sf::Vector2f pPos, const int nbrFrame, const float pDuration, bool pLoop)
-{
-	std::ifstream fichier("../../../res/Player.json");
-	if (fichier.is_open())
-	{
-		nlohmann::json data;
-		fichier >> data;
-		fichier.close();
-
-		mSizeFrame = sf::Vector2f(data["frame_size"]["width"], data["frame_size"]["height"]);
-		mDuration = pDuration;
-		mNbrFrame = nbrFrame;
-		mLoop = pLoop;
-		mShapeAnim = new sf::RectangleShape;
-		mShapeAnim = pShape;
-		mPos = pPos;
-	}
-	else
-	{
-		std::cout << "le fichier d'animation n'existe pas !" << std::endl;
-		return;
-	}
+void Animation::setAnimation(const std::string& animName) {
+    
+    if (animations.find(animName) != animations.end()) 
+    {
+        currentAnimation = animName;
+        currentFrame = 0;
+        elapsedTime = 0;
+    }
 }
 
-bool Animation::Update(float dt)
+void Animation::update(float deltaTime)
 {
-	if (mShapeAnim == nullptr || (mLoop == false && mNbrLoop != 0))
-		return true;
+    if (currentAnimation.empty())
+        return;
 
-	if (mPos.x >= mSizeFrame.x * (mNbrFrame - 1))
-	{
-		mPos.x = 0;
-		mNbrLoop++;
-	}
+    AnimationData& anim = animations[currentAnimation];
+    elapsedTime += deltaTime;
 
-	mDurationProgress -= dt;
-	if (mDurationProgress <= 0)
-	{
-		mDurationProgress = mDuration;
-		mPos.x += mSizeFrame.x;
-		mShapeAnim->setTextureRect(sf::IntRect(sf::Vector2i(mPos.x, mPos.y), sf::Vector2i(mSizeFrame.x, mSizeFrame.y)));
-	}
-	return false;
+    if (elapsedTime >= anim.timeProgress) 
+    {
+        elapsedTime = 0;
+        currentFrame = (currentFrame + 1) % anim.frames;
+    }
+
+    int frameX = currentFrame * frameSize.x;
+    int frameY = animations[currentAnimation].row * frameSize.y;
+
+    if (isFacingRight) 
+    {
+        animShape->setScale(1.f, 1.f);
+        animShape->setOrigin(0, 0);
+    }
+    else 
+    {
+        animShape->setScale(-1.f, 1.f);
+        animShape->setOrigin(frameSize.x * 2, 0);
+    }
+    animShape->setTextureRect(sf::IntRect(frameX, frameY, frameSize.x, frameSize.y));
 }

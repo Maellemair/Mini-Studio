@@ -31,23 +31,73 @@ void SampleScene::OnInitialize()
 {
 	sf::Vector2f pSizeWin = sf::Vector2f(GetWindowWidth(), GetWindowHeight());
 
-	bg = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
-	bg->Load("Background", sf::Vector2i(380, 180), sf::Vector2i(0, 0));
-	filtre = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
-	filtre->Load("filtre", sf::Vector2i(320, 180), sf::Vector2i(0, 0));
-	arbreBack = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
-	arbreBack->Load("Tree", sf::Vector2i(570, 360/2), sf::Vector2i(0, 360/2));
-	arbreBack->SetPosition(200, pSizeWin.y / 2);
-	arbre = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
-	arbre->Load("Tree", sf::Vector2i(570, 360/2), sf::Vector2i(0, 0));
-	filtreArbre = CreateRectangle<Background>(pSizeWin.y, pSizeWin.x, sf::Color::Red);
-	filtreArbre->Load("filtre", sf::Vector2i(320, 180), sf::Vector2i(0, 0));
+	//Background
+	{
+		float taille = pSizeWin.y;
+		float factor = taille / 180;
+		sf::Vector2f tempPos = sf::Vector2f(pSizeWin.x / 2, pSizeWin.y / 2);
+		bg = CreateRectangle<Background>(180 * factor, 320 * factor, sf::Color::Red);
+		bg->Load("Background", sf::Vector2i(320, 180), sf::Vector2i(0, 0), 0.01, tempPos);
+		bg->SetPosition(tempPos.x, tempPos.y);
+		mBackgrounds.push_back(bg);
+
+		bg2 = CreateRectangle<Background>(180 * factor, 320 * factor, sf::Color::Red);
+		bg2->Load("Background", sf::Vector2i(320, 180), sf::Vector2i(0, 0), 0.01, tempPos);
+		bg2->SetPosition(tempPos.x + 320 * factor, tempPos.y);
+		mBackgrounds.push_back(bg2);
+
+		factor = taille / 180;
+		filtre = CreateRectangle<Background>(180 * factor, 320 * factor, sf::Color::Red);
+		filtre->Load("filtre", sf::Vector2i(320, 180), sf::Vector2i(0, 0), 0.01, tempPos);
+		filtre->SetPosition(tempPos.x, tempPos.y);
+		mBackgrounds.push_back(filtre);
+
+		filtre2 = CreateRectangle<Background>(180 * factor, 320 * factor, sf::Color::Red);
+		filtre2->Load("filtre", sf::Vector2i(320, 180), sf::Vector2i(0, 0), 0.01, tempPos);
+		filtre2->SetPosition(tempPos.x + 320 * factor, tempPos.y);
+		mBackgrounds.push_back(filtre2);
+
+		factor = taille / (360 / 2);
+		arbreBack = CreateRectangle<Background>(360 / 2 * factor, 570 * factor, sf::Color::Red);
+		arbreBack->Load("Tree", sf::Vector2i(570, 360 / 2), sf::Vector2i(0, 360 / 2), 0.05, tempPos);
+		arbreBack->SetPosition(tempPos.x, tempPos.y);
+		mBackgrounds.push_back(arbreBack);
+
+		arbreBack2 = CreateRectangle<Background>(360 / 2 * factor, 570 * factor, sf::Color::Red);
+		arbreBack2->Load("Tree", sf::Vector2i(570, 360 / 2), sf::Vector2i(0, 360 / 2), 0.05, tempPos);
+		arbreBack2->SetPosition(tempPos.x + 570 * factor, tempPos.y);
+		mBackgrounds.push_back(arbreBack2);
+
+		factor = taille / (360 / 2);
+		arbre = CreateRectangle<Background>(360 / 2 * factor, 570 * factor, sf::Color::Red);
+		arbre->Load("Tree", sf::Vector2i(570, 360 / 2), sf::Vector2i(0, 0), 0.25, tempPos);
+		arbre->SetPosition(tempPos.x, tempPos.y);
+		mBackgrounds.push_back(arbre);
+
+		arbre2 = CreateRectangle<Background>(360 / 2 * factor, 570 * factor, sf::Color::Red);
+		arbre2->Load("Tree", sf::Vector2i(570, 360 / 2), sf::Vector2i(0, 0), 0.25, tempPos);
+		arbre2->SetPosition(tempPos.x + 570 * factor, tempPos.y);
+		mBackgrounds.push_back(arbre2);
+
+		factor = taille / 180;
+		filtreArbre = CreateRectangle<Background>(180 * factor, 320 * factor, sf::Color::Red);
+		filtreArbre->Load("filtre", sf::Vector2i(320, 180), sf::Vector2i(0, 0), 0.25, tempPos);
+		filtreArbre->SetPosition(tempPos.x, tempPos.y);
+		mBackgrounds.push_back(filtreArbre);
+
+		filtreArbre2 = CreateRectangle<Background>(180 * factor, 320 * factor, sf::Color::Red);
+		filtreArbre2->Load("filtre", sf::Vector2i(320, 180), sf::Vector2i(0, 0), 0.25, tempPos);
+		filtreArbre2->SetPosition(tempPos.x + 320 * factor, tempPos.y);
+		mBackgrounds.push_back(filtreArbre2);
+	}
 
 
 	cam = GameManager::Get()->GetView();
 	cam->zoom(0.75f);
 	sf::Vector2f camSize = cam->getSize();
 	cam->setCenter(camSize.x / 2, 720 - camSize.y / 2);
+	mCamPos = sf::Vector2(camSize.x / 2, 720 - camSize.y / 2);
+	lastCameraPosition = mCamPos;
 
 	mObjectType['G'] = new Grass();
 	mObjectType['D'] = new Dirt();
@@ -66,7 +116,6 @@ void SampleScene::OnInitialize()
 
 	std::vector<std::string> pathLevel = Level::GetInstance()->pathLevel;
 
-
 	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
 	pEntity1->SetPosition(101, 100);
 	pEntity1->SetCollider(101, 100, 64, 45);
@@ -78,7 +127,7 @@ void SampleScene::OnInitialize()
 	mPlateforms = map->GetMap();
 
 	mMusic = new Music();
-	mMusic->Load("../../../res/f1_intro.ogg");
+	mMusic->Load("../../../res/f1_intro.ogg", 1);
 	mMusic->Play();
 }
 
@@ -125,6 +174,14 @@ void SampleScene::OnUpdate()
 	float newCamY = std::clamp(pPos.y, minY, maxY);
 
 	cam->setCenter(newCamX, newCamY);
+	mCamPos = sf::Vector2f(newCamX, newCamY);
+
+	float deltaX = mCamPos.x - lastCameraPosition.x;
+	for (int i = 0; i < mBackgrounds.size(); i++)
+	{
+		mBackgrounds[i]->OnUpdate(deltaX);
+	}
+	lastCameraPosition = mCamPos;
 
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{
@@ -136,7 +193,7 @@ void SampleScene::OnUpdate()
 		{
 			mPlateforms[i]->SetStateCollision(None);
 		}
-		/*mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);*/
+		mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);
 	}
 }

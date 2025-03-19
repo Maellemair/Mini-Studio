@@ -13,6 +13,7 @@ protected:
 
 public:
 	CollisionFace GetState() { return state; }
+	Entity* GetColliderEntity() { return ColliderEntity; }
 	void SetStateCollision(CollisionFace pState) { state = pState; }
 	void SetColliderEntity(Entity* other) { ColliderEntity = other; }
 	float GetGravitySpeed() { return mGravitySpeed; }

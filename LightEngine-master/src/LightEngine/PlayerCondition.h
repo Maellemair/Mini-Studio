@@ -15,6 +15,12 @@ public:
 	bool OnTest(Player* owner) override;
 };
 
+class PlayerCondition_isJumping : public Condition<Player>
+{
+public:
+	bool OnTest(Player* owner) override;
+};
+
 class PlayerCondition_isFalling : public Condition<Player>
 {
 public:

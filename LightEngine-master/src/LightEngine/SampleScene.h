@@ -27,21 +27,27 @@ class Rocks;
 
 class SampleScene : public Scene
 {
+private:
 	sf::View* cam;
 	Player* pEntity1;
 	MapEditor* map;
 	MapEditor* mapRocks;
 	Background* bg;
+	Background* bg2;
 	Background* filtre;
+	Background* filtre2;
 	Background* filtreArbre;
+	Background* filtreArbre2;
 	Background* arbreBack;
+	Background* arbreBack2;
 	Background* arbre;
+	Background* arbre2;
+	std::vector<Background*> mBackgrounds;
 	std::vector<ObjectEntity*> mPlateforms;
 	Music* mMusic;
-
-private:
+	sf::Vector2f mCamPos;
+	sf::Vector2f lastCameraPosition;
 	std::map<char, ObjectEntity*> mObjectType;
-	sf::Sprite background;
 
 public:
 	void OnInitialize() override;

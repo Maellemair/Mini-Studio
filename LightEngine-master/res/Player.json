@@ -7,13 +7,27 @@
   "animations": {
     "idle": {
       "frames": 6,
-      "timeProgress": 0.25,
-      "loop": true
+      "timeProgress": 0.2,
+      "loop": true,
+      "row": 0
     },
     "jump": {
       "frames": 10,
       "timeProgress": 0.1,
-      "loop": false
+      "loop": false,
+       "row": 1
+    },
+    "walk": {
+      "frames": 1,
+      "timeProgress": 5,
+      "loop": true,
+      "row": 0
+    },
+    "fall": {
+      "frames": 1,
+      "timeProgress": 5,
+      "loop": true,
+      "row": 0
     }
   }
 }
