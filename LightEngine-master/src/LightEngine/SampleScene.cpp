@@ -142,8 +142,6 @@ void SampleScene::OnInitialize()
     pBonus = CreateRectangle<Bonus>(16, 16, sf::Color::Magenta);
     pBonus->SetPosition(500, 100);
     pBonus->SetCollider(500, 100, 16, 16);
-
-
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
@@ -160,13 +158,10 @@ void SampleScene::OnEvent(const sf::Event& event)
         {
             x = 0;
         }
-
         // Boutton X
         if (sf::Joystick::isButtonPressed(0, 1)) {
             pEntity1->Jump();
         }
-
-
         // Joystick a Droite
         if (x > 10.f)
         {
@@ -231,13 +226,11 @@ void SampleScene::OnEvent(const sf::Event& event)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)) {
 		mMusic->PausePlay();
 	}
-
-	if (event.type != sf::Event::EventType::MouseButtonPressed)
-		return;
 }
 
 void SampleScene::OnUpdate()
 {
+
 	sf::Vector2f camSize = cam->getSize();
 	sf::Vector2f pPos = pEntity1->GetPosition();
 	sf::Vector2f posLimite = sf::Vector2f(2000, 720);
@@ -253,12 +246,19 @@ void SampleScene::OnUpdate()
 	cam->setCenter(newCamX, newCamY);
 	mCamPos = sf::Vector2f(newCamX, newCamY);
 
+    std::string life = "Life : " + std::to_string(pEntity1->mLife);
+    Debug::DrawText(newCamX - camSize.x / 2 + 10, newCamY - camSize.y / 2 + 20, life, sf::Color::Black);
+
 	float deltaX = mCamPos.x - lastCameraPosition.x;
 	for (int i = 0; i < mBackgrounds.size(); i++)
 	{
 		mBackgrounds[i]->OnUpdate(deltaX);
 	}
 	lastCameraPosition = mCamPos;
+
+    bool bulletDestroyed = false;
+    bool enemyDestroyed = false;
+    bool bonusDestroyed = false;
 
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{
@@ -270,33 +270,15 @@ void SampleScene::OnUpdate()
 		{
 			mPlateforms[i]->SetStateCollision(None);
 		}
-		mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);
-	}
-
-    if (pEntity1 == nullptr) return; // V�rifier si le joueur existe toujours
-
-    std::string life = "Life : " + std::to_string(pEntity1->mLife);
-    Debug::DrawText(10, 20, life, sf::Color::Black);
-
-    bool bulletDestroyed = false;
-    bool enemyDestroyed = false;
-    bool bonusDestroyed = false;
-
-    // V�rification des collisions avec les plateformes
-    for (int i = 0; i < mPlateforms.size(); i++)
-    {
-        const auto* ObjectCollider = mPlateforms[i]->GetCollider();
-        pEntity1->IsColliding(*ObjectCollider);
 
         if (pEnemy != nullptr && !enemyDestroyed)
         {
-            pEnemy->IsColliding(*ObjectCollider);
+            pEnemy->IsColliding(mPlateforms[i]);
         }
-
+         
         for (auto it = bulletsList.begin(); it != bulletsList.end();)
         {
-            if ((*it)->IsColliding(*ObjectCollider))
+            if ((*it)->IsColliding(mPlateforms[i]))
             {
                 (*it)->Destroy();
                 it = bulletsList.erase(it);
@@ -306,12 +288,13 @@ void SampleScene::OnUpdate()
                 ++it;
             }
         }
-    }
+		mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);
+	}
 
     if (pEnemy != nullptr && !enemyDestroyed)
     {
-        const auto* enemyCollider = pEnemy->GetCollider();
-        if (pEntity1->IsColliding(*enemyCollider))
+        if (pEntity1->IsColliding(pEnemy))
         {
             if (pEntity1->invicibilityTime > 1.5f)
             {
@@ -320,7 +303,6 @@ void SampleScene::OnUpdate()
                     pEntity1->mLife -= 1;
                     pEntity1->invicibilityTime = 0.0f;
 
-                    // Repousser le joueur
                     sf::Vector2f repulsionForce;
                     if (pEntity1->GetPosition().x < pEnemy->GetPosition().x)
                     {
@@ -335,9 +317,8 @@ void SampleScene::OnUpdate()
                 }
                 else
                 {
-                    // D�truire le joueur
                     pEntity1->Destroy();
-                    pEntity1 = nullptr; // Mettre le pointeur � nullptr pour �viter les acc�s invalides
+                    pEntity1 = nullptr;
                 }
             }
         }
@@ -352,17 +333,15 @@ void SampleScene::OnUpdate()
         pEntity1->repulsionTimer -= GetDeltaTime();
         if (pEntity1->repulsionTimer <= 0.0f)
         {
-            pEntity1->SetDirection(0.f, 0.f, 0.f); // Arr�ter la repulsion apr�s 1 seconde
+            pEntity1->SetDirection(0.f, 0.f, 0.f);
         }
     }
 
-    // V�rification des collisions entre les balles et l'ennemi
     if (pEnemy != nullptr && !enemyDestroyed)
     {
-        const auto* enemyCollider = pEnemy->GetCollider();
         for (auto it = bulletsList.begin(); it != bulletsList.end();)
         {
-            if ((*it)->IsColliding(*enemyCollider))
+            if ((*it)->IsColliding(pEnemy))
             {
                 (*it)->Destroy();
                 pEnemy->Destroy();
@@ -378,28 +357,25 @@ void SampleScene::OnUpdate()
 
     if (pBonus != nullptr && !bonusDestroyed)
     {
-        const auto* bonusCollider = pBonus->GetCollider();
-
-        if (pEntity1->IsColliding(*bonusCollider))
+        if (pEntity1->IsColliding(pBonus))
         {
             pBonus->Destroy();
-            pBonus = nullptr; // Mettre le pointeur � nullptr pour �viter les acc�s invalides
+            pBonus = nullptr;
             pEntity1->mLife++;
             bonusDestroyed = true;
         }
     }
 
-    // Mise � jour de l'�tat de l'ennemi
     if (enemyDestroyed)
     {
-        pEnemy = nullptr; // Assurez-vous de ne plus r�f�rencer le pointeur d�truit
+        pEnemy = nullptr;
     }
 
     if (pEntity1 != nullptr)
     {
         // Dash boutton R2
         pEntity1->dashCooldown += GetDeltaTime();
-        if (pEntity1->dashCooldown >= 2.5f) // Correction de la condition
+        if (pEntity1->dashCooldown >= 2.5f)
         {
             if (sf::Joystick::isButtonPressed(0, 7))
             {
@@ -410,14 +386,14 @@ void SampleScene::OnUpdate()
                 }
                 else
                 {
-                    pEntity1->dashCooldown = 0; // R�initialiser le dashCooldown apr�s le dash
+                    pEntity1->dashCooldown = 0;
                     pEntity1->dashTimer = 0;
                 }
             }
         }
         else
         {
-            pEntity1->dashTimer = 0; // R�initialiser le dashTimer si le cooldown n'est pas encore termin�
+            pEntity1->dashTimer = 0;
         }
 
         // Shoot bullets
@@ -434,12 +410,10 @@ void SampleScene::OnUpdate()
 
                 bulletsList.push_back(newBullet);
 
-                // Shoot right
                 if (pEntity1->getLastDirection() == 1)
                 {
                     newBullet->SetDirection(1, 0, 500);
                 }
-                // Shoot left
                 else if (pEntity1->getLastDirection() == -1)
                 {
                     newBullet->SetDirection(-1, 0, 500);
