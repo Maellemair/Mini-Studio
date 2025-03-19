@@ -1,22 +1,31 @@
 #pragma once
-#include "Entity.h"
-#include <iostream>
+#include "PhysicalEntity.h"
+#include <SFML/Graphics.hpp>
 
-class Player : public Entity
+class Bullets;
+
+class Player : public PhysicalEntity
 {
-	bool mGravity = false;
-	float mGravitySpeed = 0.f;
-	bool isJumping = false;
-	int jumpCount = 0;
-	int MaxLife = 3;
-	int Life = MaxLife;
+	sf::Clock mClockDoubleJump;
+	float jumpCooldown = 0.5f;
+	int lastDirection = 1;
 
 public:
-	void Fall(float deltaTime);
+	int getLastDirection();
+	void setLastDirection(int dir);
+	void Move(float deltaTime, int key);
+	void Reset();
 	void Jump();
-	void Move();
 	void TakeHit();
-	int GetLife() { return Life; }
-	void OnUpdate() override;
+	void Dash(float deltaTime);
+
+	int MaxLife = 3;
+	int mLife = MaxLife;
+	float dashTime = 0.2f;
+	float dashTimer = 0.0f;
+	float dashCooldown;
+	float shootCooldown = 0.5f;
+	float invicibilityTime = 0.0f;
+	float repulsionTimer = 0.0f;
 };
 
