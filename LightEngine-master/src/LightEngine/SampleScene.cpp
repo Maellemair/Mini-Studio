@@ -133,12 +133,14 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
-    
+    if (pEntity1 == nullptr) return; // Vérifier si le joueur existe toujours
+
     std::string life = "Life : " + std::to_string(pEntity1->mLife);
     Debug::DrawText(10, 20, life, sf::Color::Black);
 
     bool bulletDestroyed = false;
     bool enemyDestroyed = false;
+    bool bonusDestroyed = false;
 
     // Vérification des collisions avec les plateformes
     for (int i = 0; i < mPlateforms.size(); i++)
@@ -192,7 +194,9 @@ void SampleScene::OnUpdate()
                 }
                 else
                 {
-                    // GameOver
+                    // Détruire le joueur
+                    pEntity1->Destroy();
+                    pEntity1 = nullptr; // Mettre le pointeur à nullptr pour éviter les accès invalides
                 }
             }
         }
@@ -202,7 +206,7 @@ void SampleScene::OnUpdate()
         }
     }
 
-    if (pEntity1->repulsionTimer > 0.0f)
+    if (pEntity1 != nullptr && pEntity1->repulsionTimer > 0.0f)
     {
         pEntity1->repulsionTimer -= GetDeltaTime();
         if (pEntity1->repulsionTimer <= 0.0f)
@@ -223,12 +227,24 @@ void SampleScene::OnUpdate()
                 pEnemy->Destroy();
                 enemyDestroyed = true;
                 it = bulletsList.erase(it);
-
             }
             else
             {
                 ++it;
             }
+        }
+    }
+
+    if (pBonus != nullptr && !bonusDestroyed)
+    {
+        const auto* bonusCollider = pBonus->GetCollider();
+
+        if (pEntity1->IsColliding(*bonusCollider))
+        {
+            pBonus->Destroy();
+            pBonus = nullptr; // Mettre le pointeur à nullptr pour éviter les accès invalides
+            pEntity1->mLife++;
+            bonusDestroyed = true;
         }
     }
 
@@ -238,57 +254,59 @@ void SampleScene::OnUpdate()
         pEnemy = nullptr; // Assurez-vous de ne plus référencer le pointeur détruit
     }
 
-    // Dash boutton R2
-    pEntity1->dashCooldown += GetDeltaTime();
-    if (pEntity1->dashCooldown >= 2.5f) // Correction de la condition
+    if (pEntity1 != nullptr)
     {
-        if (sf::Joystick::isButtonPressed(0, 7))
+        // Dash boutton R2
+        pEntity1->dashCooldown += GetDeltaTime();
+        if (pEntity1->dashCooldown >= 2.5f) // Correction de la condition
         {
-            if (pEntity1->dashTimer < pEntity1->dashTime)
+            if (sf::Joystick::isButtonPressed(0, 7))
             {
-                pEntity1->dashTimer += GetDeltaTime();
-                pEntity1->Dash(GetDeltaTime());
+                if (pEntity1->dashTimer < pEntity1->dashTime)
+                {
+                    pEntity1->dashTimer += GetDeltaTime();
+                    pEntity1->Dash(GetDeltaTime());
+                }
+                else
+                {
+                    pEntity1->dashCooldown = 0; // Réinitialiser le dashCooldown après le dash
+                    pEntity1->dashTimer = 0;
+                }
             }
-            else
+        }
+        else
+        {
+            pEntity1->dashTimer = 0; // Réinitialiser le dashTimer si le cooldown n'est pas encore terminé
+        }
+
+        // Shoot bullets
+        pEntity1->shootCooldown += GetDeltaTime();
+        if (sf::Joystick::isButtonPressed(0, 0))
+        {
+            if (pEntity1->shootCooldown >= 0.2f)
             {
-                pEntity1->dashCooldown = 0; // Réinitialiser le dashCooldown après le dash
-                pEntity1->dashTimer = 0;
+                Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+                newBullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+                newBullet->SetCollider(pEntity1->GetPosition().x, pEntity1->GetPosition().y, 8, 16);
+                newBullet->SetRigidBody(true);
+                newBullet->Update();
+
+                bulletsList.push_back(newBullet);
+
+                // Shoot right
+                if (pEntity1->getLastDirection() == 1)
+                {
+                    newBullet->SetDirection(1, 0, 500);
+                }
+                // Shoot left
+                else if (pEntity1->getLastDirection() == -1)
+                {
+                    newBullet->SetDirection(-1, 0, 500);
+                }
+
+                pEntity1->shootCooldown = 0;
             }
         }
     }
-    else
-    {
-        pEntity1->dashTimer = 0; // Réinitialiser le dashTimer si le cooldown n'est pas encore terminé
-    }
-
-    // Shoot bullets
-    pEntity1->shootCooldown += GetDeltaTime();
-    if (sf::Joystick::isButtonPressed(0, 0))
-    {
-        if (pEntity1->shootCooldown >= 0.2f)
-        {
-            Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-            newBullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-            newBullet->SetCollider(pEntity1->GetPosition().x, pEntity1->GetPosition().y, 8, 16);
-            newBullet->SetRigidBody(true);
-            newBullet->Update();
-           
-            bulletsList.push_back(newBullet);
-
-            // Shoot right
-            if (pEntity1->getLastDirection() == 1)
-            {
-                newBullet->SetDirection(1, 0, 500);
-            }
-            // Shoot left
-            else if (pEntity1->getLastDirection() == -1)
-            {
-                newBullet->SetDirection(-1, 0, 500);
-            }
-
-            pEntity1->shootCooldown = 0;
-        }
-    }
-
-
 }
+
