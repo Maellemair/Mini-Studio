@@ -38,28 +38,13 @@ bool Entity::IsInside(float x, float y) const
 
 bool Entity::IsColliding(Entity* other) const
 {
-	sf::Vector2f distance = GetPosition(0.5f, 0.5f) - other->GetPosition(0.5f, 0.5f);
-
-	float sqrLength = (distance.x * distance.x) + (distance.y * distance.y);
-
-	float sqrRadius = 0;
-	/*
-	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
+	AABBCollider* c1 = other->GetCollider();
+	if (c1->xMin < mBoxCollider->xMax && c1->xMax > mBoxCollider->xMin &&
+		c1->yMin < mBoxCollider->yMax && c1->yMax > mBoxCollider->yMin)
 	{
-		float radius1 = pShape->getRadius();
-		if (sf::CircleShape* pOther = dynamic_cast<sf::CircleShape*>(other))
-		{
-			float radius2 = pOther->getRadius();
-			sqrRadius = (radius1 + radius2) * (radius1 + radius2);
-		}
-		else if (sf::RectangleShape* pOther = dynamic_cast<sf::RectangleShape*>(other))
-		{
-			sqrRadius = sqrLength + 10;
-		}
-
-	}*/
-
-	return sqrLength < sqrRadius;
+		return true;
+	}
+	return false;
 }
 
 void Entity::Destroy()

@@ -44,7 +44,6 @@ void Player::OnUpdate()
 {
 	const sf::Vector2f& position = GetPosition();
 
-	std::cout << state << std::endl;
 	float dt = GetDeltaTime();
 	if (mState == IDLE)
 	{
@@ -91,6 +90,7 @@ void Player::Jump()
 	if (mNbrJump >= 2 || mClockDoubleJump.getElapsedTime().asSeconds() < jumpCooldown)
 		return;
 
+	ColliderEntity = nullptr;
 	state = None;
 	sf::Vector2f pPos = GetPosition(0.5f, 0.5f);
 	SetPosition(pPos.x, pPos.y - 1);

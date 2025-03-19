@@ -60,6 +60,8 @@ public:
 	void SetTag(int tag) { mTag = tag; }
 	void PrintCollider(sf::Color color);
 	const int GetTag() { return mTag; }
+	void SetStateCollision(CollisionFace pState) { state = pState; }
+	CollisionFace GetStateCollision() { return state; }
 	
 	//float GetRadius() const;
 	float GetHeight() const;
