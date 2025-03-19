@@ -98,21 +98,23 @@ void SampleScene::OnInitialize()
 	cam->setCenter(camSize.x / 2, 720 - camSize.y / 2);
 	mCamPos = sf::Vector2(camSize.x / 2, 720 - camSize.y / 2);
 	lastCameraPosition = mCamPos;
-
-	mObjectType['G'] = new Grass();
-	mObjectType['D'] = new Dirt();
-	mObjectType['P'] = new Right_edge_grass();
-	mObjectType['C'] = new Left_edge_grass();
-	mObjectType['L'] = new Left_edge_dirt();
-	mObjectType['R'] = new Right_edge_dirt();
-	mObjectType['S'] = new Plateform();
-	mObjectType['T'] = new Plateform_middle();
-	mObjectType['A'] = new Plateform_edge_right();
-	mObjectType['E'] = new Plateform_edge_left();
-	mObjectType['I'] = new Left_dirt_fall(); 
-	mObjectType['J'] = new Right_dirt_fall();
 	
-	mObjectType['r'] = new Rocks();
+	//Assets
+	{
+		mObjectType['G'] = new Grass();
+		mObjectType['D'] = new Dirt();
+		mObjectType['P'] = new Right_edge_grass();
+		mObjectType['C'] = new Left_edge_grass();
+		mObjectType['L'] = new Left_edge_dirt();
+		mObjectType['R'] = new Right_edge_dirt();
+		mObjectType['S'] = new Plateform();
+		mObjectType['T'] = new Plateform_middle();
+		mObjectType['A'] = new Plateform_edge_right();
+		mObjectType['E'] = new Plateform_edge_left();
+		mObjectType['I'] = new Left_dirt_fall();
+		mObjectType['J'] = new Right_dirt_fall();
+
+	}
 
 	std::vector<std::string> pathLevel = Level::GetInstance()->pathLevel;
 
