@@ -12,11 +12,13 @@ class GameManager;
 class MapEditor
 {
 	std::ifstream fichier;
-	std::vector<ObjectEntity*> mObjects;
+	std::vector<ObjectEntity*> mPlateforms;
+	//std::vector<ObjectEntity*> mEnemy;
 
 public:
 	void Load(const char* path);
-	void CreateMap(float pResolution);
+	void CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapObject);
+	
 	std::vector<ObjectEntity*> GetMap();
 };
 

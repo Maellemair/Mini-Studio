@@ -1,0 +1,19 @@
+{
+  "frame_size": {
+    "width": 32,
+    "height": 32
+  },
+  "structure": "single",
+  "animations": {
+    "idle": {
+      "frames": 6,
+      "timeProgress": 0.25,
+      "loop": true
+    },
+    "jump": {
+      "frames": 10,
+      "timeProgress": 0.1,
+      "loop": false
+    }
+  }
+}

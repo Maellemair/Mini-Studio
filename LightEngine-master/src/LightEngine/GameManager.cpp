@@ -42,6 +42,8 @@ void GameManager::CreateWindow(unsigned int width, unsigned int height, const ch
 	mpWindow = new sf::RenderWindow(sf::VideoMode(width, height), title);
 	mpWindow->setFramerateLimit(fpsLimit);
 
+	view = mpWindow->getDefaultView();
+
 	mWindowWidth = width;
 	mWindowHeight = height;
 
@@ -93,6 +95,7 @@ void GameManager::Update()
 {
 	mpScene->OnUpdate();
 
+	mpWindow->setView(view);
     //Update
     for (auto it = mEntities.begin(); it != mEntities.end(); )
     {
@@ -123,7 +126,9 @@ void GameManager::Update()
             if (entity->IsColliding(otherEntity))
             {
 				if (entity->IsRigidBody() && otherEntity->IsRigidBody())
+				{
 					entity->Repulse(otherEntity);
+				}
 
                 entity->OnCollision(otherEntity);
                 otherEntity->OnCollision(entity);
