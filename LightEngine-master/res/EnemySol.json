@@ -1,0 +1,33 @@
+{
+  "frame_size": {
+    "width": 53,
+    "height": 32
+  },
+  "structure": "single",
+  "animations": {
+    "idleNice": {
+      "frames": 6,
+      "timeProgress": 0.2,
+      "loop": true,
+      "row": 0
+    },
+    "idleEvil": {
+      "frames": 6,
+      "timeProgress": 0.2,
+      "loop": true,
+      "row": 1
+    },
+    "kick": {
+      "frames": 5,
+      "timeProgress": 0.02,
+      "loop": false,
+      "row": 2
+    },
+    "hit": {
+      "frames": 4,
+      "timeProgress": 0.05,
+      "loop": false,
+      "row": 3
+    }
+  }
+}

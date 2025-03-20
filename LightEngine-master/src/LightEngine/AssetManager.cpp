@@ -56,7 +56,11 @@ void Texture::Init()
 		std::cout << "Erreur chargement sprite_sheet_bot.png" << std::endl;
 	}
 
-	if (!textObject["animation_Ennemy"].loadFromFile("../../../res/sunshine_plante_sol.png")) {
+	if (!textObject["animation_EnnemySol"].loadFromFile("../../../res/sunshine_plante_sol.png")) {
+		std::cout << "Erreur chargement sprite_sheet_bot.png" << std::endl;
+	}
+
+	if (!textObject["animation_EnnemyVolant"].loadFromFile("../../../res/sunshine_plante_volante.png")) {
 		std::cout << "Erreur chargement sprite_sheet_bot.png" << std::endl;
 	}
 

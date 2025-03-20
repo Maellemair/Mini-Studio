@@ -1,7 +1,7 @@
 #pragma once
 #include "Action.h"
 #include "Player.h"
-
+#include "Sound.h"
 #include <iostream>
 
 class PlayerAction_Idle : public Action<Player>
@@ -36,10 +36,19 @@ public:
 	void OnEnd(Player* pPlayer) override {}
 };
 
+class PlayerAction_Shoot : public Action<Player>
+{
+	sf::Clock animTime;
+public:
+	void OnStart(Player* pPlayer) override;
+	void OnUpdate(Player* pPlayer) override;
+	void OnEnd(Player* pPlayer) override {}
+};
+
 class PlayerAction_Death : public Action<Player>
 {
 public:
-	void OnStart(Player* pPlayer) override { pPlayer->animPlayer->setAnimation("death"); }
+	void OnStart(Player* pPlayer) override { pPlayer->animPlayer->setAnimation("death"); pPlayer->mSoundDeath->Play(); }
 	void OnUpdate(Player* pPlayer) override {}
 	void OnEnd(Player* pPlayer) override {}
 };

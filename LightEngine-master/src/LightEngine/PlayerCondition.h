@@ -23,6 +23,18 @@ public:
 	bool OnTest(Player* owner) override;
 };
 
+class PlayerCondition_isShooting : public Condition<Player>
+{
+public:
+	bool OnTest(Player* owner) override;
+};
+
+class PlayerCondition_haveAmmo : public Condition<Player>
+{
+public:
+	bool OnTest(Player* owner) override;
+};
+
 class PlayerCondition_isFalling : public Condition<Player>
 {
 public:

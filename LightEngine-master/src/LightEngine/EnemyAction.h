@@ -1,38 +1,75 @@
 #pragma once
 #include "Action.h"
-#include "Enemy.h"
+#include "EnemyVolant.h"
+#include "EnemyGround.h"
 
 #include <iostream>
 
-class EnemyAction_Evil : public Action<Enemy>
+class EnemyGroundAction_Evil : public Action<EnemyGround>
 {
 public:
-	void OnStart(Enemy* pEnemy) override { pEnemy->animEnemy->setAnimation("idleEvil"); }
-	void OnUpdate(Enemy* pEnemy) override {}
-	void OnEnd(Enemy* pEnemy) override {}
+	void OnStart(EnemyGround* pEnemy) override { pEnemy->animEnemy->setAnimation("idleEvil"); }
+	void OnUpdate(EnemyGround* pEnemy) override {}
+	void OnEnd(EnemyGround* pEnemy) override {}
 };
 
-class EnemyAction_Kick : public Action<Enemy>
+class EnemyGoundAction_Kick : public Action<EnemyGround>
 {
+	sf::Clock animTime;
 public:
-	void OnStart(Enemy* pEnemy) override { pEnemy->animEnemy->setAnimation("kick"); pEnemy->animKickTime.restart(); }
-	void OnUpdate(Enemy* pEnemy) override {}
-	void OnEnd(Enemy* pEnemy) override {}
+	void OnStart(EnemyGround* pEnemy) override { std::cout << "Test" << std::endl; pEnemy->animEnemy->setAnimation("kick"); animTime.restart(); }
+	void OnUpdate(EnemyGround* pEnemy) override;
+	void OnEnd(EnemyGround* pEnemy) override {}
 };
 
-class EnemyAction_Hit : public Action<Enemy>
+class EnemyGroundAction_Hit : public Action<EnemyGround>
 {
+	sf::Clock animTime;
 public:
-	void OnStart(Enemy* pEnemy) override { pEnemy->animEnemy->setAnimation("hit"); ; pEnemy->animHitTime.restart(); }
-	void OnUpdate(Enemy* pEnemy) override {}
-	void OnEnd(Enemy* pEnemy) override {}
+	void OnStart(EnemyGround* pEnemy) override { pEnemy->animEnemy->setAnimation("hit"); ; animTime.restart(); }
+	void OnUpdate(EnemyGround* pEnemy) override;
+	void OnEnd(EnemyGround* pEnemy) override {}
 };
 
-class EnemyAction_Nice : public Action<Enemy>
+class EnemyGroundAction_Nice : public Action<EnemyGround>
 {
 public:
-	void OnStart(Enemy* pEnemy) override { pEnemy->animEnemy->setAnimation("idleNice"); }
-	void OnUpdate(Enemy* pEnemy) override {}
-	void OnEnd(Enemy* pEnemy) override {}
+	void OnStart(EnemyGround* pEnemy) override { pEnemy->animEnemy->setAnimation("idleNice"); }
+	void OnUpdate(EnemyGround* pEnemy) override {}
+	void OnEnd(EnemyGround* pEnemy) override {}
+};
+
+class EnemyVolantAction_Evil : public Action<EnemyVolant>
+{
+public:
+	void OnStart(EnemyVolant* pEnemy) override { pEnemy->animEnemy->setAnimation("idleEvil"); }
+	void OnUpdate(EnemyVolant* pEnemy) override {}
+	void OnEnd(EnemyVolant* pEnemy) override {}
+};
+
+class EnemyVolantAction_Shoot : public Action<EnemyVolant>
+{
+	sf::Clock animTime;
+public:
+	void OnStart(EnemyVolant* pEnemy) override { std::cout << "Test" << std::endl; pEnemy->animEnemy->setAnimation("kick"); animTime.restart(); }
+	void OnUpdate(EnemyVolant* pEnemy) override;
+	void OnEnd(EnemyVolant* pEnemy) override {}
+};
+
+class EnemyVolantAction_Hit : public Action<EnemyVolant>
+{
+	sf::Clock animTime;
+public:
+	void OnStart(EnemyVolant* pEnemy) override { pEnemy->animEnemy->setAnimation("hit"); ; animTime.restart(); }
+	void OnUpdate(EnemyVolant* pEnemy) override;
+	void OnEnd(EnemyVolant* pEnemy) override {}
+};
+
+class EnemyVolantAction_Nice : public Action<EnemyVolant>
+{
+public:
+	void OnStart(EnemyVolant* pEnemy) override { pEnemy->animEnemy->setAnimation("idleNice"); }
+	void OnUpdate(EnemyVolant* pEnemy) override {}
+	void OnEnd(EnemyVolant* pEnemy) override {}
 };
 

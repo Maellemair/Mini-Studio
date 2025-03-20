@@ -10,30 +10,19 @@ class Texture;
 
 class Enemy : public PhysicalEntity, public Animation
 {
-	enum State
-	{
-		EVIL,
-		KICK,
-		HIT,
-		NICE,
-		Count
-	};
-
-	State mState;
+protected:
 	bool isTakingDamage = false;
-	bool isAttacking = true;
-	sf::Clock animKickTime;
+	bool isAttacking = false;
 	sf::Clock animHitTime;
     Animation* animEnemy;
-    StateMachine<Enemy>* mpStateMachine;
+
 public:
     void OnInitialize() override;
-    void OnCollision(Entity* collidedWith) override;
-	const char* GetStateName(State state) const;
+	void OnCollision(Entity* collidedWith) override { }
 	void Hit();
-	void Kick();
+	void Kick(float pDirection);
 	bool GetIsTakingDamage() { return isTakingDamage; }
-	bool GetIsAttacking() { return isTakingDamage; }
+	bool GetIsAttacking() { return isAttacking; }
     const AABBCollider* GetCollider() { return mBoxCollider; }
 	void OnUpdate() override;
 

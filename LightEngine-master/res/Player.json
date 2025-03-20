@@ -4,42 +4,48 @@
   "height": 32
 },
 "structure": "single",
-    "animations": {
-        "idle": {
-            "frames": 6,
-            "timeProgress": 0.2,
-            "loop": true,
-            "row": 0
-        },
-        "jump": {
-            "frames": 5,
-            "timeProgress": 0.1,
-            "loop": false,
-            "row": 1
-        },
-        "fall": {
-            "frames": 5,
-            "timeProgress": 0.1,
-            "loop": false,
-            "row": 2
-        },
-        "walk": {
-            "frames": 1,
-            "timeProgress": 5,
-            "loop": true,
-            "row": 0
-        },
-        "hit": {
-            "frames": 4,
-            "timeProgress": 0.05,
-            "loop": false,
-            "row": 4
-        },
-        "death": {
-            "frames": 6,
-            "timeProgress": 0.1,
-            "loop": false,
-            "row": 5
-        }
-}
+  "animations": {
+    "idle": {
+      "frames": 6,
+      "timeProgress": 0.2,
+      "loop": true,
+      "row": 0
+    },
+    "jump": {
+      "frames": 5,
+      "timeProgress": 0.1,
+      "loop": false,
+      "row": 1
+    },
+    "fall": {
+      "frames": 5,
+      "timeProgress": 0.1,
+      "loop": false,
+      "row": 2
+    },
+    "walk": {
+      "frames": 1,
+      "timeProgress": 5,
+      "loop": true,
+      "row": 0
+    },
+    "shoot": {
+      "frames": 6,
+      "timeProgress": 0.07,
+      "loop": false,
+      "row": 3
+    },
+    "hit": {
+      "frames": 4,
+      "timeProgress": 0.05,
+      "loop": false,
+      "row": 4
+    },
+    "death": {
+      "frames": 6,
+      "timeProgress": 0.1,
+      "loop": false,
+      "row": 5
+    }
+  }
 }

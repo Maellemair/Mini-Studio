@@ -54,3 +54,17 @@ bool PlayerCondition_takeDamage::OnTest(Player* owner)
     }
     return false;
 }
+
+bool PlayerCondition_isShooting::OnTest(Player* owner)
+{
+    if (owner->GetIsShooting() == true)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool PlayerCondition_haveAmmo::OnTest(Player* owner)
+{
+    return false;
+}

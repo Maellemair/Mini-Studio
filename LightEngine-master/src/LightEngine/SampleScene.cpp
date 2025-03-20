@@ -136,7 +136,7 @@ void SampleScene::OnInitialize()
     mBonus = map->GetBonus();
 
 	mMusic = new Music();
-	mMusic->Load("../../../res/f1_intro.ogg", 1);
+	mMusic->Load("../../../res/platformer_music.wav", 10);
 	mMusic->Play();
 }
 
@@ -145,7 +145,6 @@ void SampleScene::OnEvent(const sf::Event& event)
     //Controller inputs
     if (sf::Joystick::isConnected(0))
     {
-        pEntity1->shootCooldown += GetDeltaTime();
         float vitesse = 250;
         float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
 
@@ -157,6 +156,35 @@ void SampleScene::OnEvent(const sf::Event& event)
         //Boutton X
         if (sf::Joystick::isButtonPressed(0, 1)) {
             pEntity1->Jump();
+        }
+
+        //Bouton Carré
+        if (sf::Joystick::isButtonPressed(0, 0))
+        {
+            if (!pEntity1->GetIsShooting())
+            {
+                Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+                sf::Vector2f pPos = sf::Vector2f(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+                sf::Vector2f colliderX = sf::Vector2f(pEntity1->GetCollider()->xMin, pEntity1->GetCollider()->xMax);
+
+                if (pEntity1->getLastDirection() == 1)
+                {
+                    newBullet->SetPosition(colliderX.y, pPos.y);
+                    newBullet->SetCollider(colliderX.y, pPos.y, 8, 16);
+                    newBullet->SetDirection(1, 0, 500);
+                }
+                else if (pEntity1->getLastDirection() == -1)
+                {
+                    newBullet->SetPosition(colliderX.x, pPos.y);
+                    newBullet->SetCollider(colliderX.x, pPos.y, 8, 16);
+                    newBullet->SetDirection(-1, 0, 500);
+                }
+                newBullet->SetRigidBody(true);
+                newBullet->Update();
+
+                bulletsList.push_back(newBullet);
+                pEntity1->Shoot();
+            }
         }
         //Joystick a Droite
         if (x > 10.f)
@@ -195,21 +223,30 @@ void SampleScene::OnEvent(const sf::Event& event)
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-        Bullets* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-        bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-        bullet->SetCollider(pEntity1->GetPosition().x, pEntity1->GetPosition().y, 16, 8);
-        bullet->SetRigidBody(true);
-        bulletsList.push_back(bullet);
+        
+        if (!pEntity1->GetIsShooting())
+        {
+            Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+            sf::Vector2f pPos = sf::Vector2f(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+            sf::Vector2f colliderX = sf::Vector2f(pEntity1->GetCollider()->xMin, pEntity1->GetCollider()->xMax);
 
-        // Shoot right
-        if (pEntity1->getLastDirection() == 1)
-        {
-            bullet->SetDirection(1, 0, 500);
-        }
-        // Shoot left
-        else if (pEntity1->getLastDirection() == -1)
-        {
-            bullet->SetDirection(-1, 0, 500);
+            if (pEntity1->getLastDirection() == 1)
+            {
+                newBullet->SetPosition(colliderX.y, pPos.y);
+                newBullet->SetCollider(colliderX.y, pPos.y, 8, 16);
+                newBullet->SetDirection(1, 0, 500);
+            }
+            else if (pEntity1->getLastDirection() == -1)
+            {
+                newBullet->SetPosition(colliderX.x, pPos.y);
+                newBullet->SetCollider(colliderX.x, pPos.y, 8, 16);
+                newBullet->SetDirection(-1, 0, 500);
+            }
+            newBullet->SetRigidBody(true);
+            newBullet->Update();
+
+            bulletsList.push_back(newBullet);
+            pEntity1->Shoot();
         }
     }
 
@@ -252,19 +289,16 @@ void SampleScene::OnUpdate()
 	cam->setCenter(newCamX, newCamY);
 	mCamPos = sf::Vector2f(newCamX, newCamY);
 
-    std::string life = "Life : " + std::to_string(pEntity1->mLife);
-    Debug::DrawText(newCamX - camSize.x / 2 + 10, newCamY - camSize.y / 2 + 20, life, sf::Color::Black);
+    // À CHANGER !!!
+    /*std::string life = "Life : " + std::to_string(pEntity1->mLife);
+    Debug::DrawText(newCamX - camSize.x / 2 + 10, newCamY - camSize.y / 2 + 20, life, sf::Color::Black);*/
 
 	float deltaX = mCamPos.x - lastCameraPosition.x;
 	for (int i = 0; i < mBackgrounds.size(); i++)
 	{
 		mBackgrounds[i]->OnUpdate(deltaX);
 	}
-	lastCameraPosition = mCamPos;
-
-    bool bulletDestroyed = false;
-    bool enemyDestroyed = false;
-    bool bonusDestroyed = false;
+    lastCameraPosition = mCamPos;
 
 	for (int i = 0; i < mPlateforms.size(); i++)
 	{
@@ -305,9 +339,11 @@ void SampleScene::OnUpdate()
         {
             if (pEntity1->invicibilityTime > 1.5f)
             {
-                if (pEntity1->mLife > 0)
+                if (!pEntity1->IsDead())
                 {
                     pEntity1->TakeHit(mEnemys[i]->GetPosition().x);
+                    float direction = (pEntity1->GetPosition().x - mEnemys[i]->GetPosition().x) / abs(pEntity1->GetPosition().x - mEnemys[i]->GetPosition().x);
+                    mEnemys[i]->Kick(direction);
                 }
             }
         }
@@ -317,7 +353,7 @@ void SampleScene::OnUpdate()
         }
         for(int j = 0; j < bulletsList.size(); j++)
         {
-            bulletsList[j]->PrintCollider(sf::Color::Magenta);
+            /*bulletsList[j]->PrintCollider(sf::Color::Magenta);*/
             
             if (bulletsList[j]->IsColliding(mEnemys[i]))
             {
@@ -366,32 +402,6 @@ void SampleScene::OnUpdate()
         else
         {
             pEntity1->dashTimer = 0;
-        }
-
-        // Shoot bullets
-        pEntity1->shootCooldown += GetDeltaTime();
-        if (sf::Joystick::isButtonPressed(0, 0))
-        {
-            if (pEntity1->shootCooldown >= 0.2f)
-            {
-                Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-                newBullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-                newBullet->SetCollider(pEntity1->GetPosition().x, pEntity1->GetPosition().y, 8, 16);
-                newBullet->SetRigidBody(true);
-                newBullet->Update();
-
-                bulletsList.push_back(newBullet);
-
-                if (pEntity1->getLastDirection() == 1)
-                {
-                    newBullet->SetDirection(1, 0, 500);
-                }
-                else if (pEntity1->getLastDirection() == -1)
-                {
-                    newBullet->SetDirection(-1, 0, 500);
-                }
-                pEntity1->shootCooldown = 0;
-            }
         }
     }
 }

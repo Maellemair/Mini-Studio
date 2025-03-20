@@ -31,198 +31,250 @@ void Player::OnInitialize()
 	
 	mpStateMachine = new StateMachine<Player>(this, State::Count);
 
-	//IDLE
+	//State
 	{
-		Action<Player>* pIdle = mpStateMachine->CreateAction<PlayerAction_Idle>(State::IDLE);
-
-		//-> WALKING
+		//IDLE
 		{
-			auto transition = pIdle->CreateTransition(State::WALK);
+			Action<Player>* pIdle = mpStateMachine->CreateAction<PlayerAction_Idle>(State::IDLE);
 
-			auto condition = transition->AddCondition<PlayerCondition_IsMoving>(true);
-			transition->AddCondition<PlayerCondition_isGround>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
+			//-> WALKING
+			{
+				auto transition = pIdle->CreateTransition(State::WALK);
+
+				transition->AddCondition<PlayerCondition_IsMoving>(true);
+				transition->AddCondition<PlayerCondition_isGround>(true);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
+
+			//-> Shoot
+			{
+				auto transition = pIdle->CreateTransition(State::SHOOT);
+
+				transition->AddCondition<PlayerCondition_isShooting>(true);
+			}
+
+			//-> JUMP
+			{
+				auto transition = pIdle->CreateTransition(State::JUMP);
+
+				transition->AddCondition<PlayerCondition_isGround>(false);
+				transition->AddCondition<PlayerCondition_isJumping>(true);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
+
+			//-> HIT
+			{
+				auto transition = pIdle->CreateTransition(State::HIT);
+
+				transition->AddCondition<PlayerCondition_takeDamage>(true);
+			}
+
+			//-> DEATH
+			{
+				auto transition = pIdle->CreateTransition(State::DEATH);
+
+				transition->AddCondition<PlayerCondition_isDead>(true);
+			}
 		}
 
-		//-> JUMP
+		//FALL
 		{
-			auto transition = pIdle->CreateTransition(State::JUMP);
+			Action<Player>* pFalling = mpStateMachine->CreateAction<PlayerAction_Fall>(State::FALL);
 
-			transition->AddCondition<PlayerCondition_isGround>(false);
-			transition->AddCondition<PlayerCondition_isJumping>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
+			//-> IDLE
+			{
+				auto transition = pFalling->CreateTransition(State::IDLE);
+
+				transition->AddCondition<PlayerCondition_isShooting>(false);
+			}
+
+			//-> Shoot
+			{
+				auto transition = pFalling->CreateTransition(State::SHOOT);
+
+				transition->AddCondition<PlayerCondition_isShooting>(true);
+			}
+
+			//-> JUMP
+			{
+				auto transition = pFalling->CreateTransition(State::JUMP);
+
+				transition->AddCondition<PlayerCondition_isJumping>(true);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
+
+			//-> HIT
+			{
+				auto transition = pFalling->CreateTransition(State::HIT);
+
+				transition->AddCondition<PlayerCondition_takeDamage>(true);
+			}
+
+			//-> DEATH
+			{
+				auto transition = pFalling->CreateTransition(State::DEATH);
+
+				transition->AddCondition<PlayerCondition_isDead>(true);
+			}
 		}
 
-		//-> HIT
+		//Shoot
 		{
-			auto transition = pIdle->CreateTransition(State::HIT);
+			Action<Player>* pShooting = mpStateMachine->CreateAction<PlayerAction_Shoot>(State::SHOOT);
 
-			transition->AddCondition<PlayerCondition_takeDamage>(true);
+			//-> IDLE
+			{
+				auto transition = pShooting->CreateTransition(State::IDLE);
+
+				transition->AddCondition<PlayerCondition_isGround>(true);
+				transition->AddCondition<PlayerCondition_isShooting>(false);
+			}
 		}
 
-		//-> DEATH
+		//WALK
 		{
-			auto transition = pIdle->CreateTransition(State::DEATH);
+			Action<Player>* pWalking = mpStateMachine->CreateAction<PlayerAction_Walk>(State::WALK);
 
-			transition->AddCondition<PlayerCondition_isDead>(true);
-		}
-	}
+			//-> IDLE
+			{
+				auto transition = pWalking->CreateTransition(State::IDLE);
 
-	//FALL
-	{
-		Action<Player>* pFalling = mpStateMachine->CreateAction<PlayerAction_Fall>(State::FALL);
+				transition->AddCondition<PlayerCondition_IsMoving>(false);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
 
-		//-> IDLE
-		{
-			auto transition = pFalling->CreateTransition(State::IDLE);
+			//-> Shoot
+			{
+				auto transition = pWalking->CreateTransition(State::SHOOT);
 
-			transition->AddCondition<PlayerCondition_isGround>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
-		}
+				transition->AddCondition<PlayerCondition_isShooting>(true);
+			}
 
-		//-> JUMP
-		{
-			auto transition = pFalling->CreateTransition(State::JUMP);
+			//-> JUMP
+			{
+				auto transition = pWalking->CreateTransition(State::JUMP);
 
-			transition->AddCondition<PlayerCondition_isJumping>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
-		}
+				transition->AddCondition<PlayerCondition_isGround>(false);
+				transition->AddCondition<PlayerCondition_isJumping>(true);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
 
-		//-> HIT
-		{
-			auto transition = pFalling->CreateTransition(State::HIT);
+			//-> FALL
+			{
+				auto transition = pWalking->CreateTransition(State::FALL);
 
-			transition->AddCondition<PlayerCondition_takeDamage>(true);
-		}
+				transition->AddCondition<PlayerCondition_isGround>(false);
+				transition->AddCondition<PlayerCondition_isFalling>(true);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
 
-		//-> DEATH
-		{
-			auto transition = pFalling->CreateTransition(State::DEATH);
+			//-> HIT
+			{
+				auto transition = pWalking->CreateTransition(State::HIT);
 
-			transition->AddCondition<PlayerCondition_isDead>(true);
-		}
-	}
+				transition->AddCondition<PlayerCondition_takeDamage>(true);
+			}
 
-	//WALK
-	{
-		Action<Player>* pWalking = mpStateMachine->CreateAction<PlayerAction_Walk>(State::WALK);
+			//-> DEATH
+			{
+				auto transition = pWalking->CreateTransition(State::DEATH);
 
-		//-> IDLE
-		{
-			auto transition = pWalking->CreateTransition(State::IDLE);
-
-			transition->AddCondition<PlayerCondition_IsMoving>(false);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
+				transition->AddCondition<PlayerCondition_isDead>(true);
+			}
 		}
 
-		//-> JUMP
+		//JUMP
 		{
-			auto transition = pWalking->CreateTransition(State::JUMP);
+			Action<Player>* pJumping = mpStateMachine->CreateAction<PlayerAction_Jump>(State::JUMP);
 
-			transition->AddCondition<PlayerCondition_isGround>(false);
-			transition->AddCondition<PlayerCondition_isJumping>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
+			//-> FALL
+			{
+				auto transition = pJumping->CreateTransition(State::FALL);
+
+				transition->AddCondition<PlayerCondition_isFalling>(true);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
+
+			//-> Shoot
+			{
+				auto transition = pJumping->CreateTransition(State::SHOOT);
+
+				transition->AddCondition<PlayerCondition_isShooting>(true);
+			}
+
+			//-> IDLE
+			{
+				auto transition = pJumping->CreateTransition(State::IDLE);
+
+				transition->AddCondition<PlayerCondition_isFalling>(false);
+				transition->AddCondition<PlayerCondition_isGround>(true);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
+
+			//-> HIT
+			{
+				auto transition = pJumping->CreateTransition(State::HIT);
+
+				transition->AddCondition<PlayerCondition_takeDamage>(true);
+			}
+
+			//-> DEATH
+			{
+				auto transition = pJumping->CreateTransition(State::DEATH);
+
+				transition->AddCondition<PlayerCondition_isDead>(true);
+			}
 		}
 
-		//-> FALL
+		//Death
 		{
-			auto transition = pWalking->CreateTransition(State::FALL);
-
-			transition->AddCondition<PlayerCondition_isGround>(false);
-			transition->AddCondition<PlayerCondition_isFalling>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
+			Action<Player>* pDeath = mpStateMachine->CreateAction<PlayerAction_Death>(State::DEATH);
 		}
 
-		//-> HIT
+		//Hit
 		{
-			auto transition = pWalking->CreateTransition(State::HIT);
+			Action<Player>* pHit = mpStateMachine->CreateAction<PlayerAction_Hit>(State::HIT);
 
-			transition->AddCondition<PlayerCondition_takeDamage>(true);
-		}
+			//-> Death
+			{
+				auto transition = pHit->CreateTransition(State::DEATH);
 
-		//-> DEATH
-		{
-			auto transition = pWalking->CreateTransition(State::DEATH);
+				transition->AddCondition<PlayerCondition_isDead>(true);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
 
-			transition->AddCondition<PlayerCondition_isDead>(true);
-		}
-	}
+			//-> Idle
+			{
+				auto transition = pHit->CreateTransition(State::IDLE);
 
-	//JUMP
-	{
-		Action<Player>* pJumping = mpStateMachine->CreateAction<PlayerAction_Jump>(State::JUMP); 
+				transition->AddCondition<PlayerCondition_isGround>(true);
+				transition->AddCondition<PlayerCondition_isFalling>(false);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
 
-		//-> FALL
-		{
-			auto transition = pJumping->CreateTransition(State::FALL);
+			//-> Fall
+			{
+				auto transition = pHit->CreateTransition(State::FALL);
 
-			transition->AddCondition<PlayerCondition_isFalling>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
-		}
-		
-		//-> IDLE
-		{
-			auto transition = pJumping->CreateTransition(State::IDLE);
-
-			transition->AddCondition<PlayerCondition_isFalling>(false);
-			transition->AddCondition<PlayerCondition_isGround>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
-		}
-
-		//-> HIT
-		{
-			auto transition = pJumping->CreateTransition(State::HIT);
-
-			transition->AddCondition<PlayerCondition_takeDamage>(true);
-		}
-
-		//-> DEATH
-		{
-			auto transition = pJumping->CreateTransition(State::DEATH);
-
-			transition->AddCondition<PlayerCondition_isDead>(true);
-		}
-	}
-
-	//Death
-	{
-		Action<Player>* pDeath = mpStateMachine->CreateAction<PlayerAction_Death>(State::DEATH);
-	}
-
-	//Hit
-	{
-		Action<Player>* pHit = mpStateMachine->CreateAction<PlayerAction_Hit>(State::HIT);
-
-		//-> Death
-		{
-			auto transition = pHit->CreateTransition(State::DEATH);
-
-			transition->AddCondition<PlayerCondition_isDead>(true);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
-		}
-
-		//-> Idle
-		{
-			auto transition = pHit->CreateTransition(State::IDLE);
-
-			transition->AddCondition<PlayerCondition_isGround>(true);
-			transition->AddCondition<PlayerCondition_isFalling>(false);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
-		}
-
-		//-> Fall
-		{
-			auto transition = pHit->CreateTransition(State::FALL);
-
-			transition->AddCondition<PlayerCondition_isFalling>(true);
-			transition->AddCondition<PlayerCondition_isGround>(false);
-			transition->AddCondition<PlayerCondition_takeDamage>(false);
+				transition->AddCondition<PlayerCondition_isFalling>(true);
+				transition->AddCondition<PlayerCondition_isGround>(false);
+				transition->AddCondition<PlayerCondition_takeDamage>(false);
+			}
 		}
 	}
 
 	mpStateMachine->SetState(State::JUMP);
 	mState = (Player::State)mpStateMachine->GetCurrentState();
-	mSound = new Sound();	
+
+	mSoundJump = new Sound();	
+	mSoundShoot = new Sound();
+	mSoundDeath = new Sound();
+	mSoundHit = new Sound(); 
+
+	mSoundJump->Load("../../../res/jumping_sound.wav");
+	mSoundShoot->Load("../../../res/shooting_sound.wav");
+	mSoundDeath->Load("../../../res/death_sound.wav");
+	mSoundHit->Load("../../../res/damaged_sound.wav");
 }
 
 void Player::OnUpdate()
@@ -242,6 +294,7 @@ void Player::OnUpdate()
 	float dt = GetDeltaTime();
 
 	/*Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);*/
+
 	animPlayer->update(dt);
 	mpStateMachine->Update();
 	PhysicalEntity::OnUpdate();
@@ -262,6 +315,7 @@ const char* Player::GetStateName(State state) const
 	case JUMP: return "Jump";
 	case DEATH: return "Death";
 	case HIT: return "Hit";
+	case SHOOT: return "Shoot";
 	default: return "Unknown";
 	}
 }
@@ -305,16 +359,20 @@ void Player::Jump()
 	mNbrJump++;
 	mClockDoubleJump.restart();
 
-	mSound->Load("../../../res/jump_sound.wav");
-	mSound->Play();
+	mSoundJump->Play();
+}
+
+void Player::Shoot()
+{
+	isShooting = true;
 }
 
 void Player::TakeHit(float posX)
 {
-	animHitTime.restart();
 	mLife--;
 	isTakingDamage = true;
 	invicibilityTime = 0.0f;
+	mSoundHit->Play();
 
 	sf::Vector2f repulsionForce;
 	if (GetPosition().x < posX)
