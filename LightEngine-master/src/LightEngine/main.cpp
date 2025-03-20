@@ -15,7 +15,13 @@ int main()
 
 	pInstance->CreateWindow(1280, 720, "PlatformerScene", 60, sf::Color::Black);
 	
-	pInstance->LaunchScene<SampleScene>();
+
+
+	if (sf::Joystick::isButtonPressed(0, 6))
+	{
+		pInstance->LaunchScene<SampleScene>();
+	}
+	
 
 	return 0;
 }

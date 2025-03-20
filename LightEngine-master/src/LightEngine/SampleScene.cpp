@@ -174,12 +174,10 @@ void SampleScene::OnEvent(const sf::Event& event)
             pEntity1->Move(-1);
             pEntity1->setLastDirection(-1);
         }
-        // Rien
         else
         {
             pEntity1->Move(0);
         }
-
     }
 
     // Keyboard inputs
@@ -193,24 +191,7 @@ void SampleScene::OnEvent(const sf::Event& event)
     }
     else
     {
-        pEntity1->Move(0);
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-        Entity* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-        bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-        bullet->SetRigidBody(true);
-
-        // Shoot right
-        if (pEntity1->getLastDirection() == 1)
-        {
-            bullet->SetDirection(1, 0, 500);
-        }
-        // Shoot left
-        else if (pEntity1->getLastDirection() == -1)
-        {
-            bullet->SetDirection(-1, 0, 500);
-        }
+       // pEntity1->Move(0);
     }
 
     // Jump
@@ -413,7 +394,7 @@ void SampleScene::OnUpdate()
 
         // Shoot bullets
         pEntity1->shootCooldown += GetDeltaTime();
-        if (sf::Joystick::isButtonPressed(0, 0))
+        if (sf::Joystick::isButtonPressed(0, 0) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
         {
             if (pEntity1->shootCooldown >= 0.2f)
             {
