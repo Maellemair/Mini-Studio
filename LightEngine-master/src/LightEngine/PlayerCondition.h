@@ -3,6 +3,8 @@
 #include "Condition.h"
 #include "Player.h"
 
+class Enemy;
+
 class PlayerCondition_IsMoving : public Condition<Player>
 {
 public:
@@ -22,6 +24,24 @@ public:
 };
 
 class PlayerCondition_isFalling : public Condition<Player>
+{
+public:
+	bool OnTest(Player* owner) override;
+};
+
+class PlayerCondition_isDead : public Condition<Player>
+{
+public:
+	bool OnTest(Player* owner) override;
+};
+
+class PlayerCondition_takeDamage : public Condition<Player>
+{
+public:
+	bool OnTest(Player* owner) override;
+};
+
+class PlayerCondition_animHitFinish : public Condition<Player>
 {
 public:
 	bool OnTest(Player* owner) override;

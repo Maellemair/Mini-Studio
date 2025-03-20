@@ -191,6 +191,10 @@ void SampleScene::OnEvent(const sf::Event& event)
         pEntity1->Move(1);
         pEntity1->setLastDirection(1);
     }
+    else
+    {
+        pEntity1->Move(0);
+    }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
         Entity* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
@@ -214,6 +218,11 @@ void SampleScene::OnEvent(const sf::Event& event)
         pEntity1->Jump();
     }
 
+    // Jump
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::L)) {
+        pEntity1->TakeHit();
+    }
+
     // Reset Position
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
         pEntity1->Reset();
@@ -226,6 +235,9 @@ void SampleScene::OnEvent(const sf::Event& event)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)) {
 		mMusic->PausePlay();
 	}
+
+    if (event.type != sf::Event::EventType::MouseButtonPressed)
+        return;
 }
 
 void SampleScene::OnUpdate()
@@ -273,7 +285,10 @@ void SampleScene::OnUpdate()
 
         if (pEnemy != nullptr && !enemyDestroyed)
         {
-            pEnemy->IsColliding(mPlateforms[i]);
+            if (mPlateforms[i]->IsColliding(pEnemy))
+            {
+                pEnemy->Repulse(mPlateforms[i]);
+            }
         }
          
         for (auto it = bulletsList.begin(); it != bulletsList.end();)
@@ -288,8 +303,8 @@ void SampleScene::OnUpdate()
                 ++it;
             }
         }
-		mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);
+		/*mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);*/
 	}
 
     if (pEnemy != nullptr && !enemyDestroyed)
@@ -306,14 +321,14 @@ void SampleScene::OnUpdate()
                     sf::Vector2f repulsionForce;
                     if (pEntity1->GetPosition().x < pEnemy->GetPosition().x)
                     {
-                        repulsionForce = sf::Vector2f(-75.f, 0.f);
+                        repulsionForce = sf::Vector2f(-1.f, -1.f);
                     }
                     else
                     {
-                        repulsionForce = sf::Vector2f(75.f, 0.f);
+                        repulsionForce = sf::Vector2f(1, -1.f);
                     }
-                    pEntity1->SetDirection(repulsionForce.x, repulsionForce.y, 300.f);
-                    pEntity1->repulsionTimer = 1.0f;
+                    pEntity1->SetDirection(repulsionForce.x, repulsionForce.y, 500.f);
+                    pEntity1->repulsionTimer = 0.2f;
                 }
                 else
                 {
@@ -333,7 +348,7 @@ void SampleScene::OnUpdate()
         pEntity1->repulsionTimer -= GetDeltaTime();
         if (pEntity1->repulsionTimer <= 0.0f)
         {
-            pEntity1->SetDirection(0.f, 0.f, 0.f);
+            pEntity1->Move(0);
         }
     }
 

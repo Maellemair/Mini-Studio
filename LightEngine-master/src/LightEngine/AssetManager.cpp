@@ -67,4 +67,16 @@ void Texture::Init()
 	if (!textObject["Tree"].loadFromFile("../../../res/sunshine_tree.png")) {
 		std::cout << "Erreur chargement sunshine_tre.png" << std::endl;
 	}
+
+	if (!textObject["item"].loadFromFile("../../../res/sunshine_item.png")) {
+		std::cout << "Erreur chargement sunshine_tre.png" << std::endl;
+	}
+
+	if (!textObject["hud/eau"].loadFromFile("../../../res/sunshine_9x9.png")) {
+		std::cout << "Erreur chargement sunshine_tre.png" << std::endl;
+	}
+
+	if (!textObject["uiReservoir"].loadFromFile("../../../res/sunshine_ui_reservoir_deau.png")) {
+		std::cout << "Erreur chargement sunshine_tre.png" << std::endl;
+	}
 }

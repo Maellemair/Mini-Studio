@@ -30,19 +30,20 @@ void Animation::loadAnimations(sf::Texture pText, const std::string& jsonFile, s
     }
 }
 
-void Animation::setAnimation(const std::string& animName) {
-    
+void Animation::setAnimation(const std::string& animName) 
+{
     if (animations.find(animName) != animations.end()) 
     {
         currentAnimation = animName;
         currentFrame = 0;
         elapsedTime = 0;
+        nbrLoop = 0;
     }
 }
 
 void Animation::update(float deltaTime)
 {
-    if (currentAnimation.empty())
+    if (currentAnimation.empty() || (!animations[currentAnimation].loop && nbrLoop != 0))
         return;
 
     AnimationData& anim = animations[currentAnimation];
@@ -68,4 +69,9 @@ void Animation::update(float deltaTime)
         animShape->setOrigin(frameSize.x * 2, 0);
     }
     animShape->setTextureRect(sf::IntRect(frameX, frameY, frameSize.x, frameSize.y));
+
+    if (currentFrame >= animations[currentAnimation].frames - 1)
+    {
+        nbrLoop++;
+    }
 }

@@ -22,6 +22,7 @@ class Animation
     std::string currentAnimation;
     int currentFrame = 0;
     float elapsedTime = 0;
+    int nbrLoop = 0;
     bool isFacingRight = true;
 
 public:

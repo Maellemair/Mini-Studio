@@ -40,6 +40,7 @@ void Player::OnInitialize()
 
 			auto condition = transition->AddCondition<PlayerCondition_IsMoving>(true);
 			transition->AddCondition<PlayerCondition_isGround>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
 		}
 
 		//-> JUMP
@@ -48,6 +49,21 @@ void Player::OnInitialize()
 
 			transition->AddCondition<PlayerCondition_isGround>(false);
 			transition->AddCondition<PlayerCondition_isJumping>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
+		}
+
+		//-> HIT
+		{
+			auto transition = pIdle->CreateTransition(State::HIT);
+
+			transition->AddCondition<PlayerCondition_takeDamage>(true);
+		}
+
+		//-> DEATH
+		{
+			auto transition = pIdle->CreateTransition(State::DEATH);
+
+			transition->AddCondition<PlayerCondition_isDead>(true);
 		}
 	}
 
@@ -60,6 +76,7 @@ void Player::OnInitialize()
 			auto transition = pFalling->CreateTransition(State::IDLE);
 
 			transition->AddCondition<PlayerCondition_isGround>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
 		}
 
 		//-> JUMP
@@ -67,6 +84,21 @@ void Player::OnInitialize()
 			auto transition = pFalling->CreateTransition(State::JUMP);
 
 			transition->AddCondition<PlayerCondition_isJumping>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
+		}
+
+		//-> HIT
+		{
+			auto transition = pFalling->CreateTransition(State::HIT);
+
+			transition->AddCondition<PlayerCondition_takeDamage>(true);
+		}
+
+		//-> DEATH
+		{
+			auto transition = pFalling->CreateTransition(State::DEATH);
+
+			transition->AddCondition<PlayerCondition_isDead>(true);
 		}
 	}
 
@@ -79,6 +111,7 @@ void Player::OnInitialize()
 			auto transition = pWalking->CreateTransition(State::IDLE);
 
 			transition->AddCondition<PlayerCondition_IsMoving>(false);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
 		}
 
 		//-> JUMP
@@ -87,6 +120,7 @@ void Player::OnInitialize()
 
 			transition->AddCondition<PlayerCondition_isGround>(false);
 			transition->AddCondition<PlayerCondition_isJumping>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
 		}
 
 		//-> FALL
@@ -95,6 +129,21 @@ void Player::OnInitialize()
 
 			transition->AddCondition<PlayerCondition_isGround>(false);
 			transition->AddCondition<PlayerCondition_isFalling>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
+		}
+
+		//-> HIT
+		{
+			auto transition = pWalking->CreateTransition(State::HIT);
+
+			transition->AddCondition<PlayerCondition_takeDamage>(true);
+		}
+
+		//-> DEATH
+		{
+			auto transition = pWalking->CreateTransition(State::DEATH);
+
+			transition->AddCondition<PlayerCondition_isDead>(true);
 		}
 	}
 
@@ -107,11 +156,62 @@ void Player::OnInitialize()
 			auto transition = pJumping->CreateTransition(State::FALL);
 
 			transition->AddCondition<PlayerCondition_isFalling>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
+		}
+
+		//-> HIT
+		{
+			auto transition = pJumping->CreateTransition(State::HIT);
+
+			transition->AddCondition<PlayerCondition_takeDamage>(true);
+		}
+
+		//-> DEATH
+		{
+			auto transition = pJumping->CreateTransition(State::DEATH);
+
+			transition->AddCondition<PlayerCondition_isDead>(true);
 		}
 	}
 
-	mpStateMachine->SetState(State::FALL);
+	//Death
+	{
+		Action<Player>* pDeath = mpStateMachine->CreateAction<PlayerAction_Death>(State::DEATH);
+	}
 
+	//Hit
+	{
+		Action<Player>* pHit = mpStateMachine->CreateAction<PlayerAction_Hit>(State::HIT);
+
+		//-> Death
+		{
+			auto transition = pHit->CreateTransition(State::DEATH);
+
+			transition->AddCondition<PlayerCondition_isDead>(true);
+			transition->AddCondition<PlayerCondition_animHitFinish>(true);
+		}
+
+		//-> Idle
+		{
+			auto transition = pHit->CreateTransition(State::IDLE);
+
+			transition->AddCondition<PlayerCondition_isGround>(true);
+			transition->AddCondition<PlayerCondition_isFalling>(false);
+			transition->AddCondition<PlayerCondition_animHitFinish>(true);
+		}
+
+		//-> Fall
+		{
+			auto transition = pHit->CreateTransition(State::FALL);
+
+			transition->AddCondition<PlayerCondition_isFalling>(true);
+			transition->AddCondition<PlayerCondition_isGround>(false);
+			transition->AddCondition<PlayerCondition_animHitFinish>(true);
+		}
+	}
+
+	mpStateMachine->SetState(State::JUMP);
+	mState = (Player::State)mpStateMachine->GetCurrentState();
 	mSound = new Sound();	
 }
 
@@ -141,6 +241,8 @@ const char* Player::GetStateName(State state) const
 	case FALL: return "Fall";
 	case WALK: return "Walk";
 	case JUMP: return "Jump";
+	case DEATH: return "Death";
+	case HIT: return "Hit";
 	default: return "Unknown";
 	}
 }
@@ -164,6 +266,8 @@ void Player::Reset()
 		GameManager::Get()->GetScene()->GetWindowHeight());
 	SetPosition(pPosCenter.x / 2, pPosCenter.y / 4);
 	SetCollider(pPosCenter.x / 2, pPosCenter.y / 4, mBoxCollider->ySize, mBoxCollider->xSize);
+	mLife = 3;
+	mpStateMachine->SetState(IDLE);
 	mGravitySpeed = 0;
 }
 
@@ -188,7 +292,9 @@ void Player::Jump()
 
 void Player::TakeHit()
 {
+	animHitTime.restart();
 	mLife--;
+	isTakingDamage = true;
 	if (mLife <= 0)
 	{
 		//GameOver
