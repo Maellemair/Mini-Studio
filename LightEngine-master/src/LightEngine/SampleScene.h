@@ -54,9 +54,14 @@ private:
 	sf::Vector2f mCamPos;
 	sf::Vector2f lastCameraPosition;
 	std::map<char, ObjectEntity*> mObjectType;
+	bool isMenuActive = true;
+
+	sf::Texture menuTexture;
+	sf::Sprite menuSprite;
 
 public:
 	void OnInitialize() override;
+	void DisplayMenu();
 	void OnEvent(const sf::Event& event) override;
 	void OnUpdate() override;
 };
