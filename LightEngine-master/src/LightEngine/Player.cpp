@@ -98,6 +98,6 @@ void Player::Jump()
 	mNbrJump++;
 	mClockDoubleJump.restart();
 
-	mSound->Load("../../../res/jump_sound.wav");
+	mSound->Load("../../../res/jumping_sound.wav");
 	mSound->Play();
 }
