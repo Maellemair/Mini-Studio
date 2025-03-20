@@ -129,24 +129,19 @@ void SampleScene::OnInitialize()
 	map = new MapEditor();
 	map->Load(pathLevel[0].c_str());
 	map->CreateMap(32, mObjectType);
+
 	mPlateforms = map->GetMap();
+    mEnemys = map->GetEnemy();
+    mBonus = map->GetBonus();
 
 	mMusic = new Music();
 	mMusic->Load("../../../res/f1_intro.ogg", 1);
 	mMusic->Play();
-	pEnemy = CreateRectangle<Enemy>(16, 16, sf::Color::Green);
-	pEnemy->SetPosition(200, 100);
-	pEnemy->SetCollider(200, 100, 16, 16);
-	pEnemy->SetRigidBody(true);
-
-    pBonus = CreateRectangle<Bonus>(16, 16, sf::Color::Magenta);
-    pBonus->SetPosition(500, 100);
-    pBonus->SetCollider(500, 100, 16, 16);
 }
 
 void SampleScene::OnEvent(const sf::Event& event)
 {
-    // Controller inputs
+    //Controller inputs
     if (sf::Joystick::isConnected(0))
     {
         pEntity1->shootCooldown += GetDeltaTime();
@@ -158,42 +153,44 @@ void SampleScene::OnEvent(const sf::Event& event)
         {
             x = 0;
         }
-        // Boutton X
+        //Boutton X
         if (sf::Joystick::isButtonPressed(0, 1)) {
             pEntity1->Jump();
         }
-        // Joystick a Droite
+        //Joystick a Droite
         if (x > 10.f)
         {
             pEntity1->Move(1);
             pEntity1->setLastDirection(1);
         }
-        // Joystick a Gauche
+        //Joystick a Gauche
         else if (x < -10.f)
         {
             pEntity1->Move(-1);
             pEntity1->setLastDirection(-1);
         }
-        // Rien
+        //Rien
         else
         {
             pEntity1->Move(0);
         }
-
     }
 
-    // Keyboard inputs
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-        pEntity1->Move(-1);
-        pEntity1->setLastDirection(-1);
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        pEntity1->Move(1);
-        pEntity1->setLastDirection(1);
-    }
-    else
+    //Keyboard inputs
+    else 
     {
-        pEntity1->Move(0);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
+            pEntity1->Move(-1);
+            pEntity1->setLastDirection(-1);
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+            pEntity1->Move(1);
+            pEntity1->setLastDirection(1);
+        }
+        else
+        {
+            pEntity1->Move(0);
+        }
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
@@ -213,17 +210,17 @@ void SampleScene::OnEvent(const sf::Event& event)
         }
     }
 
-    // Jump
+    //Jump
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
         pEntity1->Jump();
     }
 
-    // Jump
+    //Jump
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::L)) {
         pEntity1->TakeHit();
     }
 
-    // Reset Position
+    //Reset Position
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
         pEntity1->Reset();
     }
@@ -242,7 +239,6 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
-
 	sf::Vector2f camSize = cam->getSize();
 	sf::Vector2f pPos = pEntity1->GetPosition();
 	sf::Vector2f posLimite = sf::Vector2f(2000, 720);
@@ -283,14 +279,14 @@ void SampleScene::OnUpdate()
 			mPlateforms[i]->SetStateCollision(None);
 		}
 
-        if (pEnemy != nullptr && !enemyDestroyed)
+        for (int j = 0; j < mEnemys.size(); j++)
         {
-            if (mPlateforms[i]->IsColliding(pEnemy))
+            if (mPlateforms[i]->IsColliding(mEnemys[j]))
             {
-                pEnemy->Repulse(mPlateforms[i]);
+                mEnemys[j]->Repulse(mPlateforms[i]);
             }
         }
-         
+
         for (auto it = bulletsList.begin(); it != bulletsList.end();)
         {
             if ((*it)->IsColliding(mPlateforms[i]))
@@ -303,13 +299,14 @@ void SampleScene::OnUpdate()
                 ++it;
             }
         }
-		/*mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);*/
+		mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);
 	}
 
-    if (pEnemy != nullptr && !enemyDestroyed)
+    for(int i = 0; i < mEnemys.size(); i++)
     {
-        if (pEntity1->IsColliding(pEnemy))
+        mEnemys[i]->PrintCollider(sf::Color::White);
+        if (pEntity1->IsColliding(mEnemys[i]))
         {
             if (pEntity1->invicibilityTime > 1.5f)
             {
@@ -319,7 +316,7 @@ void SampleScene::OnUpdate()
                     pEntity1->invicibilityTime = 0.0f;
 
                     sf::Vector2f repulsionForce;
-                    if (pEntity1->GetPosition().x < pEnemy->GetPosition().x)
+                    if (pEntity1->GetPosition().x < mEnemys[i]->GetPosition().x)
                     {
                         repulsionForce = sf::Vector2f(-1.f, -1.f);
                     }
@@ -352,7 +349,7 @@ void SampleScene::OnUpdate()
         }
     }
 
-    if (pEnemy != nullptr && !enemyDestroyed)
+    for(int i = 0; i < mEnemys.size(); i++)
     {
         for (auto it = bulletsList.begin(); it != bulletsList.end();)
         {
@@ -370,14 +367,14 @@ void SampleScene::OnUpdate()
         }
     }
 
-    if (pBonus != nullptr && !bonusDestroyed)
+    for(int i = 0; i < mBonus.size(); i++)
     {
-        if (pEntity1->IsColliding(pBonus))
+        if (pEntity1->IsColliding(mBonus[i]))
         {
-            pBonus->Destroy();
-            pBonus = nullptr;
+            mBonus[i]->Update();
+            /*pBonus = nullptr;
             pEntity1->mLife++;
-            bonusDestroyed = true;
+            bonusDestroyed = true;*/
         }
     }
 

@@ -28,6 +28,7 @@ void Player::OnInitialize()
 
 	animPlayer = new Animation;
 	animPlayer->loadAnimations(m["animation_Player"], "../../../res/Player.json", mShape);
+	
 	mpStateMachine = new StateMachine<Player>(this, State::Count);
 
 	//IDLE
@@ -312,7 +313,7 @@ void Player::TakeHit()
 
 void Player::Dash(float deltaTime)
 {
-	SetDirection(lastDirection, 0, 800); // droite ou gauche
+	SetDirection(lastDirection, 0, 800);
 }
 
 

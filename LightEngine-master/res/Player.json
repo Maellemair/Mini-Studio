@@ -1,9 +1,9 @@
 {
-  "frame_size": {
-    "width": 32,
-    "height": 32
-  },
-  "structure": "single",
+"frame_size": {
+  "width": 32,
+  "height": 32
+},
+"structure": "single",
     "animations": {
         "idle": {
             "frames": 6,
@@ -12,18 +12,18 @@
             "row": 0
         },
         "jump": {
-            "frames": 10,
+            "frames": 5,
             "timeProgress": 0.1,
             "loop": false,
             "row": 1
         },
-        "walk": {
-            "frames": 1,
-            "timeProgress": 5,
-            "loop": true,
-            "row": 0
-        },
         "fall": {
+            "frames": 5,
+            "timeProgress": 0.1,
+            "loop": false,
+            "row": 2
+        },
+        "walk": {
             "frames": 1,
             "timeProgress": 5,
             "loop": true,
@@ -33,13 +33,13 @@
             "frames": 5,
             "timeProgress": 0.2,
             "loop": false,
-            "row": 3
+            "row": 4
         },
         "death": {
             "frames": 6,
             "timeProgress": 0.1,
             "loop": false,
-            "row": 4
+            "row": 5
         }
-    }
+}
 }

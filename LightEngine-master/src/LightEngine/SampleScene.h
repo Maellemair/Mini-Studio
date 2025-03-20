@@ -10,6 +10,7 @@ class ObjectEntity;
 class Background;
 class MapEditor;
 class Music;
+class Bonus;
 
 //assets
 class Grass;
@@ -26,7 +27,6 @@ class Left_dirt_fall;
 class Right_dirt_fall;
 class Rocks;
 class Bullets;
-class Bonus;
 
 class SampleScene : public Scene
 {
@@ -34,7 +34,6 @@ private:
 	sf::View* cam;
 	Player* pEntity1;
 	Enemy* pEnemy;
-	Bonus* pBonus;
 	std::vector<Bullets*> bulletsList;
 	MapEditor* map;
 	MapEditor* mapRocks;
@@ -50,6 +49,8 @@ private:
 	Background* arbre2;
 	std::vector<Background*> mBackgrounds;
 	std::vector<ObjectEntity*> mPlateforms;
+	std::vector<Enemy*> mEnemys;
+	std::vector<Bonus*> mBonus;
 	Music* mMusic;
 	sf::Vector2f mCamPos;
 	sf::Vector2f lastCameraPosition;

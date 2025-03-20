@@ -163,15 +163,6 @@ void Entity::PrintCollider(sf::Color color)
 	Debug::DrawRectangle(mBoxCollider->xMin, mBoxCollider->yMin, ColliderSize.x, ColliderSize.y, color);
 }
 
-//float Entity::GetRadius() const
-//{
-//	if (sf::CircleShape* pShape = dynamic_cast<sf::CircleShape*>(mShape))
-//	{
-//		return pShape->getRadius();
-//	}
-//	return 0;
-//}
-
 float Entity::GetHeight() const
 {
 	return mShape->getSize().y;
@@ -187,14 +178,11 @@ void Entity::Update()
 	float dt = GetDeltaTime();
 	float distance = dt * mSpeed;
 	sf::Vector2f translation = distance * mDirection;
-	
-	/*if (Player* p = dynamic_cast<Player*>(this))
-	{
-		std::cout << translation.x << " | " << translation.y << std::endl;
-	}*/
 
 	mBoxCollider->xMin += translation.x;
 	mBoxCollider->xMax += translation.x;
+	mBoxCollider->yMin += translation.y;
+	mBoxCollider->yMax += translation.y;
 	
 	mShape->move(translation);
 

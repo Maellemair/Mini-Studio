@@ -29,4 +29,10 @@ public:
     const AABBCollider* GetCollider() { return mBoxCollider; }
 	void OnUpdate() override;
 
+protected:
+	friend class EnemyAction_Evil;
+	friend class EnemyAction_Kick;
+	friend class EnemyAction_Hit;
+	friend class EnemyAction_Nice;
+
 };

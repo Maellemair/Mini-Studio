@@ -1,4 +1,7 @@
 #include "MapEditor.h"
+#include "Enemy.h"
+#include "LifeBonus.h"
+#include "WaterBonus.h"
 #include "ObjectEntity.h"
 #include "GameManager.h"
 
@@ -11,12 +14,6 @@ void MapEditor::Load(const char* path)
 		std::cout << "Erreur : Impossible d ouvrir le fichier." << std::endl;
 	}
 }
-
-// - pour ciel
-// T pour terre
-// A pour arbre ?
-// P pour plante
-
 
 void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapObject)
 {
@@ -41,6 +38,30 @@ void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapO
 				newObject->SetRigidBody(false);
 				mPlateforms.push_back(newObject);
 			}
+			else if (c == 'X')
+			{
+				Enemy* newEnemy = currentScene->CreateRectangle<Enemy>(64, 106, sf::Color::Green);
+				newEnemy->SetPosition(posX + pResolution / 2, posY + pResolution / 2);
+				newEnemy->SetCollider(posX + pResolution / 2, posY + pResolution / 2, 64, 50);
+				newEnemy->SetRigidBody(true);
+				mEnemy.push_back(newEnemy);
+			}
+			else if (c == 'l')
+			{
+				LifeBonus* newLifeBonus = currentScene->CreateRectangle<LifeBonus>(9, 9, sf::Color::Green);
+				newLifeBonus->SetPosition(posX, posY);
+				newLifeBonus->SetCollider(posX, posY, 9, 9);
+				newLifeBonus->SetRigidBody(true);
+				mBonus.push_back(newLifeBonus);
+			}
+			else if (c == 'w')
+			{
+				WaterBonus* newWaterBonus = currentScene->CreateRectangle<WaterBonus>(9, 9, sf::Color::Green);
+				newWaterBonus->SetPosition(posX, posY);
+				newWaterBonus->SetCollider(posX, posY, 9, 9);
+				newWaterBonus->SetRigidBody(true);
+				mBonus.push_back(newWaterBonus);
+			}
 			posX += pResolution;
 		}
 		posY += pResolution;
@@ -60,4 +81,14 @@ std::vector<ObjectEntity*> MapEditor::GetMap()
 		}
 	}
 	return tempVector;
+}
+
+std::vector<Enemy*> MapEditor::GetEnemy()
+{
+	return mEnemy;
+}
+
+std::vector<Bonus*> MapEditor::GetBonus()
+{
+	return mBonus;
 }
