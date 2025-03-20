@@ -39,6 +39,7 @@ void SampleScene::OnInitialize()
 		float taille = pSizeWin.y;
 		float factor = taille / 180;
 		sf::Vector2f tempPos = sf::Vector2f(pSizeWin.x / 2, pSizeWin.y / 2);
+
 		bg = CreateRectangle<Background>(180 * factor, 320 * factor, sf::Color::Red);
 		bg->Load("Background", sf::Vector2i(320, 180), sf::Vector2i(0, 0), 0.01, tempPos);
 		bg->SetPosition(tempPos.x, tempPos.y);
@@ -93,7 +94,6 @@ void SampleScene::OnInitialize()
 		filtreArbre2->SetPosition(tempPos.x + 320 * factor, tempPos.y);
 		mBackgrounds.push_back(filtreArbre2);
 	}
-
 
 	cam = GameManager::Get()->GetView();
 	cam->zoom(0.75f);
@@ -183,49 +183,34 @@ void SampleScene::OnEvent(const sf::Event& event)
     }
 
     // Keyboard inputs
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-        pEntity1->Move(-1);
-        pEntity1->setLastDirection(-1);
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        pEntity1->Move(1);
-        pEntity1->setLastDirection(1);
-    }
-    else
-    {
-        pEntity1->Move(0);
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-        Entity* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-        bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-        bullet->SetRigidBody(true);
-
-        // Shoot right
-        if (pEntity1->getLastDirection() == 1)
-        {
-            bullet->SetDirection(1, 0, 500);
+    else {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
+            pEntity1->Move(-1);
+            pEntity1->setLastDirection(-1);
         }
-        // Shoot left
-        else if (pEntity1->getLastDirection() == -1)
-        {
-            bullet->SetDirection(-1, 0, 500);
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+            pEntity1->Move(1);
+            pEntity1->setLastDirection(1);
         }
-    }
+        else
+        {
+            pEntity1->Move(0);
+        }
 
-    // Jump
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-        pEntity1->Jump();
-    }
+        // Jump
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+            pEntity1->Jump();
+        }
 
-    // Jump
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::L)) {
-        pEntity1->TakeHit();
-    }
+        // Damage
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::L)) {
+            pEntity1->TakeHit();
+        }
 
-    // Reset Position
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
-        pEntity1->Reset();
+        // Reset Position
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
+            pEntity1->Reset();
+        }
     }
 
     if (event.type != sf::Event::EventType::MouseButtonPressed) {
@@ -250,7 +235,10 @@ void SampleScene::OnUpdate()
 	float minX = camSize.x / 2;
 	float maxX = posLimite.x - camSize.x / 2;
 	float minY = camSize.y / 2;
-	float maxY = posLimite.y - camSize.y / 2;
+    float maxY = posLimite.y - camSize.y / 2;
+    if (pEntity1->mLife <= 0) {
+        maxY += 3000;
+    }
 
 	float newCamX = std::clamp(pPos.x, minX, maxX);
 	float newCamY = std::clamp(pPos.y, minY, maxY);
@@ -261,181 +249,191 @@ void SampleScene::OnUpdate()
     std::string life = "Life : " + std::to_string(pEntity1->mLife);
     Debug::DrawText(newCamX - camSize.x / 2 + 10, newCamY - camSize.y / 2 + 20, life, sf::Color::Black);
 
-	float deltaX = mCamPos.x - lastCameraPosition.x;
-	for (int i = 0; i < mBackgrounds.size(); i++)
-	{
-		mBackgrounds[i]->OnUpdate(deltaX);
-	}
-	lastCameraPosition = mCamPos;
-
-    bool bulletDestroyed = false;
-    bool enemyDestroyed = false;
-    bool bonusDestroyed = false;
-
-	for (int i = 0; i < mPlateforms.size(); i++)
-	{
-		if (mPlateforms[i]->IsColliding(pEntity1))
-		{
-			pEntity1->Repulse(mPlateforms[i]);
-		}
-		else
-		{
-			mPlateforms[i]->SetStateCollision(None);
-		}
-
-        if (pEnemy != nullptr && !enemyDestroyed)
-        {
-            if (mPlateforms[i]->IsColliding(pEnemy))
-            {
-                pEnemy->Repulse(mPlateforms[i]);
-            }
-        }
-         
-        for (auto it = bulletsList.begin(); it != bulletsList.end();)
-        {
-            if ((*it)->IsColliding(mPlateforms[i]))
-            {
-                (*it)->Destroy();
-                it = bulletsList.erase(it);
-            }
-            else
-            {
-                ++it;
-            }
-        }
-		/*mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);*/
-	}
-
-    if (pEnemy != nullptr && !enemyDestroyed)
+    float deltaX = mCamPos.x - lastCameraPosition.x;
+    for (int i = 0; i < mBackgrounds.size(); i++)
     {
-        if (pEntity1->IsColliding(pEnemy))
-        {
-            if (pEntity1->invicibilityTime > 1.5f)
-            {
-                if (pEntity1->mLife > 0)
-                {
-                    pEntity1->mLife -= 1;
-                    pEntity1->invicibilityTime = 0.0f;
+        mBackgrounds[i]->OnUpdate(deltaX);
+    }
+    lastCameraPosition = mCamPos;
 
-                    sf::Vector2f repulsionForce;
-                    if (pEntity1->GetPosition().x < pEnemy->GetPosition().x)
+    if (pEntity1->mLife < 0) {
+        pEntity1->Death();
+        Debug::DrawText(pEntity1->GetPosition().x,
+            pEntity1->GetPosition().y - 100,
+            "Game Over", 0.5, 0.5, sf::Color::White);
+    }
+
+    else {
+        bool bulletDestroyed = false;
+        bool enemyDestroyed = false;
+        bool bonusDestroyed = false;
+
+        for (int i = 0; i < mPlateforms.size(); i++)
+            {
+                if (mPlateforms[i]->IsColliding(pEntity1))
+                {
+                    pEntity1->Repulse(mPlateforms[i]);
+                }
+                else
+                {
+                    mPlateforms[i]->SetStateCollision(None);
+                }
+
+                if (pEnemy != nullptr && !enemyDestroyed)
+                {
+                    if (mPlateforms[i]->IsColliding(pEnemy))
                     {
-                        repulsionForce = sf::Vector2f(-1.f, -1.f);
+                        pEnemy->Repulse(mPlateforms[i]);
+                    }
+                }
+
+                for (auto it = bulletsList.begin(); it != bulletsList.end();)
+                {
+                    if ((*it)->IsColliding(mPlateforms[i]))
+                    {
+                        (*it)->Destroy();
+                        it = bulletsList.erase(it);
                     }
                     else
                     {
-                        repulsionForce = sf::Vector2f(1, -1.f);
+                        ++it;
                     }
-                    pEntity1->SetDirection(repulsionForce.x, repulsionForce.y, 500.f);
-                    pEntity1->repulsionTimer = 0.2f;
                 }
-                else
-                {
-                    pEntity1->Destroy();
-                    pEntity1 = nullptr;
-                }
+                /*mPlateforms[i]->PrintCollider(sf::Color::White);
+                pEntity1->PrintCollider(sf::Color::White);*/
             }
-        }
-        else
-        {
-            pEntity1->invicibilityTime += GetDeltaTime();
-        }
-    }
 
-    if (pEntity1 != nullptr && pEntity1->repulsionTimer > 0.0f)
-    {
-        pEntity1->repulsionTimer -= GetDeltaTime();
-        if (pEntity1->repulsionTimer <= 0.0f)
+        if (pEnemy != nullptr && !enemyDestroyed)
         {
-            pEntity1->Move(0);
-        }
-    }
-
-    if (pEnemy != nullptr && !enemyDestroyed)
-    {
-        for (auto it = bulletsList.begin(); it != bulletsList.end();)
-        {
-            if ((*it)->IsColliding(pEnemy))
+            if (pEntity1->IsColliding(pEnemy))
             {
-                (*it)->Destroy();
-                pEnemy->Destroy();
-                enemyDestroyed = true;
-                it = bulletsList.erase(it);
+                if (pEntity1->invicibilityTime > 1.5f)
+                {
+                    if (pEntity1->mLife > 0)
+                    {
+                        pEntity1->mLife -= 1;
+                        pEntity1->invicibilityTime = 0.0f;
+
+                        sf::Vector2f repulsionForce;
+                        if (pEntity1->GetPosition().x < pEnemy->GetPosition().x)
+                        {
+                            repulsionForce = sf::Vector2f(-1.f, -1.f);
+                        }
+                        else
+                        {
+                            repulsionForce = sf::Vector2f(1, -1.f);
+                        }
+                        pEntity1->SetDirection(repulsionForce.x, repulsionForce.y, 500.f);
+                        pEntity1->repulsionTimer = 0.2f;
+                    }
+                    else
+                    {
+                        pEntity1->Destroy();
+                        pEntity1 = nullptr;
+                    }
+                }
             }
             else
             {
-                ++it;
+                pEntity1->invicibilityTime += GetDeltaTime();
             }
         }
-    }
 
-    if (pBonus != nullptr && !bonusDestroyed)
-    {
-        if (pEntity1->IsColliding(pBonus))
-        {
-            pBonus->Destroy();
-            pBonus = nullptr;
-            pEntity1->mLife++;
-            bonusDestroyed = true;
-        }
-    }
-
-    if (enemyDestroyed)
-    {
-        pEnemy = nullptr;
-    }
-
-    if (pEntity1 != nullptr)
-    {
-        // Dash boutton R2
-        pEntity1->dashCooldown += GetDeltaTime();
-        if (pEntity1->dashCooldown >= 2.5f)
-        {
-            if (sf::Joystick::isButtonPressed(0, 7))
+        if (pEntity1 != nullptr && pEntity1->repulsionTimer > 0.0f)
             {
-                if (pEntity1->dashTimer < pEntity1->dashTime)
+                pEntity1->repulsionTimer -= GetDeltaTime();
+                if (pEntity1->repulsionTimer <= 0.0f)
                 {
-                    pEntity1->dashTimer += GetDeltaTime();
-                    pEntity1->Dash(GetDeltaTime());
+                    pEntity1->Move(0);
+                }
+            }
+
+        if (pEnemy != nullptr && !enemyDestroyed)
+            {
+                for (auto it = bulletsList.begin(); it != bulletsList.end();)
+                {
+                    if ((*it)->IsColliding(pEnemy))
+                    {
+                        (*it)->Destroy();
+                        pEnemy->Destroy();
+                        enemyDestroyed = true;
+                        it = bulletsList.erase(it);
+                    }
+                    else
+                    {
+                        ++it;
+                    }
+                }
+            }
+
+        if (pBonus != nullptr && !bonusDestroyed)
+            {
+                if (pEntity1->IsColliding(pBonus))
+                {
+                    pBonus->Destroy();
+                    pBonus = nullptr;
+                    pEntity1->mLife++;
+                    bonusDestroyed = true;
+                }
+            }
+
+        if (enemyDestroyed)
+            {
+                pEnemy = nullptr;
+            }
+
+        if (pEntity1 != nullptr)
+            {
+                // Dash boutton R2
+                pEntity1->dashCooldown += GetDeltaTime();
+                if (pEntity1->dashCooldown >= 2.5f)
+                {
+                    if (sf::Joystick::isButtonPressed(0, 7))
+                    {
+                        if (pEntity1->dashTimer < pEntity1->dashTime)
+                        {
+                            pEntity1->dashTimer += GetDeltaTime();
+                            pEntity1->Dash(GetDeltaTime());
+                        }
+                        else
+                        {
+                            pEntity1->dashCooldown = 0;
+                            pEntity1->dashTimer = 0;
+                        }
+                    }
                 }
                 else
                 {
-                    pEntity1->dashCooldown = 0;
                     pEntity1->dashTimer = 0;
                 }
-            }
-        }
-        else
-        {
-            pEntity1->dashTimer = 0;
-        }
 
-        // Shoot bullets
-        pEntity1->shootCooldown += GetDeltaTime();
-        if (sf::Joystick::isButtonPressed(0, 0))
-        {
-            if (pEntity1->shootCooldown >= 0.2f)
-            {
-                Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-                newBullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-                newBullet->SetCollider(pEntity1->GetPosition().x, pEntity1->GetPosition().y, 8, 16);
-                newBullet->SetRigidBody(true);
-                newBullet->Update();
-
-                bulletsList.push_back(newBullet);
-
-                if (pEntity1->getLastDirection() == 1)
+                // Shoot bullets
+                pEntity1->shootCooldown += GetDeltaTime();
+                if (sf::Joystick::isButtonPressed(0, 0) || 
+                    sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
                 {
-                    newBullet->SetDirection(1, 0, 500);
-                }
-                else if (pEntity1->getLastDirection() == -1)
-                {
-                    newBullet->SetDirection(-1, 0, 500);
-                }
+                    if (pEntity1->shootCooldown >= 0.2f)
+                    {
+                        Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+                        newBullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+                        newBullet->SetCollider(pEntity1->GetPosition().x, pEntity1->GetPosition().y, 8, 16);
+                        newBullet->SetRigidBody(true);
+                        newBullet->Update();
 
-                pEntity1->shootCooldown = 0;
+                        bulletsList.push_back(newBullet);
+
+                        if (pEntity1->getLastDirection() == 1)
+                        {
+                            newBullet->SetDirection(1, 0, 500);
+                        }
+                        else if (pEntity1->getLastDirection() == -1)
+                        {
+                            newBullet->SetDirection(-1, 0, 500);
+                        }
+
+                        pEntity1->shootCooldown = 0;
+                    }
+                }
             }
-        }
-    }
+     }
 }

@@ -38,6 +38,7 @@ private:
 	std::vector<Bullets*> bulletsList;
 	MapEditor* map;
 	MapEditor* mapRocks;
+	Background* bgGameOver;
 	Background* bg;
 	Background* bg2;
 	Background* filtre;

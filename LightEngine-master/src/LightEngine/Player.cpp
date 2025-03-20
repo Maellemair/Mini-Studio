@@ -225,7 +225,9 @@ void Player::OnUpdate()
 	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);
 	mpStateMachine->Update();
 	animPlayer->update(dt);
-	PhysicalEntity::OnUpdate();
+	if (mLife > 0) {
+		PhysicalEntity::OnUpdate();
+	}
 }
 
 void Player::SetState(State pState)
@@ -295,10 +297,12 @@ void Player::TakeHit()
 	animHitTime.restart();
 	mLife--;
 	isTakingDamage = true;
-	if (mLife <= 0)
-	{
-		//GameOver
-	}
+}
+
+void Player::Death() {
+	SetDirection(0, 0);
+	SetPosition(1280 / 2, ((720 / 4) * 3) + 3000);
+
 }
 
 void Player::Dash(float deltaTime)

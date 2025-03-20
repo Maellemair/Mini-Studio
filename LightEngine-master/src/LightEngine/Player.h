@@ -46,6 +46,7 @@ public:
 	void Reset();
 	void Jump();
 	void TakeHit();
+	void Death();
 	bool GetIsTakingDamage() { return isTakingDamage; }
 	bool IsDead() { return mLife <= 0; }
 	float GetAnimHitTime() { return animHitTime.getElapsedTime().asSeconds(); }
