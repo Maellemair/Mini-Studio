@@ -34,16 +34,6 @@ void SampleScene::OnInitialize()
 {
 	sf::Vector2f pSizeWin = sf::Vector2f(GetWindowWidth(), GetWindowHeight());
 
-    if (!menuTexture.loadFromFile("../../../res/sunshine_logo.png"))
-    {
-        std::cerr << "Erreur lors du chargement de l'image du menu" << std::endl;
-    }
-
-    // Configurez le sprite avec la texture
-    menuSprite.setTexture(menuTexture);
-    menuSprite.setPosition(360, 200); 
-
-
 	//Background
 	{
 		float taille = pSizeWin.y;
@@ -172,7 +162,7 @@ void SampleScene::OnEvent(const sf::Event& event)
         DisplayMenu();
 
         // Vérifier si l'utilisateur veut quitter le menu
-        if (sf::Joystick::isButtonPressed(0, 9))
+        if (sf::Joystick::isButtonPressed(0, 9) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::K))
         {
             isMenuActive = false;
         }
