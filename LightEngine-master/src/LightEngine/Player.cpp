@@ -158,6 +158,15 @@ void Player::OnInitialize()
 			transition->AddCondition<PlayerCondition_isFalling>(true);
 			transition->AddCondition<PlayerCondition_takeDamage>(false);
 		}
+		
+		//-> IDLE
+		{
+			auto transition = pJumping->CreateTransition(State::IDLE);
+
+			transition->AddCondition<PlayerCondition_isFalling>(false);
+			transition->AddCondition<PlayerCondition_isGround>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
+		}
 
 		//-> HIT
 		{

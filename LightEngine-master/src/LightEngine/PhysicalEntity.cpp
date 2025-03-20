@@ -23,7 +23,6 @@ void PhysicalEntity::Fall(float deltaTime)
 	pPos.y += mGravitySpeed * deltaTime;
 	SetPosition(pPos.x, pPos.y);
 
-	//std::cout << "GravitySpeed: " << mGravitySpeed << " | Position Y: " << mPosition.y << std::endl;
 }
 
 void PhysicalEntity::OnUpdate()
@@ -99,6 +98,7 @@ void PhysicalEntity::Repulse(Entity* other)
             {
                 SetPosition(GetPosition().x, GetPosition().y + intersectY);
                 other->SetStateCollision(BOTTOM);
+                mGravitySpeed = 0;
             }
         }
         mBoxCollider->xMin = GetPosition().x - sizeThis.x / 2;
