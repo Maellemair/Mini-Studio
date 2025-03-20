@@ -59,7 +59,7 @@ void GameManager::Run()
 	}
 
 	//#TODO : Load somewhere else
-	bool fontLoaded = mFont.loadFromFile("../../../res/Hack-Regular.ttf");
+	bool fontLoaded = mFont.loadFromFile("../../../res/Pixeled.ttf");
 	_ASSERT(fontLoaded);
 
 	_ASSERT(mpScene != nullptr);

@@ -122,8 +122,8 @@ void SampleScene::OnInitialize()
 	std::vector<std::string> pathLevel = Level::GetInstance()->pathLevel;
 
 	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
-	pEntity1->SetPosition(101, 100);
-	pEntity1->SetCollider(101, 100, 64, 45);
+	pEntity1->SetPosition(40, 720-128);
+	pEntity1->SetCollider(40, 720 - 128, 64, 45);
 	pEntity1->SetRigidBody(true);
 
 	map = new MapEditor();
@@ -256,11 +256,15 @@ void SampleScene::OnUpdate()
     }
     lastCameraPosition = mCamPos;
 
-    if (pEntity1->mLife < 0) {
+    if (pEntity1->mLife <= 0) {
         pEntity1->Death();
+
         Debug::DrawText(pEntity1->GetPosition().x,
-            pEntity1->GetPosition().y - 100,
-            "Game Over", 0.5, 0.5, sf::Color::White);
+            pEntity1->GetPosition().y - 250,
+            "Game Over", 0.5, 0.5, sf::Vector2f(2,2), sf::Color::White);
+        Debug::DrawText(pEntity1->GetPosition().x,
+            pEntity1->GetPosition().y - 175, "Press R to restart",
+            0.5, 0.5, sf::Vector2f(0.5, 0.5), sf::Color::White);
     }
 
     else {
@@ -311,7 +315,7 @@ void SampleScene::OnUpdate()
                 {
                     if (pEntity1->mLife > 0)
                     {
-                        pEntity1->mLife -= 1;
+                        pEntity1->TakeHit();
                         pEntity1->invicibilityTime = 0.0f;
 
                         sf::Vector2f repulsionForce;

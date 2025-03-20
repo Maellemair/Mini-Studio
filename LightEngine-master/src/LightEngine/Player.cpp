@@ -222,7 +222,7 @@ void Player::OnUpdate()
 	const char* stateName = GetStateName(mState);
 
 	float dt = GetDeltaTime();
-	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);
+	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Vector2f(0.5,0.5), sf::Color::White);
 	mpStateMachine->Update();
 	animPlayer->update(dt);
 	if (mLife > 0) {
@@ -264,10 +264,8 @@ void Player::Move(int key)
 
 void Player::Reset()
 {
-	sf::Vector2f pPosCenter = sf::Vector2f(GameManager::Get()->GetScene()->GetWindowWidth(),
-		GameManager::Get()->GetScene()->GetWindowHeight());
-	SetPosition(pPosCenter.x / 2, pPosCenter.y / 4);
-	SetCollider(pPosCenter.x / 2, pPosCenter.y / 4, mBoxCollider->ySize, mBoxCollider->xSize);
+	SetPosition(40, 720 - 128);
+	SetCollider(40, 720 - 128, 64, 45);
 	mLife = 3;
 	mpStateMachine->SetState(IDLE);
 	mGravitySpeed = 0;
