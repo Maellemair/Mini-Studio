@@ -41,12 +41,6 @@ public:
 	bool OnTest(Player* owner) override;
 };
 
-class PlayerCondition_animHitFinish : public Condition<Player>
-{
-public:
-	bool OnTest(Player* owner) override;
-};
-
 //class PlayerCondition_ : public Condition<Player>
 //{
 //public:

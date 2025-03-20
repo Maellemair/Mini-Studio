@@ -48,16 +48,7 @@ bool PlayerCondition_isDead::OnTest(Player* owner)
 
 bool PlayerCondition_takeDamage::OnTest(Player* owner)
 {
-    if (owner->GetIsTakingDamage())
-    {
-        return true;
-    }
-    return false;
-}
-
-bool PlayerCondition_animHitFinish::OnTest(Player* owner)
-{
-    if (owner->GetAnimHitTime() >= 1)
+    if (owner->GetIsTakingDamage() == true)
     {
         return true;
     }

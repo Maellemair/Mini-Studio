@@ -15,6 +15,5 @@ void Rocks::Create(float posX, float posY)
 ObjectEntity* Rocks::Clone(float height, float width, float posX, float posY)
 {
 	Rocks* tempRocks = CreateRectangle<Rocks>(height, width, sf::Color::Green);
-	tempRocks->Create(posX, posY);
 	return tempRocks;
 }

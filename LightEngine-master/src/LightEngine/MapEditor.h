@@ -10,6 +10,7 @@ class ObjectEntity;
 class Enemy;
 class GameManager;
 class Bonus;
+class Rocks;
 
 class MapEditor
 {

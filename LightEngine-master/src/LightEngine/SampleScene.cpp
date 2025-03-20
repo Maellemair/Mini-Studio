@@ -94,9 +94,8 @@ void SampleScene::OnInitialize()
 		mBackgrounds.push_back(filtreArbre2);
 	}
 
-
 	cam = GameManager::Get()->GetView();
-	cam->zoom(0.75f);
+	cam->zoom(0.6f);
 	sf::Vector2f camSize = cam->getSize();
 	cam->setCenter(camSize.x / 2, 720 - camSize.y / 2);
 	mCamPos = sf::Vector2(camSize.x / 2, 720 - camSize.y / 2);
@@ -312,7 +311,7 @@ void SampleScene::OnUpdate()
             {
                 if (pEntity1->mLife > 0)
                 {
-                    pEntity1->mLife -= 1;
+                    pEntity1->TakeHit();
                     pEntity1->invicibilityTime = 0.0f;
 
                     sf::Vector2f repulsionForce;

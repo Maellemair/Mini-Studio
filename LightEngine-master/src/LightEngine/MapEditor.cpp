@@ -1,5 +1,6 @@
 #include "MapEditor.h"
 #include "Enemy.h"
+#include "Assets/Rocks.h"
 #include "LifeBonus.h"
 #include "WaterBonus.h"
 #include "ObjectEntity.h"
@@ -48,20 +49,21 @@ void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapO
 			}
 			else if (c == 'l')
 			{
-				LifeBonus* newLifeBonus = currentScene->CreateRectangle<LifeBonus>(9, 9, sf::Color::Green);
+				LifeBonus* newLifeBonus = currentScene->CreateRectangle<LifeBonus>(36, 18, sf::Color::Green);
 				newLifeBonus->SetPosition(posX, posY);
-				newLifeBonus->SetCollider(posX, posY, 9, 9);
+				newLifeBonus->SetCollider(posX, posY, 36, 18);
 				newLifeBonus->SetRigidBody(true);
 				mBonus.push_back(newLifeBonus);
 			}
 			else if (c == 'w')
 			{
-				WaterBonus* newWaterBonus = currentScene->CreateRectangle<WaterBonus>(9, 9, sf::Color::Green);
+				WaterBonus* newWaterBonus = currentScene->CreateRectangle<WaterBonus>(36, 18, sf::Color::Green);
 				newWaterBonus->SetPosition(posX, posY);
-				newWaterBonus->SetCollider(posX, posY, 9, 9);
+				newWaterBonus->SetCollider(posX, posY, 36, 18);
 				newWaterBonus->SetRigidBody(true);
 				mBonus.push_back(newWaterBonus);
 			}
+			std::cout << (int)'1' << std::endl;
 			posX += pResolution;
 		}
 		posY += pResolution;

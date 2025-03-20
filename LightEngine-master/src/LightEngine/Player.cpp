@@ -198,7 +198,7 @@ void Player::OnInitialize()
 			auto transition = pHit->CreateTransition(State::DEATH);
 
 			transition->AddCondition<PlayerCondition_isDead>(true);
-			transition->AddCondition<PlayerCondition_animHitFinish>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
 		}
 
 		//-> Idle
@@ -207,7 +207,7 @@ void Player::OnInitialize()
 
 			transition->AddCondition<PlayerCondition_isGround>(true);
 			transition->AddCondition<PlayerCondition_isFalling>(false);
-			transition->AddCondition<PlayerCondition_animHitFinish>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
 		}
 
 		//-> Fall
@@ -216,7 +216,7 @@ void Player::OnInitialize()
 
 			transition->AddCondition<PlayerCondition_isFalling>(true);
 			transition->AddCondition<PlayerCondition_isGround>(false);
-			transition->AddCondition<PlayerCondition_animHitFinish>(true);
+			transition->AddCondition<PlayerCondition_takeDamage>(false);
 		}
 	}
 
@@ -233,8 +233,8 @@ void Player::OnUpdate()
 
 	float dt = GetDeltaTime();
 	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);
-	mpStateMachine->Update();
 	animPlayer->update(dt);
+	mpStateMachine->Update();
 	PhysicalEntity::OnUpdate();
 }
 
@@ -305,10 +305,6 @@ void Player::TakeHit()
 	animHitTime.restart();
 	mLife--;
 	isTakingDamage = true;
-	if (mLife <= 0)
-	{
-		//GameOver
-	}
 }
 
 void Player::Dash(float deltaTime)

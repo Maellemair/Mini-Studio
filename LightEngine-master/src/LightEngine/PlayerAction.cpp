@@ -8,6 +8,8 @@ void PlayerAction_Hit::OnStart(Player* pPlayer)
 
 void PlayerAction_Hit::OnUpdate(Player* pPlayer)
 {
-	if (animTime.getElapsedTime().asSeconds() >= 1.f)
+	if (animTime.getElapsedTime().asSeconds() >= 0.2f)
+	{
 		pPlayer->isTakingDamage = false;
+	}
 }

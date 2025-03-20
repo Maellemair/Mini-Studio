@@ -30,8 +30,8 @@
             "row": 0
         },
         "hit": {
-            "frames": 5,
-            "timeProgress": 0.2,
+            "frames": 4,
+            "timeProgress": 0.05,
             "loop": false,
             "row": 4
         },
