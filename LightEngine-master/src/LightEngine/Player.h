@@ -50,6 +50,7 @@ public:
 	bool IsDead() { return mLife <= 0; }
 	float GetAnimHitTime() { return animHitTime.getElapsedTime().asSeconds(); }
 	void Dash(float deltaTime);
+	void MakeSound(const char* path);
 
 	int MaxLife = 3;
 	int mLife = MaxLife;

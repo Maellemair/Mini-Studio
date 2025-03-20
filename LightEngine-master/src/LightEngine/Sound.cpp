@@ -16,3 +16,9 @@ void Sound::Play()
 {
 	mSound.play();
 }
+
+void Sound::LoadAndPlay(const char* path)
+{
+	Load(path);
+	Play();
+}

@@ -315,7 +315,8 @@ void SampleScene::OnUpdate()
             {
                 if (pEntity1->mLife > 0)
                 {
-                    pEntity1->mLife -= 1;
+                    //pEntity1->mLife -= 1;
+                    pEntity1->TakeHit();
                     pEntity1->invicibilityTime = 0.0f;
 
                     sf::Vector2f repulsionForce;
