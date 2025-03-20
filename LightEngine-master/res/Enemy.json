@@ -19,13 +19,13 @@
         },
         "kick": {
             "frames": 5,
-            "timeProgress": 0.1,
+            "timeProgress": 0.05,
             "loop": false,
             "row": 2
         },
         "hit": {
             "frames": 4,
-            "timeProgress": 0.1,
+            "timeProgress": 0.05,
             "loop": false,
             "row": 3
         }

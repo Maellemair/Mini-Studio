@@ -1,8 +1,17 @@
 #include "EnemyCondition.h"
 
-bool EnemyCondition_IsColliding::OnTest(Enemy* owner)
+bool EnemyCondition_isTakingDamage::OnTest(Enemy* owner)
 {
-    if (owner->GetStateCollision() != None)
+    if (owner->GetIsTakingDamage() == true)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool EnemyCondition_isAttacking::OnTest(Enemy* owner)
+{
+    if (owner->GetIsAttacking() == true)
     {
         return true;
     }

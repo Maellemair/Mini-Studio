@@ -15,7 +15,7 @@ public:
 class EnemyAction_Kick : public Action<Enemy>
 {
 public:
-	void OnStart(Enemy* pEnemy) override { pEnemy->animEnemy->setAnimation("kick"); }
+	void OnStart(Enemy* pEnemy) override { pEnemy->animEnemy->setAnimation("kick"); pEnemy->animKickTime.restart(); }
 	void OnUpdate(Enemy* pEnemy) override {}
 	void OnEnd(Enemy* pEnemy) override {}
 };
@@ -23,7 +23,7 @@ public:
 class EnemyAction_Hit : public Action<Enemy>
 {
 public:
-	void OnStart(Enemy* pEnemy) override { pEnemy->animEnemy->setAnimation("hit"); }
+	void OnStart(Enemy* pEnemy) override { pEnemy->animEnemy->setAnimation("hit"); ; pEnemy->animHitTime.restart(); }
 	void OnUpdate(Enemy* pEnemy) override {}
 	void OnEnd(Enemy* pEnemy) override {}
 };

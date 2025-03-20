@@ -39,13 +39,14 @@ public:
 	void SetState(State pState);
 	const char* GetStateName(State state) const;
 	Entity* GetColliderEntity() override { return PhysicalEntity::GetColliderEntity(); }
-
+	void GiveHealth() { mLife++; }
+	void ReloadWater() {}
 	int getLastDirection();
 	void setLastDirection(int dir);
 	void Move(int key);
 	void Reset();
 	void Jump();
-	void TakeHit();
+	void TakeHit(float posX);
 	bool GetIsTakingDamage() { return isTakingDamage; }
 	bool IsDead() { return mLife <= 0; }
 	float GetAnimHitTime() { return animHitTime.getElapsedTime().asSeconds(); }

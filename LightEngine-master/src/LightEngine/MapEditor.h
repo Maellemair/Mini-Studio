@@ -5,11 +5,13 @@
 #include <string>
 
 #include "Scene.h"
+#include "Bonus.h"
 
 class ObjectEntity;
 class Enemy;
 class GameManager;
-class Bonus;
+class LifeBonus;
+class WaterBonus;
 class Rocks;
 
 class MapEditor

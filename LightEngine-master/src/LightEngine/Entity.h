@@ -39,6 +39,7 @@ class Entity
     };
 
 protected:
+	bool needToBeDestroid = false;
 	CollisionFace state = None;
 	AABBCollider* mBoxCollider;
     sf::RectangleShape* mShape;
@@ -62,6 +63,8 @@ public:
 	const int GetTag() { return mTag; }
 	void SetStateCollision(CollisionFace pState) { state = pState; }
 	CollisionFace GetStateCollision() { return state; }
+	bool GetNeedToBeDestroid() { return needToBeDestroid; }
+	void SetNeedToBeDestroid(bool state) { needToBeDestroid = state; }
 	
 	//float GetRadius() const;
 	float GetHeight() const;

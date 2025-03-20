@@ -63,7 +63,6 @@ void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapO
 				newWaterBonus->SetRigidBody(true);
 				mBonus.push_back(newWaterBonus);
 			}
-			std::cout << (int)'1' << std::endl;
 			posX += pResolution;
 		}
 		posY += pResolution;

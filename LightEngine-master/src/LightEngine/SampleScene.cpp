@@ -19,7 +19,9 @@
 #include "Bullets.h"
 #include "ObjectEntity.h"
 #include "Debug.h"
+
 #include "Bonus.h"
+
 #include "Music.h"
 #include "Sound.h"
 #include "MapEditor.h"
@@ -193,9 +195,11 @@ void SampleScene::OnEvent(const sf::Event& event)
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-        Entity* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+        Bullets* bullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
         bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+        bullet->SetCollider(pEntity1->GetPosition().x, pEntity1->GetPosition().y, 16, 8);
         bullet->SetRigidBody(true);
+        bulletsList.push_back(bullet);
 
         // Shoot right
         if (pEntity1->getLastDirection() == 1)
@@ -212,11 +216,6 @@ void SampleScene::OnEvent(const sf::Event& event)
     //Jump
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
         pEntity1->Jump();
-    }
-
-    //Jump
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::L)) {
-        pEntity1->TakeHit();
     }
 
     //Reset Position
@@ -284,52 +283,31 @@ void SampleScene::OnUpdate()
             {
                 mEnemys[j]->Repulse(mPlateforms[i]);
             }
+            //mEnemys[j]->PrintCollider(sf::Color::White);
         }
 
-        for (auto it = bulletsList.begin(); it != bulletsList.end();)
+        for (int j = 0; j < bulletsList.size(); j++)
         {
-            if ((*it)->IsColliding(mPlateforms[i]))
+            if (bulletsList[j]->IsColliding(mPlateforms[i]))
             {
-                (*it)->Destroy();
-                it = bulletsList.erase(it);
-            }
-            else
-            {
-                ++it;
+                bulletsList[j]->Destroy();
+                bulletsList.erase(bulletsList.begin() + j);
+                j--;
             }
         }
-		mPlateforms[i]->PrintCollider(sf::Color::White);
-		pEntity1->PrintCollider(sf::Color::White);
+		/*mPlateforms[i]->PrintCollider(sf::Color::White);
+		pEntity1->PrintCollider(sf::Color::White);*/
 	}
 
     for(int i = 0; i < mEnemys.size(); i++)
     {
-        mEnemys[i]->PrintCollider(sf::Color::White);
         if (pEntity1->IsColliding(mEnemys[i]))
         {
             if (pEntity1->invicibilityTime > 1.5f)
             {
                 if (pEntity1->mLife > 0)
                 {
-                    pEntity1->TakeHit();
-                    pEntity1->invicibilityTime = 0.0f;
-
-                    sf::Vector2f repulsionForce;
-                    if (pEntity1->GetPosition().x < mEnemys[i]->GetPosition().x)
-                    {
-                        repulsionForce = sf::Vector2f(-1.f, -1.f);
-                    }
-                    else
-                    {
-                        repulsionForce = sf::Vector2f(1, -1.f);
-                    }
-                    pEntity1->SetDirection(repulsionForce.x, repulsionForce.y, 500.f);
-                    pEntity1->repulsionTimer = 0.2f;
-                }
-                else
-                {
-                    pEntity1->Destroy();
-                    pEntity1 = nullptr;
+                    pEntity1->TakeHit(mEnemys[i]->GetPosition().x);
                 }
             }
         }
@@ -337,49 +315,32 @@ void SampleScene::OnUpdate()
         {
             pEntity1->invicibilityTime += GetDeltaTime();
         }
-    }
-
-    if (pEntity1 != nullptr && pEntity1->repulsionTimer > 0.0f)
-    {
-        pEntity1->repulsionTimer -= GetDeltaTime();
-        if (pEntity1->repulsionTimer <= 0.0f)
+        for(int j = 0; j < bulletsList.size(); j++)
         {
-            pEntity1->Move(0);
-        }
-    }
+            bulletsList[j]->PrintCollider(sf::Color::Magenta);
+            
+            if (bulletsList[j]->IsColliding(mEnemys[i]))
+            {
+                mEnemys[i]->Hit();
 
-    for(int i = 0; i < mEnemys.size(); i++)
-    {
-        for (auto it = bulletsList.begin(); it != bulletsList.end();)
-        {
-            if ((*it)->IsColliding(pEnemy))
-            {
-                (*it)->Destroy();
-                pEnemy->Destroy();
-                enemyDestroyed = true;
-                it = bulletsList.erase(it);
-            }
-            else
-            {
-                ++it;
+                bulletsList[j]->Destroy();
+                bulletsList.erase(bulletsList.begin() + j);
+                j--;
+                break;
             }
         }
     }
 
     for(int i = 0; i < mBonus.size(); i++)
     {
+        mBonus[i]->PrintCollider(sf::Color::White);
         if (pEntity1->IsColliding(mBonus[i]))
         {
-            mBonus[i]->Update();
-            /*pBonus = nullptr;
-            pEntity1->mLife++;
-            bonusDestroyed = true;*/
+            mBonus[i]->isCollid(pEntity1);
+            mBonus[i]->Destroy();
+            mBonus.erase(mBonus.begin() + i);
+            i--;
         }
-    }
-
-    if (enemyDestroyed)
-    {
-        pEnemy = nullptr;
     }
 
     if (pEntity1 != nullptr)
@@ -429,7 +390,6 @@ void SampleScene::OnUpdate()
                 {
                     newBullet->SetDirection(-1, 0, 500);
                 }
-
                 pEntity1->shootCooldown = 0;
             }
         }

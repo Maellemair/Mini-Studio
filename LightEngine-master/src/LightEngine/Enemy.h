@@ -5,6 +5,7 @@
 
 template<typename T>
 class StateMachine;
+class SampleScene;
 class Texture;
 
 class Enemy : public PhysicalEntity, public Animation
@@ -19,13 +20,20 @@ class Enemy : public PhysicalEntity, public Animation
 	};
 
 	State mState;
-
+	bool isTakingDamage = false;
+	bool isAttacking = true;
+	sf::Clock animKickTime;
+	sf::Clock animHitTime;
     Animation* animEnemy;
     StateMachine<Enemy>* mpStateMachine;
 public:
     void OnInitialize() override;
     void OnCollision(Entity* collidedWith) override;
 	const char* GetStateName(State state) const;
+	void Hit();
+	void Kick();
+	bool GetIsTakingDamage() { return isTakingDamage; }
+	bool GetIsAttacking() { return isTakingDamage; }
     const AABBCollider* GetCollider() { return mBoxCollider; }
 	void OnUpdate() override;
 

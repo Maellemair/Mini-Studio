@@ -231,8 +231,17 @@ void Player::OnUpdate()
 	mState = (Player::State)mpStateMachine->GetCurrentState();
 	const char* stateName = GetStateName(mState);
 
+	if(isTakingDamage)
+	{
+		repulsionTimer -= GetDeltaTime();
+		if (repulsionTimer <= 0.0f)
+		{
+			Move(0);
+		}
+	}
 	float dt = GetDeltaTime();
-	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);
+
+	/*Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);*/
 	animPlayer->update(dt);
 	mpStateMachine->Update();
 	PhysicalEntity::OnUpdate();
@@ -300,11 +309,24 @@ void Player::Jump()
 	mSound->Play();
 }
 
-void Player::TakeHit()
+void Player::TakeHit(float posX)
 {
 	animHitTime.restart();
 	mLife--;
 	isTakingDamage = true;
+	invicibilityTime = 0.0f;
+
+	sf::Vector2f repulsionForce;
+	if (GetPosition().x < posX)
+	{
+		repulsionForce = sf::Vector2f(-1.f, -1.f);
+	}
+	else
+	{
+		repulsionForce = sf::Vector2f(1, -1.f);
+	}
+	SetDirection(repulsionForce.x, repulsionForce.y, 500.f);
+	repulsionTimer = 0.2f;
 }
 
 void Player::Dash(float deltaTime)

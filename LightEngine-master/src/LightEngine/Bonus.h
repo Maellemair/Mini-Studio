@@ -6,7 +6,7 @@ class Bonus : public PhysicalEntity
 {
 
 public:
-	virtual void Update() {};
+	virtual void isCollid(Player* pPlayer) { std::cout << "Test" << std::endl; }
 	void OnCollision(Entity* collidedWith) override;
 	const AABBCollider* GetCollider() { return mBoxCollider; }
 	void OnUpdate() override;

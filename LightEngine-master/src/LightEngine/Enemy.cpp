@@ -3,6 +3,8 @@
 #include "StateMachine.h"
 #include "EnemyCondition.h"
 #include "EnemyAction.h"
+#include "Debug.h"
+#include "SampleScene.h"
 
 void Enemy::OnInitialize()
 {
@@ -13,7 +15,7 @@ void Enemy::OnInitialize()
 
 	animEnemy = new Animation;
 	animEnemy->loadAnimations(m["animation_Ennemy"], "../../../res/Enemy.json", mShape);
-	
+
 	mpStateMachine = new StateMachine<Enemy>(this, State::Count);
 	//EVIL
 	{
@@ -23,14 +25,14 @@ void Enemy::OnInitialize()
 		{
 			auto transition = pEvil->CreateTransition(State::KICK);
 
-			auto condition = transition->AddCondition<EnemyCondition_IsColliding>(true);
+			auto condition = transition->AddCondition<EnemyCondition_isAttacking>(true);
 		}
 
 		//-> HIT
 		{
 			auto transition = pEvil->CreateTransition(State::HIT);
 
-			//transition->AddCondition<PlayerCondition_isGround>(false);
+			transition->AddCondition<EnemyCondition_isTakingDamage>(true);
 		}
 	}
 
@@ -42,7 +44,7 @@ void Enemy::OnInitialize()
 		{
 			auto transition = pKick->CreateTransition(State::EVIL);
 
-			//transition->AddCondition<PlayerCondition_isGround>(true);
+			transition->AddCondition<EnemyCondition_isAttacking>(false);
 		}
 
 	}
@@ -55,7 +57,7 @@ void Enemy::OnInitialize()
 		{
 			auto transition = pHit->CreateTransition(State::EVIL);
 
-			//transition->AddCondition<PlayerCondition_IsMoving>(false);
+			transition->AddCondition<EnemyCondition_isTakingDamage>(false);
 		}
 	}
 
@@ -85,8 +87,27 @@ const char* Enemy::GetStateName(State state) const
 	}
 }
 
+void Enemy::Hit()
+{
+	std::cout << "Test" << std::endl;
+	isTakingDamage = true;
+}
+
+void Enemy::Kick()
+{
+	isAttacking = true;
+}
+
 void Enemy::OnUpdate()
 {
+	const sf::Vector2f& position = GetPosition();
+
+	mState = (Enemy::State)mpStateMachine->GetCurrentState();
+	const char* stateName = GetStateName(mState);
+	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);
+
+	float dt = GetDeltaTime();
 	mpStateMachine->Update();
+	animEnemy->update(dt);
 }
 
