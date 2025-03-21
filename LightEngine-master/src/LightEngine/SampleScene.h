@@ -66,6 +66,11 @@ private:
 	sf::Vector2f lastCameraPosition;
 	std::map<char, ObjectEntity*> mObjectType;
 
+	sf::Clock mClock;
+	int mFrameCount = 0;
+	float mElapsedTime = 0.0f;
+	float mFPS = 0.0f;
+
 public:
 	void OnInitialize() override;
 	void DisplayMenu();

@@ -296,6 +296,16 @@ void SampleScene::OnEvent(const sf::Event& event)
 
 void SampleScene::OnUpdate()
 {
+
+    mFrameCount++;
+    mElapsedTime += mClock.restart().asSeconds();
+    if (mElapsedTime >= 1.0f)
+    {
+        mFPS = mFrameCount / mElapsedTime;
+        mFrameCount = 0;
+        mElapsedTime = 0.0f;
+    }
+
 	sf::Vector2f camSize = cam->getSize();
 	sf::Vector2f pPos = pEntity1->GetPosition();
 	sf::Vector2f posLimite = sf::Vector2f(4600, 720);
@@ -490,6 +500,11 @@ void SampleScene::OnUpdate()
             i--;
         }
     }
+
+    std::string fpsText = "FPS: " + std::to_string(static_cast<int>(mFPS));
+    Debug::DrawText(100, 10, fpsText, sf::Color::White);
+
+
 }
 
 void SampleScene::OnDestroy()
