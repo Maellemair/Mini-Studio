@@ -129,8 +129,8 @@ void SampleScene::OnInitialize()
 	std::vector<std::string> pathLevel = Level::GetInstance()->pathLevel;
 
 	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
-	pEntity1->SetPosition(101, 550);
-	pEntity1->SetCollider(101, 550, 64, 45);
+	pEntity1->SetPosition(101, 608);
+	pEntity1->SetCollider(101, 608, 64, 45);
 	pEntity1->SetRigidBody(true);
 
 	map = new MapEditor();
