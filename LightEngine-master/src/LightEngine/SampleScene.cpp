@@ -201,6 +201,8 @@ void SampleScene::OnEvent(const sf::Event& event)
         bullet->SetPosition(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
         bullet->SetRigidBody(true);
 
+        pEntity1->MakeSound("../../../res/splashing_sound.wav", 1.0f);
+
         // Shoot right
         if (pEntity1->getLastDirection() == 1)
         {
@@ -425,6 +427,8 @@ void SampleScene::OnUpdate()
                 newBullet->Update();
 
                 bulletsList.push_back(newBullet);
+
+				//pEntity1->MakeSound("../../../res/shooting_sound.wav", 1.0f);
 
                 if (pEntity1->getLastDirection() == 1)
                 {

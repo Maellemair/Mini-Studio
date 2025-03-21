@@ -295,7 +295,9 @@ void Player::Jump()
 	mNbrJump++;
 	mClockDoubleJump.restart();
 
-	mSound->LoadAndPlay("../../../res/jumping_sound.wav");
+	mSound->Load("../../../res/jumping_sound.wav");
+	mSound->SetPicth(0.95f);
+	mSound->Play();
 }
 
 void Player::TakeHit()
@@ -303,8 +305,6 @@ void Player::TakeHit()
 	animHitTime.restart();
 	mLife--;
 	isTakingDamage = true;
-
-	mSound->LoadAndPlay("../../../res/damaged_sound.wav");
 
 	if (mLife <= 0)
 	{
@@ -315,11 +315,17 @@ void Player::TakeHit()
 void Player::Dash(float deltaTime)
 {
 	SetDirection(lastDirection, 0, 800); // droite ou gauche
+
+	mSound->Load("../../../res/jumping_sound.wav");
+	mSound->SetPicth(1.1f);
+	mSound->Play();
 }
 
-void Player::MakeSound(const char* path)
+void Player::MakeSound(const char* path, float pitch)
 {
-	mSound->LoadAndPlay(path);
+	mSound->Load(path);
+	mSound->SetPicth(pitch);
+	mSound->Play();
 }
 
 

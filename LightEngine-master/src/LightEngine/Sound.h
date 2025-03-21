@@ -10,5 +10,7 @@ public:
 	void Load(const char* path);
 	void Play();
 	void LoadAndPlay(const char* path);
+	void SetPicth(float pitch);
+	void RandomPitch();
 };
 
