@@ -28,7 +28,7 @@ void Player::OnInitialize()
 
 	animPlayer = new Animation;
 	animPlayer->loadAnimations(m["animation_Player"], "../../../res/Player.json", mShape);
-	
+
 	mpStateMachine = new StateMachine<Player>(this, State::Count);
 
 	//State
@@ -261,6 +261,7 @@ void Player::OnInitialize()
 				transition->AddCondition<PlayerCondition_isGround>(false);
 				transition->AddCondition<PlayerCondition_takeDamage>(false);
 			}
+			
 		}
 	}
 
@@ -377,17 +378,20 @@ void Player::TakeHit(float posX, int pLifeLost)
 	invicibilityTime = 0.0f;
 	mSoundHit->Play();
 
-	sf::Vector2f repulsionForce;
-	if (GetPosition().x < posX)
+	if(posX != 0)
 	{
-		repulsionForce = sf::Vector2f(-1.f, -1.f);
+		sf::Vector2f repulsionForce;
+		if (GetPosition().x < posX)
+		{
+			repulsionForce = sf::Vector2f(-1.f, -1.f);
+		}
+		else
+		{
+			repulsionForce = sf::Vector2f(1, -1.f);
+		}
+		SetDirection(repulsionForce.x, repulsionForce.y, 500.f);
+		repulsionTimer = 0.2f;
 	}
-	else
-	{
-		repulsionForce = sf::Vector2f(1, -1.f);
-	}
-	SetDirection(repulsionForce.x, repulsionForce.y, 500.f);
-	repulsionTimer = 0.2f;
 }
 
 

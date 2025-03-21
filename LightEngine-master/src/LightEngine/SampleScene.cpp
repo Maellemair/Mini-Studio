@@ -148,154 +148,181 @@ void SampleScene::OnInitialize()
 	mMusic->Play();
 }
 
+void SampleScene::DisplayMenu()
+{
+    std::string Menu = "Press Start to play !";
+    sf::Vector2f pSizeWin = sf::Vector2f(GetWindowWidth(), GetWindowHeight());
+    Debug::DrawText(280, 500, Menu, sf::Color::Black);
+}
+
 void SampleScene::OnEvent(const sf::Event& event)
 {
-    //Controller inputs
-    if (sf::Joystick::isConnected(0))
+    if (isMenuActive)
     {
-        float vitesse = 250;
-        float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+        DisplayMenu();
 
-        // Drift out
-        if ((x > 0.f && x < 10.f) || (x < 0.f && x > -10.f))
+        if (sf::Joystick::isButtonPressed(0, 1) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::K))
         {
-            x = 0;
+            isMenuActive = false;
         }
-        //Boutton X
-        if (sf::Joystick::isButtonPressed(0, 1)) {
-            pEntity1->Jump();
-        }
+    }
+    else
+    {
+        //Controller inputs
+        if (sf::Joystick::isConnected(0))
+        {
+            float vitesse = 250;
+            float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
 
-        //Bouton Carré
-        else if (sf::Joystick::isButtonPressed(0, 0))
-        {
-            if (!pEntity1->GetIsShooting() && pEntity1->GetAmmo() > 0)
+            // Drift out
+            if ((x > 0.f && x < 10.f) || (x < 0.f && x > -10.f))
             {
-                Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-                sf::Vector2f pPos = sf::Vector2f(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-                sf::Vector2f colliderX = sf::Vector2f(pEntity1->GetCollider()->xMin, pEntity1->GetCollider()->xMax);
+                x = 0;
+            }
+            //Boutton X
+            if (sf::Joystick::isButtonPressed(0, 1)) {
+                pEntity1->Jump();
+            }
 
-                if (pEntity1->getLastDirection() == 1)
+            //Bouton Carré
+            else if (sf::Joystick::isButtonPressed(0, 0))
+            {
+                if (!pEntity1->GetIsShooting() && pEntity1->GetAmmo() > 0)
                 {
-                    newBullet->SetPosition(colliderX.y, pPos.y);
-                    newBullet->SetCollider(colliderX.y, pPos.y, 8, 16);
-                    newBullet->SetDirection(1, 0, 500);
-                }
-                else if (pEntity1->getLastDirection() == -1)
-                {
-                    newBullet->SetPosition(colliderX.x, pPos.y);
-                    newBullet->SetCollider(colliderX.x, pPos.y, 8, 16);
-                    newBullet->SetDirection(-1, 0, 500);
-                }
-                newBullet->SetRigidBody(true);
-                newBullet->Update();
+                    Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+                    sf::Vector2f pPos = sf::Vector2f(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+                    sf::Vector2f colliderX = sf::Vector2f(pEntity1->GetCollider()->xMin, pEntity1->GetCollider()->xMax);
 
-                bulletsList.push_back(newBullet);
-                pEntity1->Shoot();
+                    if (pEntity1->getLastDirection() == 1)
+                    {
+                        newBullet->SetPosition(colliderX.y, pPos.y);
+                        newBullet->SetCollider(colliderX.y, pPos.y, 8, 16);
+                        newBullet->SetDirection(1, 0, 500);
+                    }
+                    else if (pEntity1->getLastDirection() == -1)
+                    {
+                        newBullet->SetPosition(colliderX.x, pPos.y);
+                        newBullet->SetCollider(colliderX.x, pPos.y, 8, 16);
+                        newBullet->SetDirection(-1, 0, 500);
+                    }
+                    newBullet->SetRigidBody(true);
+                    newBullet->Update();
+
+                    bulletsList.push_back(newBullet);
+                    pEntity1->Shoot();
+                }
+            }
+            //Joystick a Droite
+            if (x > 10.f)
+            {
+                pEntity1->Move(1);
+                pEntity1->setLastDirection(1);
+            }
+            //Joystick a Gauche
+            else if (x < -10.f)
+            {
+                pEntity1->Move(-1);
+                pEntity1->setLastDirection(-1);
+            }
+            //Rien
+            else
+            {
+                pEntity1->Move(0);
             }
         }
-        //Joystick a Droite
-        if (x > 10.f)
-        {
-            pEntity1->Move(1);
-            pEntity1->setLastDirection(1);
-        }
-        //Joystick a Gauche
-        else if (x < -10.f)
-        {
-            pEntity1->Move(-1);
-            pEntity1->setLastDirection(-1);
-        }
-        //Rien
+        //Keyboard inputs
         else
         {
-            pEntity1->Move(0);
-        }
-    }
-
-    //Keyboard inputs
-    else 
-    {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-            pEntity1->Move(-1);
-            pEntity1->setLastDirection(-1);
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-            pEntity1->Move(1);
-            pEntity1->setLastDirection(1);
-        }
-        else
-        {
-            pEntity1->Move(0);
-        }
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-        
-        if (!pEntity1->GetIsShooting() && pEntity1->GetAmmo() > 0)
-        {
-            Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
-            sf::Vector2f pPos = sf::Vector2f(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
-            sf::Vector2f colliderX = sf::Vector2f(pEntity1->GetCollider()->xMin, pEntity1->GetCollider()->xMax);
-
-            if (pEntity1->getLastDirection() == 1)
-            {
-                newBullet->SetPosition(colliderX.y, pPos.y);
-                newBullet->SetCollider(colliderX.y, pPos.y, 8, 16);
-                newBullet->SetDirection(1, 0, 500);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
+                pEntity1->Move(-1);
+                pEntity1->setLastDirection(-1);
             }
-            else if (pEntity1->getLastDirection() == -1)
-            {
-                newBullet->SetPosition(colliderX.x, pPos.y);
-                newBullet->SetCollider(colliderX.x, pPos.y, 8, 16);
-                newBullet->SetDirection(-1, 0, 500);
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+                pEntity1->Move(1);
+                pEntity1->setLastDirection(1);
             }
-            newBullet->SetRigidBody(true);
-            newBullet->Update();
+            else
+            {
+                pEntity1->Move(0);
+            }
 
-            bulletsList.push_back(newBullet);
-            pEntity1->Shoot();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
+
+                if (!pEntity1->GetIsShooting() && pEntity1->GetAmmo() > 0)
+                {
+                    Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
+                    sf::Vector2f pPos = sf::Vector2f(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
+                    sf::Vector2f colliderX = sf::Vector2f(pEntity1->GetCollider()->xMin, pEntity1->GetCollider()->xMax);
+
+                    if (pEntity1->getLastDirection() == 1)
+                    {
+                        newBullet->SetPosition(colliderX.y, pPos.y);
+                        newBullet->SetCollider(colliderX.y, pPos.y, 8, 16);
+                        newBullet->SetDirection(1, 0, 500);
+                    }
+                    else if (pEntity1->getLastDirection() == -1)
+                    {
+                        newBullet->SetPosition(colliderX.x, pPos.y);
+                        newBullet->SetCollider(colliderX.x, pPos.y, 8, 16);
+                        newBullet->SetDirection(-1, 0, 500);
+                    }
+                    newBullet->SetRigidBody(true);
+                    newBullet->Update();
+
+                    bulletsList.push_back(newBullet);
+                    pEntity1->Shoot();
+                }
+            }
+            //Jump
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+                pEntity1->Jump();
+            }
+
+            //Reset Position
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
+                pEntity1->Reset();
+            }
+
+            if (event.type != sf::Event::EventType::MouseButtonPressed) {
+                return;
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)) {
+                mMusic->PausePlay();
+            }
         }
     }
-
-    //Jump
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-        pEntity1->Jump();
-    }
-
-    //Reset Position
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
-        pEntity1->Reset();
-    }
-
-    if (event.type != sf::Event::EventType::MouseButtonPressed) {
-        return;
-    }
-    
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)) {
-		mMusic->PausePlay();
-	}
-
-    if (event.type != sf::Event::EventType::MouseButtonPressed)
-        return;
 }
 
 void SampleScene::OnUpdate()
 {
 	sf::Vector2f camSize = cam->getSize();
 	sf::Vector2f pPos = pEntity1->GetPosition();
-	sf::Vector2f posLimite = sf::Vector2f(20000, 720);
+	sf::Vector2f posLimite = sf::Vector2f(4600, 720);
 
 	float minX = camSize.x / 2;
 	float maxX = posLimite.x - camSize.x / 2;
 	float minY = camSize.y / 2;
 	float maxY = posLimite.y - camSize.y / 2;
 
+    if (pEntity1->GetLife() <= 0) {
+        maxY += 3000;
+    }
+
 	float newCamX = std::clamp(pPos.x, minX, maxX);
 	float newCamY = std::clamp(pPos.y, minY, maxY);
 
 	cam->setCenter(newCamX, newCamY);
 	mCamPos = sf::Vector2f(newCamX, newCamY);
+    
+    if (pEntity1->GetLife() <= 0) {
+        pEntity1->Death();
+
+        pEntity1->SetGravity(false);
+        Debug::DrawText(pEntity1->GetPosition().x,
+            pEntity1->GetPosition().y - 100,
+            "Game Over", 0.5, 0.5, sf::Vector2f(2, 2), sf::Color::White);
+    }
 
     if (mHearths.size() < pEntity1->GetLife())
     {
@@ -463,4 +490,36 @@ void SampleScene::OnUpdate()
             i--;
         }
     }
+}
+
+void SampleScene::OnDestroy()
+{
+    delete pEntity1;
+    delete pEnemy;
+    bulletsList.clear();
+    bulletsEnemyList.clear();
+    delete map;
+    delete mapRocks;
+    delete bg;
+    delete bg2;
+    delete filtre;
+    delete filtre2;
+    delete filtreArbre;
+    delete filtreArbre2;
+    delete arbreBack;
+    delete arbreBack2;
+    delete arbre;
+    delete arbre2;
+    mBackgrounds.clear();
+    mPlateforms.clear();
+    mEnemys.clear();
+    mBonus.clear();
+    mHearths.clear(); 
+    delete mMusic;
+    delete mReservoir;
+    for (auto& pair : mObjectType)
+    {
+        delete pair.second; 
+    }
+    mObjectType.clear();
 }

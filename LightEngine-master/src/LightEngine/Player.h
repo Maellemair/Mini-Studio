@@ -48,6 +48,7 @@ public:
 	void OnInitialize() override;
 	void OnUpdate() override;
 	void SetState(State pState);
+	void SetGravity(bool state) { mGravity = state; }
 	const char* GetStateName(State state) const;
 	Entity* GetColliderEntity() override { return PhysicalEntity::GetColliderEntity(); }
 	void GiveHealth() { mLife++; }
@@ -59,6 +60,7 @@ public:
 	void Jump();
 	void Shoot();
 	void TakeHit(float posX, int pLifeLost = 1);
+	void Death() { SetDirection(0, 0); SetPosition(1280 / 2, ((720 / 4) * 3) + 3000); }
 	int GetLife() { return mLife; }
 	bool GetIsTakingDamage() { return isTakingDamage; }
 	bool GetIsShooting() { return isShooting; }
