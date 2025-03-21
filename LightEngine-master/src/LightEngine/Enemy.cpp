@@ -13,6 +13,10 @@ void Enemy::OnInitialize()
 
 void Enemy::Hit()
 {
+	if (mLife <= 0)
+		return;
+
+	mLife--;
 	isTakingDamage = true;
 }
 

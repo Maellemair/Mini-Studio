@@ -1,0 +1,15 @@
+{
+"frame_size": {
+  "width": 9,
+  "height": 9
+},
+"structure": "single",
+  "animations": {
+    "idle": {
+      "frames": 4,
+      "timeProgress": 0.1,
+      "loop": true,
+      "row": 2
+    }
+  }
+}

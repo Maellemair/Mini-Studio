@@ -13,11 +13,11 @@ public:
 	void OnEnd(EnemyGround* pEnemy) override {}
 };
 
-class EnemyGoundAction_Kick : public Action<EnemyGround>
+class EnemyGroundAction_Kick : public Action<EnemyGround>
 {
 	sf::Clock animTime;
 public:
-	void OnStart(EnemyGround* pEnemy) override { std::cout << "Test" << std::endl; pEnemy->animEnemy->setAnimation("kick"); animTime.restart(); }
+	void OnStart(EnemyGround* pEnemy) override { pEnemy->animEnemy->setAnimation("kick"); animTime.restart(); }
 	void OnUpdate(EnemyGround* pEnemy) override;
 	void OnEnd(EnemyGround* pEnemy) override {}
 };
@@ -51,7 +51,7 @@ class EnemyVolantAction_Shoot : public Action<EnemyVolant>
 {
 	sf::Clock animTime;
 public:
-	void OnStart(EnemyVolant* pEnemy) override { std::cout << "Test" << std::endl; pEnemy->animEnemy->setAnimation("kick"); animTime.restart(); }
+	void OnStart(EnemyVolant* pEnemy) override { pEnemy->animEnemy->setAnimation("shoot"); animTime.restart(); }
 	void OnUpdate(EnemyVolant* pEnemy) override;
 	void OnEnd(EnemyVolant* pEnemy) override {}
 };

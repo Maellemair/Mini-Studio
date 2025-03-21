@@ -12,5 +12,4 @@ void LifeBonus::OnInitialize()
 void LifeBonus::isCollid(Player* pPlayer)
 {
 	pPlayer->GiveHealth();
-	SetNeedToBeDestroid(true);
 }

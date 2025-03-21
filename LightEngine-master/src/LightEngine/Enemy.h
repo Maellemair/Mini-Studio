@@ -15,12 +15,14 @@ protected:
 	bool isAttacking = false;
 	sf::Clock animHitTime;
     Animation* animEnemy;
+	float mLife = 5;
 
 public:
     void OnInitialize() override;
 	void OnCollision(Entity* collidedWith) override { }
 	void Hit();
-	void Kick(float pDirection);
+	bool IsDead() { return mLife <= 0; }
+	virtual void Attack(float pDirection) { }
 	bool GetIsTakingDamage() { return isTakingDamage; }
 	bool GetIsAttacking() { return isAttacking; }
     const AABBCollider* GetCollider() { return mBoxCollider; }

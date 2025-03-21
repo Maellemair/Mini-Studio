@@ -6,11 +6,17 @@
 
 class Player;
 class Enemy;
+class EnemyVolant;
+class EnemyGround;
 class ObjectEntity;
 class Background;
 class MapEditor;
 class Music;
 class Bonus;
+class Bullets;
+class BulletsEnemy;
+class Hearth;
+class Reservoir;
 
 //assets
 class Grass;
@@ -26,7 +32,7 @@ class Plateform_edge_left;
 class Left_dirt_fall;
 class Right_dirt_fall;
 class Rocks;
-class Bullets;
+class DeathZone;
 
 class SampleScene : public Scene
 {
@@ -35,6 +41,7 @@ private:
 	Player* pEntity1;
 	Enemy* pEnemy;
 	std::vector<Bullets*> bulletsList;
+	std::vector<BulletsEnemy*> bulletsEnemyList;
 	MapEditor* map;
 	MapEditor* mapRocks;
 	Background* bg;
@@ -51,7 +58,9 @@ private:
 	std::vector<ObjectEntity*> mPlateforms;
 	std::vector<Enemy*> mEnemys;
 	std::vector<Bonus*> mBonus;
+	std::vector<Hearth*> mHearths;
 	Music* mMusic;
+	Reservoir* mReservoir;
 	sf::Vector2f mCamPos;
 	sf::Vector2f lastCameraPosition;
 	std::map<char, ObjectEntity*> mObjectType;

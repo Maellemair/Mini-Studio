@@ -8,6 +8,7 @@ class StateMachine;
 class Texture;
 class Sound;
 class Bullets;
+class Hearth;
 
 class Player : public PhysicalEntity, public Animation
 {
@@ -34,9 +35,10 @@ class Player : public PhysicalEntity, public Animation
 	Sound* mSoundJump;	
 	Sound* mSoundHit;	
 	Sound* mSoundShoot;	
-	Sound* mSoundDeath;	
+	Sound* mSoundDeath;
+
 	int lastDirection = 1;
-	int mAmmoMax;
+	int mAmmoMax = 12;
 	int mAmmo = mAmmoMax;
 
 	bool isTakingDamage = false;
@@ -49,24 +51,21 @@ public:
 	const char* GetStateName(State state) const;
 	Entity* GetColliderEntity() override { return PhysicalEntity::GetColliderEntity(); }
 	void GiveHealth() { mLife++; }
-	void ReloadWater() {}
+	void ReloadWater() { mAmmo = mAmmoMax; }
 	int getLastDirection();
 	void setLastDirection(int dir);
 	void Move(int key);
 	void Reset();
 	void Jump();
 	void Shoot();
-	void TakeHit(float posX);
+	void TakeHit(float posX, int pLifeLost = 1);
+	int GetLife() { return mLife; }
 	bool GetIsTakingDamage() { return isTakingDamage; }
 	bool GetIsShooting() { return isShooting; }
 	int GetAmmo() { return mAmmo; }
 	void ResetAmmo() { mAmmo = mAmmoMax; }
 	bool IsDead() { return mLife <= 0; }
-	void Dash(float deltaTime);
 
-	float dashTime = 0.2f;
-	float dashTimer = 0.0f;
-	float dashCooldown;
 	float invicibilityTime = 0.0f;
 	float repulsionTimer = 0.0f;
 

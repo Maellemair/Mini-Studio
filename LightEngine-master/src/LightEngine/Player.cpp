@@ -122,11 +122,19 @@ void Player::OnInitialize()
 		{
 			Action<Player>* pShooting = mpStateMachine->CreateAction<PlayerAction_Shoot>(State::SHOOT);
 
-			//-> IDLE
+			//-> Idle
 			{
 				auto transition = pShooting->CreateTransition(State::IDLE);
 
 				transition->AddCondition<PlayerCondition_isGround>(true);
+				transition->AddCondition<PlayerCondition_isShooting>(false);
+			}
+
+			//-> Fall
+			{
+				auto transition = pShooting->CreateTransition(State::FALL);
+
+				transition->AddCondition<PlayerCondition_isFalling>(true);
 				transition->AddCondition<PlayerCondition_isShooting>(false);
 			}
 		}
@@ -193,13 +201,6 @@ void Player::OnInitialize()
 
 				transition->AddCondition<PlayerCondition_isFalling>(true);
 				transition->AddCondition<PlayerCondition_takeDamage>(false);
-			}
-
-			//-> Shoot
-			{
-				auto transition = pJumping->CreateTransition(State::SHOOT);
-
-				transition->AddCondition<PlayerCondition_isShooting>(true);
 			}
 
 			//-> IDLE
@@ -293,8 +294,6 @@ void Player::OnUpdate()
 	}
 	float dt = GetDeltaTime();
 
-	/*Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);*/
-
 	animPlayer->update(dt);
 	mpStateMachine->Update();
 	PhysicalEntity::OnUpdate();
@@ -364,12 +363,16 @@ void Player::Jump()
 
 void Player::Shoot()
 {
+	if (mAmmo <= 0)
+		return;
+
+	mAmmo--;
 	isShooting = true;
 }
 
-void Player::TakeHit(float posX)
+void Player::TakeHit(float posX, int pLifeLost)
 {
-	mLife--;
+	mLife -= pLifeLost;
 	isTakingDamage = true;
 	invicibilityTime = 0.0f;
 	mSoundHit->Play();
@@ -385,11 +388,6 @@ void Player::TakeHit(float posX)
 	}
 	SetDirection(repulsionForce.x, repulsionForce.y, 500.f);
 	repulsionTimer = 0.2f;
-}
-
-void Player::Dash(float deltaTime)
-{
-	SetDirection(lastDirection, 0, 800);
 }
 
 

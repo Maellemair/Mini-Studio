@@ -8,68 +8,81 @@
 
 void EnemyVolant::OnInitialize()
 {
+	mpStateMachine = new StateMachine<EnemyVolant>(this, State::Count);
 
-	//EVIL
+	//State
 	{
-		Action<EnemyVolant>* pEvil = mpStateMachine->CreateAction<EnemyVolantAction_Evil>(State::EVIL);
-
-		//-> KICK
+		//EVIL
 		{
-			auto transition = pEvil->CreateTransition(State::KICK);
+			Action<EnemyVolant>* pEvil = mpStateMachine->CreateAction<EnemyVolantAction_Evil>(State::EVIL);
 
-			transition->AddCondition<EnemyCondition_isTakingDamage>(false);
-			transition->AddCondition<EnemyCondition_isAttacking>(true);
+			//-> SHOOT
+			{
+				auto transition = pEvil->CreateTransition(State::SHOOT);
+
+				transition->AddCondition<EnemyVolantCondition_isTakingDamage>(false);
+				transition->AddCondition<EnemyVolantCondition_isAttacking>(true);
+			}
+
+			//-> HIT
+			{
+				auto transition = pEvil->CreateTransition(State::HIT);
+
+				transition->AddCondition<EnemyVolantCondition_isTakingDamage>(true);
+				transition->AddCondition<EnemyVolantCondition_isAttacking>(false);
+			}
 		}
 
-		//-> HIT
+		//SHOOT
 		{
-			auto transition = pEvil->CreateTransition(State::HIT);
+			Action<EnemyVolant>* pKick = mpStateMachine->CreateAction<EnemyVolantAction_Shoot>(State::SHOOT);
 
-			transition->AddCondition<EnemyCondition_isTakingDamage>(true);
-			transition->AddCondition<EnemyCondition_isAttacking>(false);
-		}
-	}
+			//-> EVIL
+			{
+				auto transition = pKick->CreateTransition(State::EVIL);
 
-	//KICK
-	{
-		Action<EnemyVolant>* pKick = mpStateMachine->CreateAction<EnemyVolantAction_Kick>(State::KICK);
+				transition->AddCondition<EnemyVolantCondition_isAttacking>(false);
+			}
 
-		//-> EVIL
-		{
-			auto transition = pKick->CreateTransition(State::EVIL);
-
-			transition->AddCondition<EnemyCondition_isAttacking>(false);
 		}
 
-	}
-
-	//HIT
-	{
-		Action<EnemyVolant>* pHit = mpStateMachine->CreateAction<EnemyVolantAction_Hit>(State::HIT);
-
-		//-> EVIL
+		//HIT
 		{
-			auto transition = pHit->CreateTransition(State::EVIL);
+			Action<EnemyVolant>* pHit = mpStateMachine->CreateAction<EnemyVolantAction_Hit>(State::HIT);
 
-			transition->AddCondition<EnemyCondition_isTakingDamage>(false);
+			//-> EVIL
+			{
+				auto transition = pHit->CreateTransition(State::EVIL);
+
+				transition->AddCondition<EnemyVolantCondition_isTakingDamage>(false);
+				transition->AddCondition<EnemyVolantCondition_isDead>(false);
+			}
+
+			//-> NICE
+			{
+				auto transition = pHit->CreateTransition(State::NICE);
+
+				transition->AddCondition<EnemyVolantCondition_isTakingDamage>(false);
+				transition->AddCondition<EnemyVolantCondition_isDead>(true);
+			}
 		}
-	}
 
-	//NICE
-	{
-		Action<EnemyVolant>* pNice = mpStateMachine->CreateAction<EnemyVolantAction_Nice>(State::NICE);
+		//NICE
+		{
+			Action<EnemyVolant>* pNice = mpStateMachine->CreateAction<EnemyVolantAction_Nice>(State::NICE);
+		}
 	}
 
 	std::map <std::string, sf::Texture>& m = Texture::GetInstance()->textObject;
 	mShape->setTexture(&m["animation_EnnemyVolant"], true);
-	mShape->setTextureRect(sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(53, 32)));
+	mShape->setTextureRect(sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(32, 32)));
 
 	animEnemy = new Animation;
 	animEnemy->loadAnimations(m["animation_EnnemyVolant"], "../../../res/EnemyVolant.json", mShape);
 
-	mpStateMachine = new StateMachine<EnemyVolant>(this, State::Count);
 	mpStateMachine->SetState(State::EVIL);
 	mState = (EnemyVolant::State)mpStateMachine->GetCurrentState();
+
 }
 
 const char* EnemyVolant::GetStateName(State state) const
@@ -84,10 +97,18 @@ const char* EnemyVolant::GetStateName(State state) const
 	}
 }
 
+void EnemyVolant::Tracking(float pPosX)
+{
+	float direction = (pPosX - GetPosition().x) / abs(pPosX - GetPosition().x);
+	SetDirection(direction, 0 ,50);
+	isTraking = true;
+}
+
 void EnemyVolant::OnUpdate()
 {
 	const sf::Vector2f& position = GetPosition();
 	mState = (EnemyVolant::State)mpStateMachine->GetCurrentState();
-	const char* stateName = GetStateName(mState);
-	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);
+
+	mpStateMachine->Update();
+	Enemy::OnUpdate();
 }

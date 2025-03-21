@@ -10,11 +10,18 @@ void Background::Load(const char* backgroundName, sf::Vector2i pSize, sf::Vector
 	mSpeed = pSpeed;
 }
 
-void Background::OnUpdate(float delta)
+void Background::OnUpdate(float delta, float pCampPos)
 {
- 	if (GetPosition(0.5, 0.5).x <= mPos.x - mShape->getSize().x)
-	{
-		SetPosition(mPos.x + mShape->getSize().x, mPos.y);
-	}
-	mShape->move(-delta * mSpeed, 0);
+    float bgWidth = mShape->getSize().x;
+
+    if (GetPosition().x + bgWidth <= pCampPos)
+    {
+        SetPosition(GetPosition().x + bgWidth * 2, mPos.y);
+    }
+    else if (GetPosition().x >= pCampPos + bgWidth)
+    {
+        SetPosition(GetPosition().x - bgWidth * 2, mPos.y);
+    }
+
+    mShape->move(-delta * mSpeed, 0);
 }

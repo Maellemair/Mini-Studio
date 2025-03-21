@@ -10,6 +10,6 @@ class Background : public Entity
 
 public:
 	void Load(const char* backgroundName, sf::Vector2i pSize, sf::Vector2i pPos, float speed, sf::Vector2f pPosShape);
-	void OnUpdate(float delta);
+	void OnUpdate(float delta, float pCampPos);
 };
 

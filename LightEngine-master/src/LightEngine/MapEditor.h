@@ -9,6 +9,8 @@
 
 class ObjectEntity;
 class Enemy;
+class EnemyGround;
+class EnemyVolant;
 class GameManager;
 class LifeBonus;
 class WaterBonus;

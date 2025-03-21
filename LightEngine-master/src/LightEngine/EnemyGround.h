@@ -26,10 +26,10 @@ public:
 	void OnInitialize() override;
 	void OnUpdate() override;
 	const char* GetStateName(State state) const;
-	void Kick(float pDirection);
+	void Attack(float pDirection) override;
 
 protected:
-	friend class EnemyGroundtAction_Evil;
+	friend class EnemyGroundAction_Evil;
 	friend class EnemyGroundAction_Kick;
 	friend class EnemyGroundAction_Hit;
 	friend class EnemyGroundAction_Nice;

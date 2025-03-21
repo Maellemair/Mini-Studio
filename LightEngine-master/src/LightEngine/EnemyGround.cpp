@@ -7,55 +7,66 @@
 
 void EnemyGround::OnInitialize()
 {
+	mpStateMachine = new StateMachine<EnemyGround>(this, State::Count);
+
 	//EVIL
 	{
-		Action<Enemy>* pEvil = mpStateMachine->CreateAction<EnemyAction_Evil>(State::EVIL);
+		Action<EnemyGround>* pEvil = mpStateMachine->CreateAction<EnemyGroundAction_Evil>(State::EVIL);
 
 		//-> KICK
 		{
 			auto transition = pEvil->CreateTransition(State::KICK);
 
-			transition->AddCondition<EnemyCondition_isTakingDamage>(false);
-			transition->AddCondition<EnemyCondition_isAttacking>(true);
+			transition->AddCondition<EnemyGroundCondition_isTakingDamage>(false);
+			transition->AddCondition<EnemyGroundCondition_isAttacking>(true);
 		}
 
 		//-> HIT
 		{
 			auto transition = pEvil->CreateTransition(State::HIT);
 
-			transition->AddCondition<EnemyCondition_isTakingDamage>(true);
-			transition->AddCondition<EnemyCondition_isAttacking>(false);
+			transition->AddCondition<EnemyGroundCondition_isTakingDamage>(true);
+			transition->AddCondition<EnemyGroundCondition_isAttacking>(false);
 		}
 	}
 
 	//KICK
 	{
-		Action<Enemy>* pKick = mpStateMachine->CreateAction<EnemyAction_Kick>(State::KICK);
+		Action<EnemyGround>* pKick = mpStateMachine->CreateAction<EnemyGroundAction_Kick>(State::KICK);
 
 		//-> EVIL
 		{
 			auto transition = pKick->CreateTransition(State::EVIL);
 
-			transition->AddCondition<EnemyCondition_isAttacking>(false);
+			transition->AddCondition<EnemyGroundCondition_isAttacking>(false);
 		}
 
 	}
 
 	//HIT
 	{
-		Action<Enemy>* pHit = mpStateMachine->CreateAction<EnemyAction_Hit>(State::HIT);
+		Action<EnemyGround>* pHit = mpStateMachine->CreateAction<EnemyGroundAction_Hit>(State::HIT);
 
 		//-> EVIL
 		{
 			auto transition = pHit->CreateTransition(State::EVIL);
 
-			transition->AddCondition<EnemyCondition_isTakingDamage>(false);
+			transition->AddCondition<EnemyGroundCondition_isTakingDamage>(false);
+			transition->AddCondition<EnemyGroundCondition_isDead>(false);
+		}
+
+		//-> NICE
+		{
+			auto transition = pHit->CreateTransition(State::NICE);
+
+			transition->AddCondition<EnemyGroundCondition_isTakingDamage>(false);
+			transition->AddCondition<EnemyGroundCondition_isDead>(true);
 		}
 	}
 
 	//NICE
 	{
-		Action<Enemy>* pNice = mpStateMachine->CreateAction<EnemyAction_Nice>(State::NICE);
+		Action<EnemyGround>* pNice = mpStateMachine->CreateAction<EnemyGroundAction_Nice>(State::NICE);
 	}
 
 	std::map <std::string, sf::Texture>& m = Texture::GetInstance()->textObject;
@@ -63,9 +74,8 @@ void EnemyGround::OnInitialize()
 	mShape->setTextureRect(sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(53, 32)));
 
 	animEnemy = new Animation;
-	animEnemy->loadAnimations(m["animation_EnnemySol"], "../../../res/Enemy.json", mShape);
-	
-	mpStateMachine = new StateMachine<EnemyGround>(this, State::Count);
+	animEnemy->loadAnimations(m["animation_EnnemySol"], "../../../res/EnemySol.json", mShape);
+
 	mpStateMachine->SetState(State::EVIL);
 	mState = (EnemyGround::State)mpStateMachine->GetCurrentState();
 }
@@ -82,7 +92,7 @@ const char* EnemyGround::GetStateName(State state) const
 	}
 }
 
-void EnemyGround::Kick(float pDirection)
+void EnemyGround::Attack(float pDirection)
 {
 	if (pDirection == -1)
 	{
@@ -99,7 +109,8 @@ void EnemyGround::OnUpdate()
 {
 	const sf::Vector2f& position = GetPosition();
 	mState = (EnemyGround::State)mpStateMachine->GetCurrentState();
-	const char* stateName = GetStateName(mState);
-	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::White);
+
+	mpStateMachine->Update();
+	Enemy::OnUpdate();
 }
 

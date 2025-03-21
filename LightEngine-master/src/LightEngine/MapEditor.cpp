@@ -1,5 +1,6 @@
 #include "MapEditor.h"
-#include "Enemy.h"
+#include "EnemyGround.h"
+#include "EnemyVolant.h"
 #include "Assets/Rocks.h"
 #include "LifeBonus.h"
 #include "WaterBonus.h"
@@ -26,7 +27,7 @@ void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapO
 	Scene* currentScene = GameManager::Get()->GetScene();
 	std::string line = "";
 
-	int posX = pResolution / 2;
+	int posX = - pResolution / 2;
 	int posY = pResolution / 2;
 
 	while (std::getline(fichier, line))
@@ -41,9 +42,17 @@ void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapO
 			}
 			else if (c == 'X')
 			{
-				Enemy* newEnemy = currentScene->CreateRectangle<Enemy>(64, 106, sf::Color::Green);
+				EnemyGround* newEnemy = currentScene->CreateRectangle<EnemyGround>(64, 106, sf::Color::Green);
 				newEnemy->SetPosition(posX + pResolution / 2, posY + pResolution / 2);
 				newEnemy->SetCollider(posX + pResolution / 2, posY + pResolution / 2, 64, 50);
+				newEnemy->SetRigidBody(true);
+				mEnemy.push_back(newEnemy);
+			}
+			else if (c == 'V')
+			{
+				EnemyVolant* newEnemy = currentScene->CreateRectangle<EnemyVolant>(64, 64, sf::Color::Green);
+				newEnemy->SetPosition(posX + pResolution / 2, posY + pResolution / 2);
+				newEnemy->SetCollider(posX + pResolution / 2, posY + pResolution / 2, 64, 64);
 				newEnemy->SetRigidBody(true);
 				mEnemy.push_back(newEnemy);
 			}
@@ -66,7 +75,7 @@ void MapEditor::CreateMap(float pResolution, std::map<char, ObjectEntity*> pMapO
 			posX += pResolution;
 		}
 		posY += pResolution;
-		posX = pResolution / 2;
+		posX = -pResolution / 2;
 	}
 	fichier.close();
 }

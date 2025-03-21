@@ -9,11 +9,6 @@ void Bullets::OnInitialize()
 	mShape->setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(9, 9)));
 }
 
-void Bullets::OnCollision(Entity* collideWith)
-{
-
-}
-
 void Bullets::Update()
 {
 	mGravitySpeed = -70.0f;

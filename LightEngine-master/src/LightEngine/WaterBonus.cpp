@@ -1,5 +1,6 @@
 #include "WaterBonus.h"
 #include "AssetManager.h"
+#include "Player.h"
 
 void WaterBonus::OnInitialize()
 {
@@ -10,4 +11,5 @@ void WaterBonus::OnInitialize()
 
 void WaterBonus::isCollid(Player* pPlayer)
 {
+	pPlayer->ReloadWater();
 }

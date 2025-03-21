@@ -13,7 +13,6 @@ class Bullets : public PhysicalEntity
 	float lifeTimer = 0.0f;
 public:
 	void OnInitialize() override;
-	void OnCollision(Entity* collidedWith) override;
 	const AABBCollider* GetCollider() { return mBoxCollider; }
 	void Update();
 };

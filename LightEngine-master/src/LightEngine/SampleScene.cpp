@@ -14,12 +14,15 @@
 #include "Assets/Background.h"
 #include "Assets/Left_dirt_fall.h"
 #include "Assets/Right_dirt_fall.h"
+#include "Assets/DeathZone.h"
 
 #include "Player.h"
 #include "Bullets.h"
+#include "BulletsEnemy.h"
 #include "ObjectEntity.h"
 #include "Debug.h"
-
+#include "Hearth.h"
+#include "Reservoir.h"
 #include "Bonus.h"
 
 #include "Music.h"
@@ -29,6 +32,8 @@
 #include "Utils.h"
 
 #include "Enemy.h"
+#include "EnemyVolant.h"
+#include "EnemyGround.h"
 #include <iostream>
 #include <string>
 
@@ -117,14 +122,15 @@ void SampleScene::OnInitialize()
 		mObjectType['E'] = new Plateform_edge_left();
 		mObjectType['I'] = new Left_dirt_fall();
 		mObjectType['J'] = new Right_dirt_fall();
+		mObjectType['Z'] = new DeathZone();
 
 	}
 
 	std::vector<std::string> pathLevel = Level::GetInstance()->pathLevel;
 
 	pEntity1 = CreateRectangle<Player>(64, 64, sf::Color::Red);
-	pEntity1->SetPosition(101, 100);
-	pEntity1->SetCollider(101, 100, 64, 45);
+	pEntity1->SetPosition(101, 550);
+	pEntity1->SetCollider(101, 550, 64, 45);
 	pEntity1->SetRigidBody(true);
 
 	map = new MapEditor();
@@ -134,6 +140,8 @@ void SampleScene::OnInitialize()
 	mPlateforms = map->GetMap();
     mEnemys = map->GetEnemy();
     mBonus = map->GetBonus();
+
+    mReservoir = CreateRectangle<Reservoir>(58, 34, sf::Color::Red);
 
 	mMusic = new Music();
 	mMusic->Load("../../../res/platformer_music.wav", 10);
@@ -159,9 +167,9 @@ void SampleScene::OnEvent(const sf::Event& event)
         }
 
         //Bouton Carré
-        if (sf::Joystick::isButtonPressed(0, 0))
+        else if (sf::Joystick::isButtonPressed(0, 0))
         {
-            if (!pEntity1->GetIsShooting())
+            if (!pEntity1->GetIsShooting() && pEntity1->GetAmmo() > 0)
             {
                 Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
                 sf::Vector2f pPos = sf::Vector2f(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
@@ -224,7 +232,7 @@ void SampleScene::OnEvent(const sf::Event& event)
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
         
-        if (!pEntity1->GetIsShooting())
+        if (!pEntity1->GetIsShooting() && pEntity1->GetAmmo() > 0)
         {
             Bullets* newBullet = CreateRectangle<Bullets>(16, 8, sf::Color::Blue);
             sf::Vector2f pPos = sf::Vector2f(pEntity1->GetPosition().x, pEntity1->GetPosition().y);
@@ -276,7 +284,7 @@ void SampleScene::OnUpdate()
 {
 	sf::Vector2f camSize = cam->getSize();
 	sf::Vector2f pPos = pEntity1->GetPosition();
-	sf::Vector2f posLimite = sf::Vector2f(2000, 720);
+	sf::Vector2f posLimite = sf::Vector2f(20000, 720);
 
 	float minX = camSize.x / 2;
 	float maxX = posLimite.x - camSize.x / 2;
@@ -289,14 +297,38 @@ void SampleScene::OnUpdate()
 	cam->setCenter(newCamX, newCamY);
 	mCamPos = sf::Vector2f(newCamX, newCamY);
 
-    // À CHANGER !!!
-    /*std::string life = "Life : " + std::to_string(pEntity1->mLife);
-    Debug::DrawText(newCamX - camSize.x / 2 + 10, newCamY - camSize.y / 2 + 20, life, sf::Color::Black);*/
+    if (mHearths.size() < pEntity1->GetLife())
+    {
+        int size = pEntity1->GetLife() - mHearths.size();
+        for (int i = 0; i < size; i++)
+        {
+            Hearth* tempHeart = CreateRectangle<Hearth>(27, 27, sf::Color::Magenta);
+            tempHeart->SetPosition(0, 0);
+            mHearths.push_back(tempHeart);
+        }
+    }
+    sf::Vector2f HearthPos = sf::Vector2f(newCamX - camSize.x / 2 + 30, newCamY - camSize.y / 2 + 30);
+    for (int i = 0; i < mHearths.size(); i++)
+    {
+        if (pEntity1->GetLife() < i + 1)
+        {
+            mHearths[i]->SetDead(true);
+        }
+        else
+        {
+            mHearths[i]->SetDead(false);
+        }
+        mHearths[i]->SetPosition(HearthPos.x, HearthPos.y);
+        HearthPos.x += 30;
+    }
+
+    mReservoir->SetPosition(newCamX + camSize.x / 2 - 40, newCamY - camSize.y / 2 + 35);
+    mReservoir->UpdateText(pEntity1->GetAmmo());
 
 	float deltaX = mCamPos.x - lastCameraPosition.x;
 	for (int i = 0; i < mBackgrounds.size(); i++)
 	{
-		mBackgrounds[i]->OnUpdate(deltaX);
+		mBackgrounds[i]->OnUpdate(deltaX, newCamX);
 	}
     lastCameraPosition = mCamPos;
 
@@ -304,6 +336,11 @@ void SampleScene::OnUpdate()
 	{
 		if (mPlateforms[i]->IsColliding(pEntity1))
 		{
+            if (DeathZone* pPlateform = dynamic_cast<DeathZone*>(mPlateforms[i]))
+            {
+                pEntity1->TakeHit(0, pEntity1->GetLife());
+                pEntity1->SetPosition(pPlateform->GetPosition().x, pPlateform->GetPosition().y + pEntity1->GetColliderSize().y * 3);
+            }
 			pEntity1->Repulse(mPlateforms[i]);
 		}
 		else
@@ -329,6 +366,16 @@ void SampleScene::OnUpdate()
                 j--;
             }
         }
+
+        for (int j = 0; j < bulletsEnemyList.size(); j++)
+        {
+            if (bulletsEnemyList[j]->IsColliding(mPlateforms[i]))
+            {
+                bulletsEnemyList[j]->Destroy();
+                bulletsEnemyList.erase(bulletsEnemyList.begin() + j);
+                j--;
+            }
+        }
 		/*mPlateforms[i]->PrintCollider(sf::Color::White);
 		pEntity1->PrintCollider(sf::Color::White);*/
 	}
@@ -339,23 +386,51 @@ void SampleScene::OnUpdate()
         {
             if (pEntity1->invicibilityTime > 1.5f)
             {
-                if (!pEntity1->IsDead())
+                if (!pEntity1->IsDead() && !mEnemys[i]->IsDead())
                 {
                     pEntity1->TakeHit(mEnemys[i]->GetPosition().x);
                     float direction = (pEntity1->GetPosition().x - mEnemys[i]->GetPosition().x) / abs(pEntity1->GetPosition().x - mEnemys[i]->GetPosition().x);
-                    mEnemys[i]->Kick(direction);
+                    mEnemys[i]->Attack(direction);
                 }
             }
         }
         else
         {
+            if (EnemyVolant* pEnemy = dynamic_cast<EnemyVolant*>(mEnemys[i]))
+            {
+                if (pEntity1->GetPosition().y > pEnemy->GetPosition().y && pEntity1->GetPosition().y < pEnemy->GetPosition().y + 100)
+                {
+                    sf::Vector2f enemyPos = pEnemy->GetPosition();
+                    sf::Vector2f pPos = pEntity1->GetPosition();
+                    float distance = Utils::GetDistance(enemyPos.x, enemyPos.y, pPos.x, pPos.y);
+                    if (distance <= 200)
+                    {
+                        pEnemy->Tracking(pPos.x);
+                        if(!pEnemy->GetIsAttacking())
+                        {
+                            pEnemy->Attack(0);
+
+                            BulletsEnemy* newBulletLeft = CreateRectangle<BulletsEnemy>(18, 18, sf::Color::Blue);
+                            sf::Vector2f pPos = sf::Vector2f(pEnemy->GetPosition().x, pEnemy->GetPosition().y);
+                            newBulletLeft->SetPosition(pPos.x, pPos.y);
+                            newBulletLeft->SetCollider(pPos.x, pPos.y, 18, 18);
+                            newBulletLeft->SetDirection(0, 1, 300);
+                            bulletsEnemyList.push_back(newBulletLeft);
+                        }
+                    }
+                }
+                else
+                {
+                    pEnemy->SetDirection(0, 0);
+                }
+            }
             pEntity1->invicibilityTime += GetDeltaTime();
         }
         for(int j = 0; j < bulletsList.size(); j++)
         {
             /*bulletsList[j]->PrintCollider(sf::Color::Magenta);*/
             
-            if (bulletsList[j]->IsColliding(mEnemys[i]))
+            if (bulletsList[j]->IsColliding(mEnemys[i]) && !mEnemys[i]->IsDead())
             {
                 mEnemys[i]->Hit();
 
@@ -366,42 +441,26 @@ void SampleScene::OnUpdate()
             }
         }
     }
+    
+    for (int i = 0; i < bulletsEnemyList.size(); i++)
+    {
+        if (bulletsEnemyList[i]->IsColliding(pEntity1))
+        {
+            pEntity1->TakeHit(bulletsEnemyList[i]->GetPosition().x);
+            bulletsEnemyList[i]->Destroy();
+            bulletsEnemyList.erase(bulletsEnemyList.begin() + i);
+            i--;
+        }
+    }
 
     for(int i = 0; i < mBonus.size(); i++)
     {
-        mBonus[i]->PrintCollider(sf::Color::White);
         if (pEntity1->IsColliding(mBonus[i]))
         {
             mBonus[i]->isCollid(pEntity1);
             mBonus[i]->Destroy();
             mBonus.erase(mBonus.begin() + i);
             i--;
-        }
-    }
-
-    if (pEntity1 != nullptr)
-    {
-        // Dash boutton R2
-        pEntity1->dashCooldown += GetDeltaTime();
-        if (pEntity1->dashCooldown >= 2.5f)
-        {
-            if (sf::Joystick::isButtonPressed(0, 7))
-            {
-                if (pEntity1->dashTimer < pEntity1->dashTime)
-                {
-                    pEntity1->dashTimer += GetDeltaTime();
-                    pEntity1->Dash(GetDeltaTime());
-                }
-                else
-                {
-                    pEntity1->dashCooldown = 0;
-                    pEntity1->dashTimer = 0;
-                }
-            }
-        }
-        else
-        {
-            pEntity1->dashTimer = 0;
         }
     }
 }
