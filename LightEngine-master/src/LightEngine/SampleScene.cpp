@@ -161,7 +161,7 @@ void SampleScene::OnEvent(const sf::Event& event)
     {
         DisplayMenu();
 
-        if (sf::Joystick::isButtonPressed(0, 1) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::K))
+        if (sf::Joystick::isButtonPressed(0, 9) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::K))
         {
             isMenuActive = false;
         }
